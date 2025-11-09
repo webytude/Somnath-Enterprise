@@ -1,6 +1,16 @@
 @section('title','Dashboard')
 @extends('admin.layouts.main')
 @section('main_contant')
+@php
+$email=$users=$profile_pic='';
+$profile_pic =asset('/assets/media/images/no-image.png');
+if(Auth::check())
+{
+    $users = Auth::user(); 
+}
+
+
+@endphp
 <div class="toolbar py-5 py-lg-5" id="kt_toolbar">
     <div id="kt_toolbar_container" class="container-xxl d-flex flex-stack flex-wrap">
         <div class="page-title d-flex flex-column me-3">
@@ -15,15 +25,15 @@
                 <div class="d-flex flex-wrap flex-sm-nowrap mb-3">
                     <div class="me-7 mb-4">
                         <div class="symbol symbol-100px symbol-lg-160px symbol-fixed position-relative">
-                            <img src="assets/media/avatars/300-1.jpg" alt="image" />
+                            <img src="{{$profile_pic}}" alt="image" />
                         </div>
                     </div>
                     <div class="flex-grow-1">
                         <div class="d-flex justify-content-between align-items-start flex-wrap mb-2">
                             <div class="d-flex flex-column">
                                 <div class="d-flex align-items-center mb-2">
-                                    <a href="javascript::void(0);" class="text-gray-900 text-hover-primary fs-2 fw-bolder me-1">Max Smith</a>
-                                    <a href="javascript::void(0);">
+                                    <a href="javascript::void(0);" class="text-gray-900 text-hover-primary fs-2 fw-bolder me-1">{{ $users->name ?? "" }}</a>
+                                    <a href="javascript:void(0);">
                                         <span class="svg-icon svg-icon-1 svg-icon-primary">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24">
                                                 <path d="M10.0813 3.7242C10.8849 2.16438 13.1151 2.16438 13.9187 3.7242V3.7242C14.4016 4.66147 15.4909 5.1127 16.4951 4.79139V4.79139C18.1663 4.25668 19.7433 5.83365 19.2086 7.50485V7.50485C18.8873 8.50905 19.3385 9.59842 20.2758 10.0813V10.0813C21.8356 10.8849 21.8356 13.1151 20.2758 13.9187V13.9187C19.3385 14.4016 18.8873 15.491 19.2086 16.4951V16.4951C19.7433 18.1663 18.1663 19.7433 16.4951 19.2086V19.2086C15.491 18.8873 14.4016 19.3385 13.9187 20.2758V20.2758C13.1151 21.8356 10.8849 21.8356 10.0813 20.2758V20.2758C9.59842 19.3385 8.50905 18.8873 7.50485 19.2086V19.2086C5.83365 19.7433 4.25668 18.1663 4.79139 16.4951V16.4951C5.1127 15.491 4.66147 14.4016 3.7242 13.9187V13.9187C2.16438 13.1151 2.16438 10.8849 3.7242 10.0813V10.0813C4.66147 9.59842 5.1127 8.50905 4.79139 7.50485V7.50485C4.25668 5.83365 5.83365 4.25668 7.50485 4.79139V4.79139C8.50905 5.1127 9.59842 4.66147 10.0813 3.7242V3.7242Z" fill="#00A3FF" />
@@ -31,6 +41,7 @@
                                             </svg>
                                         </span>
                                     </a>
+                                    <a href="{{ route('user.editProfile') }}" type="button" class="btn btn-primary ms-auto">Edit profile</a>
                                 </div>
                             </div>
                         </div>
@@ -41,46 +52,34 @@
                                         <div class="row mb-7">
                                             <label class="col-lg-4 fw-bold text-muted">Full Name</label>
                                             <div class="col-lg-8">
-                                                <span class="fw-bolder fs-6 text-gray-800">Max Smith</span>
+                                                <span class="fw-bolder fs-6 text-gray-800">{{ $users->name ?? "" }}</span>
                                             </div>
                                         </div>
                                         <div class="row mb-7">
-                                            <label class="col-lg-4 fw-bold text-muted">Company</label>
+                                            <label class="col-lg-4 fw-bold text-muted">Email</label>
                                             <div class="col-lg-8 fv-row">
-                                                <span class="fw-bold text-gray-800 fs-6">Keenthemes</span>
+                                                <span class="fw-bold text-gray-800 fs-6">{{ $users->email ?? "" }}</span>
                                             </div>
                                         </div>
                                         <div class="row mb-7">
-                                            <label class="col-lg-4 fw-bold text-muted">Contact Phone
+                                            <label class="col-lg-4 fw-bold text-muted">Emergancy Contact Number
                                                 <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" title="Phone number must be active"></i></label>
                                             <div class="col-lg-8 d-flex align-items-center">
-                                                <span class="fw-bolder fs-6 text-gray-800 me-2">044 3276 454 935</span>
+                                                <span class="fw-bolder fs-6 text-gray-800 me-2">{{ $users->phone ?? "" }}</span>
                                                 <span class="badge badge-success">Verified</span>
                                             </div>
                                         </div>
                                         <div class="row mb-7">
-                                            <label class="col-lg-4 fw-bold text-muted">Company Site</label>
+                                            <label class="col-lg-4 fw-bold text-muted">Date of Joining</label>
                                             <div class="col-lg-8">
-                                                <a href="#" class="fw-bold fs-6 text-gray-800 text-hover-primary">keenthemes.com</a>
+                                                <a href="#" class="fw-bold fs-6 text-gray-800 text-hover-primary">{{ $users->created_at ?? "" }}</a>
                                             </div>
                                         </div>
                                         <div class="row mb-7">
-                                            <label class="col-lg-4 fw-bold text-muted">Country
+                                            <label class="col-lg-4 fw-bold text-muted">Date of Birth
                                                 <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" title="Country of origination"></i></label>
                                             <div class="col-lg-8">
-                                                <span class="fw-bolder fs-6 text-gray-800">Germany</span>
-                                            </div>
-                                        </div>
-                                        <div class="row mb-7">
-                                            <label class="col-lg-4 fw-bold text-muted">Communication</label>
-                                            <div class="col-lg-8">
-                                                <span class="fw-bolder fs-6 text-gray-800">Email, Phone</span>
-                                            </div>
-                                        </div>
-                                        <div class="row mb-10">
-                                            <label class="col-lg-4 fw-bold text-muted">Allow Changes</label>
-                                            <div class="col-lg-8">
-                                                <span class="fw-bold fs-6 text-gray-800">Yes</span>
+                                                <span class="fw-bolder fs-6 text-gray-800">{{ $users->dob ?? "" }}</span>
                                             </div>
                                         </div>
                                     </div>

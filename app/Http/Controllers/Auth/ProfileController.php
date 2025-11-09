@@ -47,7 +47,7 @@ class ProfileController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit()
     {
         $user = User::where('id', Auth::user()->id)->first();
         return view('admin.profile.editprofile', compact('user'));
