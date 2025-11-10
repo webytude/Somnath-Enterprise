@@ -1,4 +1,4 @@
-@section('title','Dashboard')
+@section('title','My Profile')
 @extends('admin.layouts.main')
 @section('main_contant')
 @php
@@ -22,6 +22,7 @@ if(Auth::check())
     <div class="content flex-row-fluid" id="kt_content">
         <div class="card mb-5 mb-xl-10">
             <div class="card-body pt-9 pb-0">
+                @include('global.show_session')
                 <div class="d-flex flex-wrap flex-sm-nowrap mb-3">
                     <div class="me-7 mb-4">
                         <div class="symbol symbol-100px symbol-lg-160px symbol-fixed position-relative">
@@ -41,9 +42,9 @@ if(Auth::check())
                                             </svg>
                                         </span>
                                     </a>
-                                    <a href="{{ route('user.editProfile') }}" type="button" class="btn btn-primary ms-auto">Edit profile</a>
                                 </div>
                             </div>
+                            <a href="{{ route('user.editProfile') }}" type="button" class="btn btn-primary ms-auto">Edit profile</a>
                         </div>
                         <div class="d-flex flex-wrap flex-stack">
                             <div class="d-flex flex-column flex-grow-1 pe-8">

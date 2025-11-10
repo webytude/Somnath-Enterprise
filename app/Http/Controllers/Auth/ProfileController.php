@@ -68,16 +68,17 @@ class ProfileController extends Controller
                 $request->session()->flash('message', $message);
                 Auth::logout();
                 return redirect('/login');
-            } else {
-                $message = config('params.msg_error') . ' something went wrong !' . config('params.msg_end');
-                $request->session()->flash('message', $message);
-                return redirect()->back();
             }
+            $message = config('params.msg_error') . ' something went wrong !' . config('params.msg_end');
+            $request->session()->flash('message', $message);
+            return redirect()->back();
+            
         } else {
             $message = config('params.msg_error') . ' Invalid Old Password !' . config('params.msg_end');
             $request->session()->flash('message', $message);
             return redirect()->back();
         }
+        
     }
 
     /**
@@ -106,12 +107,14 @@ class ProfileController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
-            'dob' => $request->dob,
+            // 'dob' => $request->dob,
             'e_phone' => $request->e_phone,
             'address' => $request->address,
-            'image' => $url,
+            // 'image' => $url,
         ]);
-        return redirect()->route('admin.user.getProfile')->with('success', 'My profile updated successfully.');
+        $message = config('params.msg_success') . 'My profile updated successfully.' . config('params.msg_end');
+        $request->session()->flash('message', $message);
+        return redirect()->route('user.getProfile');
     }
 
     /**
