@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\DashboardController;
 use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\DepartmentController;
 // Route::get('/', function () {
 //     return view('admin.auth.login');
 // });
@@ -19,6 +20,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
     Route::resource('users', UsersController::class);
+    Route::resource('departments', DepartmentController::class);
 
     Route::get('my-profile', [ProfileController::class, 'index'])->name('user.getProfile');
     Route::get('edit-profile', [ProfileController::class, 'edit'])->name('user.editProfile');
