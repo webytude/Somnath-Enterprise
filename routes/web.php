@@ -6,6 +6,9 @@ use App\Http\Controllers\Auth\DashboardController;
 use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\SubdepartmentController;
+use App\Http\Controllers\DivisionController;
+use App\Http\Controllers\PedhiController;
 // Route::get('/', function () {
 //     return view('admin.auth.login');
 // });
@@ -21,6 +24,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('users', UsersController::class);
     Route::resource('departments', DepartmentController::class);
+    Route::resource('sub-departments', SubdepartmentController::class);
+    Route::resource('division', DivisionController::class);
+    Route::resource('pedhi', PedhiController::class);
 
     Route::get('my-profile', [ProfileController::class, 'index'])->name('user.getProfile');
     Route::get('edit-profile', [ProfileController::class, 'edit'])->name('user.editProfile');

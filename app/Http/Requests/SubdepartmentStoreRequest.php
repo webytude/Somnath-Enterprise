@@ -22,7 +22,15 @@ class SubdepartmentStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string|max:255|unique:departments,name',
+            'department_id' => 'required|exists:departments,id',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'department_id.exists' => 'The selected department is invalid.',
         ];
     }
 }

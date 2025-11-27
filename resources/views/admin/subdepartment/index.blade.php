@@ -8,18 +8,18 @@
         <div class="card mb-5 mb-xl-12">
             <div class="card-header border-0 pt-6">
                 <div class="card-title">
-                    <h1 class="d-flex text-dark fw-bolder fs-3 flex-column mb-0">Manage Department</h1>
+                    <h1 class="d-flex text-dark fw-bolder fs-3 flex-column mb-0">Manage sub Department</h1>
                 </div>
                 <div class="card-toolbar">
                     <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
-                        <a href="{{ route('departments.create') }}" type="button" class="btn btn-primary">
+                        <a href="{{ route('sub-departments.create') }}" type="button" class="btn btn-primary">
                             <span class="svg-icon svg-icon-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                     <rect opacity="0.5" x="11.364" y="20.364" width="16" height="2" rx="1" transform="rotate(-90 11.364 20.364)" fill="currentColor" />
                                     <rect x="4.36396" y="11.364" width="16" height="2" rx="1" fill="currentColor" />
                                 </svg>
                             </span>
-                            Add Department
+                            Add
                         </a>
                     </div>
                     <div class="d-flex justify-content-end align-items-center d-none" data-kt-user-table-toolbar="selected">
@@ -36,15 +36,17 @@
                     <thead>
                         <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
                             <th class="min-w-125px">Name</th>
+                            <th class="min-w-125px">Department</th>
                             <th class="text-end min-w-100px">Action</th>
                         </tr>
                     </thead>
                     <tbody class="text-gray-600 fw-bold">
-                        @foreach($departments as $dept)
+                        @foreach($subdepartments as $subdept)
                         <tr>
-                            <td>{{ $dept->name }}</td>
+                            <td>{{ $subdept->name }}</td>
+                            <td>{{ $subdept->department->name }}</td>
                             <td class="text-end">
-                                <a href="{{ route('departments.edit', $dept) }}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
+                                <a href="{{ route('sub-departments.edit', $subdept) }}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
                                     <span class="svg-icon svg-icon-3">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                             <path opacity="0.3" d="M21.4 8.35303L19.241 10.511L13.485 4.755L15.643 2.59595C16.0248 2.21423 16.5426 1.99988 17.0825 1.99988C17.6224 1.99988 18.1402 2.21423 18.522 2.59595L21.4 5.474C21.7817 5.85581 21.9962 6.37355 21.9962 6.91345C21.9962 7.45335 21.7817 7.97122 21.4 8.35303ZM3.68699 21.932L9.88699 19.865L4.13099 14.109L2.06399 20.309C1.98815 20.5354 1.97703 20.7787 2.03189 21.0111C2.08674 21.2436 2.2054 21.4561 2.37449 21.6248C2.54359 21.7934 2.75641 21.9115 2.989 21.9658C3.22158 22.0201 3.4647 22.0084 3.69099 21.932H3.68699Z" fill="currentColor" />
@@ -52,7 +54,7 @@
                                         </svg>
                                     </span>
                                 </a>
-                                <form action="{{ route('departments.destroy', $dept) }}" method="POST" style="display:inline">
+                                <form action="{{ route('sub-departments.destroy', $subdept) }}" method="POST" style="display:inline">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
                                         <span class="svg-icon svg-icon-3">
