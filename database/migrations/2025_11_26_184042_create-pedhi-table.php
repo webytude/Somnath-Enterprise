@@ -14,6 +14,9 @@ return new class extends Migration
         Schema::create('pedhi', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->foreignId('department_id')->constrained()->onDelete('cascade');
+            $table->foreignId('subdepartment_id')->constrained()->onDelete('cascade');
+            $table->foreignId('division_id')->constrained()->onDelete('cascade');
             $table->bigInteger('created_by')->nullable();
             $table->bigInteger('updated_by')->nullable();
             $table->timestamps();

@@ -10,18 +10,24 @@ class Division extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'department_id', 'created_by', 'updated_by'
+        'name', 'department_id', 'subdepartment_id', 'created_by', 'updated_by'
     ];
 
-    // A subdepartment belongs to one department
+    // A division belongs to one department
     public function department()
     {
         return $this->belongsTo(Department::class);
     }
 
-    // A subdepartment has many divisions
-    public function divisions()
+    // A division belongs to one subdepartment
+    public function subdepartment()
     {
-        return $this->hasMany(Division::class);
+        return $this->belongsTo(Subdepartment::class);
+    }
+
+    // A division has many pedhi
+    public function pedhi()
+    {
+        return $this->hasMany(Pedhi::class);
     }
 }

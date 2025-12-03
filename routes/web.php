@@ -26,7 +26,10 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('departments', DepartmentController::class);
     Route::resource('sub-departments', SubdepartmentController::class);
     Route::resource('division', DivisionController::class);
+    Route::get('division/get-subdepartments', [DivisionController::class, 'getSubdepartments'])->name('division.getSubdepartments');
     Route::resource('pedhi', PedhiController::class);
+    Route::get('pedhi/get-subdepartments', [PedhiController::class, 'getSubdepartments'])->name('pedhi.getSubdepartments');
+    Route::get('pedhi/get-divisions', [PedhiController::class, 'getDivisions'])->name('pedhi.getDivisions');
 
     Route::get('my-profile', [ProfileController::class, 'index'])->name('user.getProfile');
     Route::get('edit-profile', [ProfileController::class, 'edit'])->name('user.editProfile');

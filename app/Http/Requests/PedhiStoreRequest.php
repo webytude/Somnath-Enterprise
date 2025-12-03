@@ -21,8 +21,14 @@ class PedhiStoreRequest extends FormRequest
      */
     public function rules(): array
     {
+        $pedhiId = $this->route('pedhi');
+        $pedhiId = is_object($pedhiId) ? $pedhiId->id : $pedhiId;
+        
         return [
-            //
+            'name' => 'required|string|max:255|unique:pedhi,name,' . $pedhiId,
+            'department_id' => 'required|exists:departments,id',
+            'subdepartment_id' => 'required|exists:subdepartments,id',
+            'division_id' => 'required|exists:divisions,id',
         ];
     }
 }

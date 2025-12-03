@@ -21,8 +21,13 @@ class DivisionStoreRequest extends FormRequest
      */
     public function rules(): array
     {
+        $divisionId = $this->route('division');
+        $divisionId = is_object($divisionId) ? $divisionId->id : $divisionId;
+        
         return [
-            //
+            'name' => 'required|string|max:255|unique:divisions,name,' . $divisionId,
+            'department_id' => 'required|exists:departments,id',
+            'subdepartment_id' => 'required|exists:subdepartments,id',
         ];
     }
 }
