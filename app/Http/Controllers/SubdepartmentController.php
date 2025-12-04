@@ -91,8 +91,14 @@ class SubdepartmentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Subdepartment $subdepartment)
     {
-        //
+        try {
+            $subdepartment->delete();
+            return redirect()->route('sub-departments.index')->with('success', 'Subdepartment deleted.');
+        } catch (\Exception $e) {
+           dd($e->getMessage());
+        }
+        
     }
 }

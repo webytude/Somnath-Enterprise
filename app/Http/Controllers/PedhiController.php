@@ -4,9 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Pedhi;
-use App\Models\Department;
-use App\Models\Subdepartment;
-use App\Models\Division;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\PedhiStoreRequest;
 
@@ -17,7 +14,7 @@ class PedhiController extends Controller
      */
     public function index()
     {
-        $pedhi = Pedhi::with(['department', 'subdepartment', 'division'])->latest()->get();
+        $pedhi = Pedhi::latest()->get();
         return view('admin.pedhi.index', compact('pedhi'));
     }
 
@@ -26,8 +23,7 @@ class PedhiController extends Controller
      */
     public function create()
     {
-        $departments = Department::orderBy('name')->get();
-        return view('admin.pedhi.create', compact('departments'));
+        return view('admin.pedhi.create');
     }
 
     /**
@@ -37,9 +33,6 @@ class PedhiController extends Controller
     {
         Pedhi::create([
             'name' => $request->name,
-            'department_id' => $request->department_id,
-            'subdepartment_id' => $request->subdepartment_id,
-            'division_id' => $request->division_id,
             'created_by' => Auth::id(),
             'updated_by' => Auth::id(),
         ]);
@@ -62,10 +55,7 @@ class PedhiController extends Controller
     public function edit(string $id)
     {
         $pedhi = Pedhi::findOrFail($id);
-        $departments = Department::orderBy('name')->get();
-        $subdepartments = Subdepartment::where('department_id', $pedhi->department_id)->orderBy('name')->get();
-        $divisions = Division::where('subdepartment_id', $pedhi->subdepartment_id)->orderBy('name')->get();
-        return view('admin.pedhi.edit', compact('pedhi', 'departments', 'subdepartments', 'divisions'));
+        return view('admin.pedhi.edit', compact('pedhi'));
     }
 
     /**
@@ -76,9 +66,6 @@ class PedhiController extends Controller
         $pedhi = Pedhi::findOrFail($id);
         $pedhi->update([
             'name' => $request->name,
-            'department_id' => $request->department_id,
-            'subdepartment_id' => $request->subdepartment_id,
-            'division_id' => $request->division_id,
             'updated_by' => Auth::id(),
         ]);
 
@@ -97,27 +84,4 @@ class PedhiController extends Controller
             ->with('success', 'Pedhi deleted successfully.');
     }
 
-    /**
-     * Get subdepartments by department ID (for AJAX)
-     */
-    public function getSubdepartments(Request $request)
-    {
-        $subdepartments = Subdepartment::where('department_id', $request->department_id)
-            ->orderBy('name')
-            ->get();
-        
-        return response()->json($subdepartments);
-    }
-
-    /**
-     * Get divisions by subdepartment ID (for AJAX)
-     */
-    public function getDivisions(Request $request)
-    {
-        $divisions = Division::where('subdepartment_id', $request->subdepartment_id)
-            ->orderBy('name')
-            ->get();
-        
-        return response()->json($divisions);
-    }
 }

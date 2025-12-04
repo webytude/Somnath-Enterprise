@@ -26,9 +26,6 @@ class PedhiStoreRequest extends FormRequest
         
         return [
             'name' => 'required|string|max:255|unique:pedhi,name,' . $pedhiId,
-            'department_id' => 'required|exists:departments,id',
-            'subdepartment_id' => 'required|exists:subdepartments,id',
-            'division_id' => 'required|exists:divisions,id',
         ];
     }
 }

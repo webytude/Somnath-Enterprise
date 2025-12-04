@@ -1,4 +1,4 @@
-@section('title','Dashboard')
+@section('title','Manage Location')
 @extends('admin.layouts.main')
 @section('main_contant')
 <div class="toolbar bg-transparent pt-6 mb-5" id="kt_toolbar">
@@ -8,25 +8,19 @@
         <div class="card mb-5 mb-xl-12">
             <div class="card-header border-0 pt-6">
                 <div class="card-title">
-                    <h1 class="d-flex text-dark fw-bolder fs-3 flex-column mb-0">Manage sub Department</h1>
+                    <h1 class="d-flex text-dark fw-bolder fs-3 flex-column mb-0">Manage Location</h1>
                 </div>
                 <div class="card-toolbar">
                     <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
-                        <a href="{{ route('sub-departments.create') }}" type="button" class="btn btn-primary">
+                        <a href="{{ route('locations.create') }}" type="button" class="btn btn-primary">
                             <span class="svg-icon svg-icon-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                     <rect opacity="0.5" x="11.364" y="20.364" width="16" height="2" rx="1" transform="rotate(-90 11.364 20.364)" fill="currentColor" />
                                     <rect x="4.36396" y="11.364" width="16" height="2" rx="1" fill="currentColor" />
                                 </svg>
                             </span>
-                            Add
+                            Add Location
                         </a>
-                    </div>
-                    <div class="d-flex justify-content-end align-items-center d-none" data-kt-user-table-toolbar="selected">
-                        <div class="fw-bolder me-5">
-                            <span class="me-2" data-kt-user-table-select="selected_count"></span>Selected
-                        </div>
-                        <button type="button" class="btn btn-danger" data-kt-user-table-select="delete_selected">Delete Selected</button>
                     </div>
                 </div>
             </div>
@@ -36,17 +30,25 @@
                     <thead>
                         <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
                             <th class="min-w-125px">Name</th>
+                            <th class="min-w-125px">Pedhi</th>
                             <th class="min-w-125px">Department</th>
+                            <th class="min-w-125px">Sub Department</th>
+                            <th class="min-w-125px">Division</th>
+                            <th class="min-w-200px">Location</th>
                             <th class="text-end min-w-100px">Action</th>
                         </tr>
                     </thead>
                     <tbody class="text-gray-600 fw-bold">
-                        @foreach($subdepartments as $subdept)
+                        @foreach($locations as $location)
                         <tr>
-                            <td>{{ $subdept->name }}</td>
-                            <td>{{ $subdept->department->name ?? "" }}</td>
+                            <td>{{ $location->name }}</td>
+                            <td>{{ $location->pedhi->name }}</td>
+                            <td>{{ $location->department->name }}</td>
+                            <td>{{ $location->subdepartment->name }}</td>
+                            <td>{{ $location->division->name }}</td>
+                            <td>{{ Str::limit($location->location, 50) }}</td>
                             <td class="text-end">
-                                <a href="{{ route('sub-departments.edit', $subdept) }}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
+                                <a href="{{ route('locations.edit', $location) }}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
                                     <span class="svg-icon svg-icon-3">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                             <path opacity="0.3" d="M21.4 8.35303L19.241 10.511L13.485 4.755L15.643 2.59595C16.0248 2.21423 16.5426 1.99988 17.0825 1.99988C17.6224 1.99988 18.1402 2.21423 18.522 2.59595L21.4 5.474C21.7817 5.85581 21.9962 6.37355 21.9962 6.91345C21.9962 7.45335 21.7817 7.97122 21.4 8.35303ZM3.68699 21.932L9.88699 19.865L4.13099 14.109L2.06399 20.309C1.98815 20.5354 1.97703 20.7787 2.03189 21.0111C2.08674 21.2436 2.2054 21.4561 2.37449 21.6248C2.54359 21.7934 2.75641 21.9115 2.989 21.9658C3.22158 22.0201 3.4647 22.0084 3.69099 21.932H3.68699Z" fill="currentColor" />
@@ -54,10 +56,9 @@
                                         </svg>
                                     </span>
                                 </a>
-                                <form action="{{ route('sub-departments.destroy', $subdept) }}" method="POST" style="display:inline">
-                                    @csrf 
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
+                                <form action="{{ route('locations.destroy', $location) }}" method="POST" style="display:inline">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm" onclick="return confirm('Are you sure you want to delete this location?')">
                                         <span class="svg-icon svg-icon-3">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                                 <path d="M5 9C5 8.44772 5.44772 8 6 8H18C18.5523 8 19 8.44772 19 9V18C19 19.6569 17.6569 21 16 21H8C6.34315 21 5 19.6569 5 18V9Z" fill="currentColor" />
@@ -67,7 +68,6 @@
                                         </span>
                                     </button>
                                 </form>
-                                
                             </td>
                         </tr>
                         @endforeach
@@ -78,3 +78,4 @@
     </div>
 </div>
 @endsection
+

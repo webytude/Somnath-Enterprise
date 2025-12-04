@@ -11,9 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pedhi', function (Blueprint $table) {
+        Schema::create('locations', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('pedhi_id')->constrained()->onDelete('cascade');
+            $table->foreignId('department_id')->constrained()->onDelete('cascade');
+            $table->foreignId('subdepartment_id')->constrained()->onDelete('cascade');
+            $table->foreignId('division_id')->constrained()->onDelete('cascade');
             $table->string('name');
+            $table->text('location');
+            $table->text('remark')->nullable();
             $table->bigInteger('created_by')->nullable();
             $table->bigInteger('updated_by')->nullable();
             $table->timestamps();
@@ -25,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pedhi');
+        Schema::dropIfExists('locations');
     }
 };

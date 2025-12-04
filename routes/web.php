@@ -9,6 +9,7 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\SubdepartmentController;
 use App\Http\Controllers\DivisionController;
 use App\Http\Controllers\PedhiController;
+use App\Http\Controllers\LocationController;
 // Route::get('/', function () {
 //     return view('admin.auth.login');
 // });
@@ -28,8 +29,9 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('division', DivisionController::class);
     Route::get('division/get-subdepartments', [DivisionController::class, 'getSubdepartments'])->name('division.getSubdepartments');
     Route::resource('pedhi', PedhiController::class);
-    Route::get('pedhi/get-subdepartments', [PedhiController::class, 'getSubdepartments'])->name('pedhi.getSubdepartments');
-    Route::get('pedhi/get-divisions', [PedhiController::class, 'getDivisions'])->name('pedhi.getDivisions');
+    Route::resource('locations', LocationController::class);
+    Route::get('locations/get-subdepartments', [LocationController::class, 'getSubdepartments'])->name('locations.getSubdepartments');
+    Route::get('locations/get-divisions', [LocationController::class, 'getDivisions'])->name('locations.getDivisions');
 
     Route::get('my-profile', [ProfileController::class, 'index'])->name('user.getProfile');
     Route::get('edit-profile', [ProfileController::class, 'edit'])->name('user.editProfile');

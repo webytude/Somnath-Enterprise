@@ -24,36 +24,6 @@
                                     <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                 @enderror
                             </div>
-                            <div class="fv-row mb-7">
-                                <label class="fs-6 fw-bold form-label mt-3">Department</label>
-                                <select class="form-select form-select-solid" name="department_id" id="department_id" data-control="select2" data-placeholder="Select Department...">
-                                    <option value="">Select Department...</option>
-                                    @foreach($departments as $dept)
-                                        <option value="{{ $dept->id }}">{{ $dept->name }}</option>
-                                    @endforeach
-                                </select>
-                                @error('department_id')
-                                    <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
-                                @enderror
-                            </div>
-                            <div class="fv-row mb-7">
-                                <label class="fs-6 fw-bold form-label mt-3">Sub Department</label>
-                                <select class="form-select form-select-solid" name="subdepartment_id" id="subdepartment_id" data-control="select2" data-placeholder="Select Sub Department...">
-                                    <option value="">Select Sub Department...</option>
-                                </select>
-                                @error('subdepartment_id')
-                                    <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
-                                @enderror
-                            </div>
-                            <div class="fv-row mb-7">
-                                <label class="fs-6 fw-bold form-label mt-3">Division</label>
-                                <select class="form-select form-select-solid" name="division_id" id="division_id" data-control="select2" data-placeholder="Select Division...">
-                                    <option value="">Select Division...</option>
-                                </select>
-                                @error('division_id')
-                                    <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
-                                @enderror
-                            </div>
                             <div class="separator mb-6"></div>
                             <div class="d-flex justify-content-end">
                                 <a href="{{route('pedhi.index')}}"  data-kt-attendance-form="cancel" class="btn btn-light me-3">Cancel</a>
@@ -72,62 +42,5 @@
         </div>
     </div>
 </div>
-@endsection
-
-@section('custom_scripts')
-<script>
-    $(document).ready(function() {
-        // When department changes, load subdepartments
-        $('#department_id').on('change', function() {
-            var departmentId = $(this).val();
-            var subdepartmentSelect = $('#subdepartment_id');
-            var divisionSelect = $('#division_id');
-            
-            // Clear subdepartment and division options
-            subdepartmentSelect.empty();
-            subdepartmentSelect.append('<option value="">Select Sub Department...</option>');
-            divisionSelect.empty();
-            divisionSelect.append('<option value="">Select Division...</option>');
-            
-            if (departmentId) {
-                $.ajax({
-                    url: '{{ route("pedhi.getSubdepartments") }}',
-                    type: 'GET',
-                    data: { department_id: departmentId },
-                    success: function(data) {
-                        $.each(data, function(key, value) {
-                            subdepartmentSelect.append('<option value="' + value.id + '">' + value.name + '</option>');
-                        });
-                        subdepartmentSelect.trigger('change');
-                    }
-                });
-            }
-        });
-        
-        // When subdepartment changes, load divisions
-        $('#subdepartment_id').on('change', function() {
-            var subdepartmentId = $(this).val();
-            var divisionSelect = $('#division_id');
-            
-            // Clear division options
-            divisionSelect.empty();
-            divisionSelect.append('<option value="">Select Division...</option>');
-            
-            if (subdepartmentId) {
-                $.ajax({
-                    url: '{{ route("pedhi.getDivisions") }}',
-                    type: 'GET',
-                    data: { subdepartment_id: subdepartmentId },
-                    success: function(data) {
-                        $.each(data, function(key, value) {
-                            divisionSelect.append('<option value="' + value.id + '">' + value.name + '</option>');
-                        });
-                        divisionSelect.trigger('change');
-                    }
-                });
-            }
-        });
-    });
-</script>
 @endsection
 

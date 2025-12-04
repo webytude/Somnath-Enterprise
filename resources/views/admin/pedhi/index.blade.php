@@ -30,9 +30,6 @@
                     <thead>
                         <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
                             <th class="min-w-125px">Name</th>
-                            <th class="min-w-125px">Department</th>
-                            <th class="min-w-125px">Sub Department</th>
-                            <th class="min-w-125px">Division</th>
                             <th class="text-end min-w-100px">Action</th>
                         </tr>
                     </thead>
@@ -40,9 +37,6 @@
                         @foreach($pedhi as $p)
                         <tr>
                             <td>{{ $p->name }}</td>
-                            <td>{{ $p->department->name }}</td>
-                            <td>{{ $p->subdepartment->name }}</td>
-                            <td>{{ $p->division->name }}</td>
                             <td class="text-end">
                                 <a href="{{ route('pedhi.edit', $p) }}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
                                     <span class="svg-icon svg-icon-3">
