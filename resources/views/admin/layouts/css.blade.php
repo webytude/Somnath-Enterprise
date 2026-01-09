@@ -5,3 +5,4 @@
 <link href="{{ asset('assets/css/datatables.bundle.css')}}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/css/vis-timeline.bundle.css')}}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/css/fontawesome.all.min.css')}}" rel="stylesheet" type="text/css" />
+<link href="{{ asset('assets/css/style.custum.css') }}" rel="stylesheet" type="text/css" />

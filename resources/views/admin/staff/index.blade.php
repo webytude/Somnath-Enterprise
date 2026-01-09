@@ -80,6 +80,7 @@
                 <div class="tab-content" id="kt_tab_content">
                     <!-- List of Staff Tab -->
                     <div class="tab-pane fade show active" id="kt_tab_staff_list" role="tabpanel">
+                        <div class="table-responsive">
                         <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_staff">
                             <thead>
                                 <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
@@ -141,6 +142,7 @@
                                 @endforelse
                             </tbody>
                         </table>
+                        </div>
                     </div>
 
                     <!-- Attendance Tab -->
@@ -151,12 +153,12 @@
                                     <h3 class="mb-0">Staff Attendance - {{ $today->format('d M Y') }}</h3>
                                 </div>
                                 <div class="card-toolbar">
-                                    <div class="d-flex align-items-center gap-5">
+                                    <div class="d-flex align-items-center gap-5 gap-col-d">
                                         <div class="badge badge-success fs-6 px-4 py-3">
                                             <i class="fas fa-users me-2"></i>
                                             <strong>Present Today: {{ $presentCount }}</strong> / {{ $staff->count() }}
                                         </div>
-                                        <div class="alert alert-info mb-0">
+                                        <div class="alert alert-info mb-0 alert-sm">
                                             <i class="fas fa-info-circle"></i> Only today's date can be marked/unmarked. Past dates are view-only.
                                         </div>
                                     </div>
@@ -237,7 +239,7 @@
                                 </div>
                                 <div class="card-toolbar">
                                     <div class="badge badge-primary fs-6 px-4 py-3">
-                                        <i class="fas fa-rupee-sign me-2"></i>
+                                        <i class="fas fa-rupee-sign me-2 white-color"></i>
                                         <strong>Total Paid Today: ₹<span id="total_paid_today">0.00</span></strong>
                                     </div>
                                 </div>
