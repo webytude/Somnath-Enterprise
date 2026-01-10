@@ -30,7 +30,6 @@ use App\Http\Controllers\ScrapListController;
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login')->middleware('redirectIfAuthenticated');
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login')->middleware('redirectIfAuthenticated');
 Route::post('/login', [LoginController::class, 'login'])->name('post.login');
-
 Route::middleware(['auth'])->group(function () {
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
@@ -38,12 +37,12 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('users', UsersController::class);
     Route::resource('departments', DepartmentController::class);
     Route::resource('sub-departments', SubdepartmentController::class);
-    Route::resource('division', DivisionController::class);
     Route::get('division/get-subdepartments', [DivisionController::class, 'getSubdepartments'])->name('division.getSubdepartments');
+    Route::resource('division', DivisionController::class);
     Route::resource('pedhi', PedhiController::class);
-    Route::resource('locations', LocationController::class);
     Route::get('locations/get-subdepartments', [LocationController::class, 'getSubdepartments'])->name('locations.getSubdepartments');
     Route::get('locations/get-divisions', [LocationController::class, 'getDivisions'])->name('locations.getDivisions');
+    Route::resource('locations', LocationController::class);
 
     Route::resource('staff', StaffController::class);
     
