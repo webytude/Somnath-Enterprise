@@ -60,6 +60,15 @@
                                 @enderror
                             </div>
                             <div class="fv-row mb-7">
+                                <label class="fs-6 fw-bold form-label mt-3">Sub Division</label>
+                                <select class="form-select form-select-solid" name="sub_division_id" id="sub_division_id" data-control="select2" data-placeholder="Select Sub Division...">
+                                    <option value="">Select Sub Division...</option>
+                                </select>
+                                @error('sub_division_id')
+                                    <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="fv-row mb-7">
                                 <label class="fs-6 fw-bold form-label mt-3">Name</label>
                                 <input type="text" class="form-control form-control-solid" name="name" placeholder="Enter Location name" />
                                 @error('name')
@@ -108,12 +117,15 @@
             var departmentId = $(this).val();
             var subdepartmentSelect = $('#subdepartment_id');
             var divisionSelect = $('#division_id');
+            var subDivisionSelect = $('#sub_division_id');
             
-            // Clear subdepartment and division options
+            // Clear subdepartment, division and sub division options
             subdepartmentSelect.empty();
             subdepartmentSelect.append('<option value="">Select Sub Department...</option>');
             divisionSelect.empty();
             divisionSelect.append('<option value="">Select Division...</option>');
+            subDivisionSelect.empty();
+            subDivisionSelect.append('<option value="">Select Sub Division...</option>');
             
             if (departmentId) {
                 $.ajax({
@@ -134,10 +146,13 @@
         $('#subdepartment_id').on('change', function() {
             var subdepartmentId = $(this).val();
             var divisionSelect = $('#division_id');
+            var subDivisionSelect = $('#sub_division_id');
             
-            // Clear division options
+            // Clear division and sub division options
             divisionSelect.empty();
             divisionSelect.append('<option value="">Select Division...</option>');
+            subDivisionSelect.empty();
+            subDivisionSelect.append('<option value="">Select Sub Division...</option>');
             
             if (subdepartmentId) {
                 $.ajax({
@@ -149,6 +164,41 @@
                             divisionSelect.append('<option value="' + value.id + '">' + value.name + '</option>');
                         });
                         divisionSelect.trigger('change');
+                    }
+                });
+            }
+        });
+        
+        // When division changes, load sub divisions
+        $('#division_id').on('change', function() {
+            var divisionId = $(this).val();
+            var subDivisionSelect = $('#sub_division_id');
+            
+            // Clear sub division options
+            subDivisionSelect.empty();
+            subDivisionSelect.append('<option value="">Select Sub Division...</option>');
+            
+            if (divisionId) {
+                $.ajax({
+                    url: '{{ route("locations.getSubDivisions") }}',
+                    type: 'GET',
+                    dataType: 'json',
+                    data: { division_id: divisionId },
+                    success: function(data) {
+                        if (data && data.length > 0) {
+                            $.each(data, function(key, value) {
+                                subDivisionSelect.append('<option value="' + value.id + '">' + value.name + '</option>');
+                            });
+                        }
+                        subDivisionSelect.trigger('change');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX Error:', {
+                            status: status,
+                            error: error,
+                            response: xhr.responseText,
+                            statusCode: xhr.status
+                        });
                     }
                 });
             }

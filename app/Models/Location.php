@@ -10,7 +10,7 @@ class Location extends Model
     use HasFactory;
 
     protected $fillable = [
-        'pedhi_id', 'department_id', 'subdepartment_id', 'division_id', 
+        'pedhi_id', 'department_id', 'subdepartment_id', 'division_id', 'sub_division_id',
         'name', 'location', 'remark', 'created_by', 'updated_by'
     ];
 
@@ -36,5 +36,11 @@ class Location extends Model
     public function division()
     {
         return $this->belongsTo(Division::class);
+    }
+
+    // A location belongs to one sub division
+    public function subDivision()
+    {
+        return $this->belongsTo(SubDivision::class);
     }
 }

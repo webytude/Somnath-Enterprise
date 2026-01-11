@@ -22,6 +22,12 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
+            
+            // Check if user is staff
+            if (Auth::user()->isStaff()) {
+                return redirect()->route('daily-expense.index');
+            }
+            
             return redirect()->route('admin.dashboard');
         }
 

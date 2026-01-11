@@ -43,6 +43,19 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_staff' => 'boolean',
         ];
+    }
+
+    // A user can have one staff record
+    public function staff()
+    {
+        return $this->hasOne(Staff::class);
+    }
+
+    // Check if user is staff
+    public function isStaff()
+    {
+        return $this->is_staff == true;
     }
 }

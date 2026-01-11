@@ -26,20 +26,32 @@
                             <div class="row mb-7">
                                 <div class="col-md-4">
                                     <label class="fs-6 fw-bold form-label mt-3">
-                                        <span class="required">Name</span>
+                                        <span class="required">First Name</span>
                                     </label>
-                                    <input type="text" class="form-control form-control-solid" name="name" value="{{ old('name') }}" placeholder="Enter Name" />
-                                    @error('name')
+                                    <input type="text" class="form-control form-control-solid" name="first_name" value="{{ old('first_name') }}" placeholder="Enter First Name" />
+                                    @error('first_name')
                                         <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="fs-6 fw-bold form-label mt-3">Father Name</label>
-                                    <input type="text" class="form-control form-control-solid" name="father_name" value="{{ old('father_name') }}" placeholder="Enter Father Name" />
-                                    @error('father_name')
+                                    <label class="fs-6 fw-bold form-label mt-3">
+                                        <span class="required">Last Name</span>
+                                    </label>
+                                    <input type="text" class="form-control form-control-solid" name="last_name" value="{{ old('last_name') }}" placeholder="Enter Last Name" />
+                                    @error('last_name')
                                         <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                     @enderror
                                 </div>
+                                <div class="col-md-4">
+                                    <label class="fs-6 fw-bold form-label mt-3">Second Name / Surname</label>
+                                    <input type="text" class="form-control form-control-solid" name="second_name" value="{{ old('second_name') }}" placeholder="Enter Second Name / Surname" />
+                                    @error('second_name')
+                                        <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="row mb-7">
                                 <div class="col-md-4">
                                     <label class="fs-6 fw-bold form-label mt-3">Date of Birth</label>
                                     <input type="date" class="form-control form-control-solid" name="dob" value="{{ old('dob') }}" />
@@ -99,6 +111,13 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-4">
+                                    <label class="fs-6 fw-bold form-label mt-3">Other Contact Number</label>
+                                    <input type="text" class="form-control form-control-solid" name="other_contact_number" value="{{ old('other_contact_number') }}" placeholder="Enter Other Contact Number" />
+                                    @error('other_contact_number')
+                                        <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-4">
                                     <label class="fs-6 fw-bold form-label mt-3">Gender</label>
                                     <select class="form-select form-select-solid" name="gender" data-control="select2" data-placeholder="Select Gender...">
                                         <option value="">Select Gender...</option>
@@ -130,29 +149,6 @@
                                     <label class="fs-6 fw-bold form-label mt-3">Blood Group</label>
                                     <input type="text" class="form-control form-control-solid" name="blood_group" value="{{ old('blood_group') }}" placeholder="Enter Blood Group" />
                                     @error('blood_group')
-                                        <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <!-- Nominee Information -->
-                            <div class="separator separator-dashed my-5"></div>
-                            <div class="mb-5">
-                                <h3 class="mb-3">Nominee Information</h3>
-                            </div>
-
-                            <div class="row mb-7">
-                                <div class="col-md-6">
-                                    <label class="fs-6 fw-bold form-label mt-3">Nominee Name</label>
-                                    <input type="text" class="form-control form-control-solid" name="nominee_name" value="{{ old('nominee_name') }}" placeholder="Enter Nominee Name" />
-                                    @error('nominee_name')
-                                        <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="fs-6 fw-bold form-label mt-3">Relation of Nominee</label>
-                                    <input type="text" class="form-control form-control-solid" name="nominee_relation" value="{{ old('nominee_relation') }}" placeholder="Enter Relation" />
-                                    @error('nominee_relation')
                                         <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                     @enderror
                                 </div>
@@ -205,17 +201,24 @@
                             </div>
 
                             <div class="row mb-7">
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <label class="fs-6 fw-bold form-label mt-3">Bank Name</label>
                                     <input type="text" class="form-control form-control-solid" name="bank_name" value="{{ old('bank_name') }}" placeholder="Enter Bank Name" />
                                     @error('bank_name')
                                         <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <label class="fs-6 fw-bold form-label mt-3">Bank Account No.</label>
                                     <input type="text" class="form-control form-control-solid" name="bank_account_no" value="{{ old('bank_account_no') }}" placeholder="Enter Bank Account Number" />
                                     @error('bank_account_no')
+                                        <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="fs-6 fw-bold form-label mt-3">IFSC Code</label>
+                                    <input type="text" class="form-control form-control-solid" name="ifsc_code" value="{{ old('ifsc_code') }}" placeholder="Enter IFSC Code" />
+                                    @error('ifsc_code')
                                         <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                     @enderror
                                 </div>

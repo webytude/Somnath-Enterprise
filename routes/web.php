@@ -8,11 +8,12 @@ use App\Http\Controllers\UsersController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\SubdepartmentController;
 use App\Http\Controllers\DivisionController;
+use App\Http\Controllers\SubDivisionController;
 use App\Http\Controllers\PedhiController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\AttendanceController;
-use App\Http\Controllers\DailyPaymentController;
+use App\Http\Controllers\DailyExpenseController;
 use App\Http\Controllers\PaymentSlabController;
 use App\Http\Controllers\SiteMaterialController;
 use App\Http\Controllers\PartyController;
@@ -30,7 +31,7 @@ use App\Http\Controllers\ScrapListController;
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login')->middleware('redirectIfAuthenticated');
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login')->middleware('redirectIfAuthenticated');
 Route::post('/login', [LoginController::class, 'login'])->name('post.login');
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'staff.permission'])->group(function () {
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
@@ -39,9 +40,11 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('sub-departments', SubdepartmentController::class);
     Route::get('division/get-subdepartments', [DivisionController::class, 'getSubdepartments'])->name('division.getSubdepartments');
     Route::resource('division', DivisionController::class);
+    Route::resource('sub-division', SubDivisionController::class);
     Route::resource('pedhi', PedhiController::class);
     Route::get('locations/get-subdepartments', [LocationController::class, 'getSubdepartments'])->name('locations.getSubdepartments');
     Route::get('locations/get-divisions', [LocationController::class, 'getDivisions'])->name('locations.getDivisions');
+    Route::get('locations/get-sub-divisions', [LocationController::class, 'getSubDivisions'])->name('locations.getSubDivisions');
     Route::resource('locations', LocationController::class);
 
     Route::resource('staff', StaffController::class);
@@ -51,11 +54,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('attendance', [AttendanceController::class, 'index'])->name('attendance.index');
     Route::get('attendance/get', [AttendanceController::class, 'getAttendance'])->name('attendance.get');
 
-    // Daily Payment routes
-    Route::post('daily-payment/store', [DailyPaymentController::class, 'store'])->name('daily-payment.store');
-    Route::get('daily-payment', [DailyPaymentController::class, 'index'])->name('daily-payment.index');
-    Route::get('daily-payment/get', [DailyPaymentController::class, 'getPayment'])->name('daily-payment.get');
-    Route::delete('daily-payment/{id}', [DailyPaymentController::class, 'destroy'])->name('daily-payment.destroy');
+    // Daily Expense routes
+    Route::resource('daily-expense', DailyExpenseController::class);
 
     Route::resource('payment-slabs', PaymentSlabController::class);
 

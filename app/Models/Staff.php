@@ -10,9 +10,11 @@ class Staff extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'code',
-        'name',
-        'father_name',
+        'first_name',
+        'last_name',
+        'second_name',
         'dob',
         'doj',
         'designation',
@@ -20,23 +22,30 @@ class Staff extends Model
         'permanent_address',
         'present_address',
         'mobile_number',
+        'other_contact_number',
         'gender',
         'marital_status',
         'blood_group',
-        'nominee_name',
-        'nominee_relation',
         'aadhar_no',
         'pan_no',
         'uan_no',
         'esic_no',
         'bank_name',
         'bank_account_no',
+        'ifsc_code',
         'date_of_leaving',
         'no_of_years_service',
         'remark',
         'created_by',
         'updated_by',
     ];
+
+    // Accessor to get full name
+    public function getFullNameAttribute()
+    {
+        $name = trim($this->first_name . ' ' . ($this->second_name ? $this->second_name . ' ' : '') . $this->last_name);
+        return $name;
+    }
 
     protected $casts = [
         'dob' => 'date',
@@ -52,5 +61,17 @@ class Staff extends Model
     public function dailyPayments()
     {
         return $this->hasMany(DailyPayment::class);
+    }
+
+    // A staff belongs to one user
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    // A staff has many daily expenses
+    public function dailyExpenses()
+    {
+        return $this->hasMany(DailyExpense::class);
     }
 }

@@ -29,6 +29,7 @@ class LocationStoreRequest extends FormRequest
             'department_id' => 'required|exists:departments,id',
             'subdepartment_id' => 'required|exists:subdepartments,id',
             'division_id' => 'required|exists:divisions,id',
+            'sub_division_id' => 'nullable|exists:sub_divisions,id',
             'name' => 'required|string|max:255',
             'location' => 'required|string',
             'remark' => 'nullable|string',

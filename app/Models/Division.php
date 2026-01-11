@@ -30,4 +30,10 @@ class Division extends Model
     {
         return $this->hasMany(Pedhi::class);
     }
+
+    // A division has many sub divisions
+    public function subDivisions()
+    {
+        return $this->hasMany(SubDivision::class);
+    }
 }

@@ -8,6 +8,7 @@ use App\Models\Pedhi;
 use App\Models\Department;
 use App\Models\Subdepartment;
 use App\Models\Division;
+use App\Models\SubDivision;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\LocationStoreRequest;
 
@@ -18,7 +19,7 @@ class LocationController extends Controller
      */
     public function index()
     {
-        $locations = Location::with(['pedhi', 'department', 'subdepartment', 'division'])->latest()->get();
+        $locations = Location::with(['pedhi', 'department', 'subdepartment', 'division', 'subDivision'])->latest()->get();
         return view('admin.location.index', compact('locations'));
     }
 
@@ -42,6 +43,7 @@ class LocationController extends Controller
             'department_id' => $request->department_id,
             'subdepartment_id' => $request->subdepartment_id,
             'division_id' => $request->division_id,
+            'sub_division_id' => $request->sub_division_id,
             'name' => $request->name,
             'location' => $request->location,
             'remark' => $request->remark,
@@ -71,7 +73,8 @@ class LocationController extends Controller
         $departments = Department::orderBy('name')->get();
         $subdepartments = Subdepartment::where('department_id', $location->department_id)->orderBy('name')->get();
         $divisions = Division::where('subdepartment_id', $location->subdepartment_id)->orderBy('name')->get();
-        return view('admin.location.edit', compact('location', 'pedhi', 'departments', 'subdepartments', 'divisions'));
+        $subDivisions = SubDivision::where('division_id', $location->division_id)->orderBy('name')->get();
+        return view('admin.location.edit', compact('location', 'pedhi', 'departments', 'subdepartments', 'divisions', 'subDivisions'));
     }
 
     /**
@@ -85,6 +88,7 @@ class LocationController extends Controller
             'department_id' => $request->department_id,
             'subdepartment_id' => $request->subdepartment_id,
             'division_id' => $request->division_id,
+            'sub_division_id' => $request->sub_division_id,
             'name' => $request->name,
             'location' => $request->location,
             'remark' => $request->remark,
@@ -128,5 +132,17 @@ class LocationController extends Controller
             ->get();
         
         return response()->json($divisions);
+    }
+
+    /**
+     * Get sub divisions by division ID (for AJAX)
+     */
+    public function getSubDivisions(Request $request)
+    {
+        $subDivisions = SubDivision::where('division_id', $request->division_id)
+            ->orderBy('name')
+            ->get();
+        
+        return response()->json($subDivisions);
     }
 }

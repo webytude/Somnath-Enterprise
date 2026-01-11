@@ -35,16 +35,29 @@ class StaffController extends Controller
             ->toArray();
         
         $presentStaff = Staff::whereIn('id', $presentStaffIds)
-            ->orderBy('name')
+            ->orderBy('first_name')
             ->get();
         
-        // Get today's payments
-        $payments = \App\Models\DailyPayment::whereDate('payment_date', $today)
-            ->with('staff')
-            ->get()
-            ->keyBy('staff_id');
+        // Get daily expenses - all for admin, only own for staff
+        $dailyExpenses = collect();
+        if (Auth::check()) {
+            if (Auth::user()->isStaff() && Auth::user()->staff) {
+                // Staff can only see their own expenses
+                $dailyExpenses = \App\Models\DailyExpense::with('staff')
+                    ->where('staff_id', Auth::user()->staff->id)
+                    ->latest('date')
+                    ->latest()
+                    ->get();
+            } else {
+                // Admin can see all expenses
+                $dailyExpenses = \App\Models\DailyExpense::with('staff')
+                    ->latest('date')
+                    ->latest()
+                    ->get();
+            }
+        }
         
-        return view('admin.staff.index', compact('staff', 'attendances', 'today', 'presentCount', 'presentStaff', 'payments'));
+        return view('admin.staff.index', compact('staff', 'attendances', 'today', 'presentCount', 'presentStaff', 'dailyExpenses'));
     }
 
     /**

@@ -19,7 +19,7 @@ class AttendanceController extends Controller
         $selectedDate = Carbon::parse($date);
         
         // Get all staff
-        $staff = Staff::orderBy('name')->get();
+        $staff = Staff::orderBy('first_name')->get();
         
         // Get attendance for the selected date
         $attendances = Attendance::whereDate('attendance_date', $selectedDate)
