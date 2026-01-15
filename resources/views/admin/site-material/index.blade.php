@@ -32,7 +32,9 @@
                             <th class="min-w-100px">Photo</th>
                             <th class="min-w-150px">Name</th>
                             <th class="min-w-150px">Location</th>
-                            <th class="min-w-100px">Quantity</th>
+                            <th class="min-w-150px">Party</th>
+                            <th class="min-w-100px">GST</th>
+                            <th class="min-w-150px">Details</th>
                             <th class="min-w-100px">Is Inward</th>
                             <th class="min-w-150px">Remark</th>
                             <th class="text-end min-w-100px">Action</th>
@@ -52,7 +54,19 @@
                             </td>
                             <td>{{ $material->name }}</td>
                             <td>{{ $material->location->name ?? 'N/A' }}</td>
-                            <td>{{ number_format($material->quantity, 2) }}</td>
+                            <td>{{ $material->party->name ?? 'N/A' }}</td>
+                            <td>{{ $material->gst ?? 'N/A' }}</td>
+                            <td>
+                                @if($material->details->count() > 0)
+                                    <div class="d-flex flex-column">
+                                        @foreach($material->details as $detail)
+                                            <span class="badge badge-light-info mb-1">{{ $detail->material_name }} - {{ $detail->quantity }} {{ $detail->unit }}</span>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <span class="text-muted">No details</span>
+                                @endif
+                            </td>
                             <td>
                                 @if($material->is_inward)
                                     <span class="badge badge-success">Yes</span>
@@ -86,7 +100,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="7" class="text-center">No site materials found.</td>
+                            <td colspan="9" class="text-center">No site materials found.</td>
                         </tr>
                         @endforelse
                     </tbody>

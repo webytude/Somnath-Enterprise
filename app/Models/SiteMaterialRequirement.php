@@ -5,18 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class SiteProgress extends Model
+class SiteMaterialRequirement extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'location_id',
-        'work_name',
-        'work_site',
-        'work_stage',
-        'remark',
-        'photo_url',
-        'date',
         'created_by',
         'updated_by',
     ];
@@ -26,7 +20,8 @@ class SiteProgress extends Model
         return $this->belongsTo(Location::class);
     }
 
-    protected $casts = [
-        'date' => 'date',
-    ];
+    public function details()
+    {
+        return $this->hasMany(SiteMaterialRequirementDetail::class);
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\SiteProgress;
+use App\Models\Location;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\SiteProgressStoreRequest;
 
@@ -38,7 +39,7 @@ class SiteProgressController extends Controller
      */
     public function index()
     {
-        $siteProgress = SiteProgress::latest()->get();
+        $siteProgress = SiteProgress::with('location')->latest()->get();
         return view('admin.site-progress.index', compact('siteProgress'));
     }
 
@@ -48,7 +49,8 @@ class SiteProgressController extends Controller
     public function create()
     {
         $workNames = $this->getWorkNameOptions();
-        return view('admin.site-progress.create', compact('workNames'));
+        $locations = Location::orderBy('name')->get();
+        return view('admin.site-progress.create', compact('workNames', 'locations'));
     }
 
     /**
@@ -78,7 +80,8 @@ class SiteProgressController extends Controller
     public function edit(SiteProgress $siteProgress)
     {
         $workNames = $this->getWorkNameOptions();
-        return view('admin.site-progress.edit', compact('siteProgress', 'workNames'));
+        $locations = Location::orderBy('name')->get();
+        return view('admin.site-progress.edit', compact('siteProgress', 'workNames', 'locations'));
     }
 
     /**

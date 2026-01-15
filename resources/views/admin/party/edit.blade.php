@@ -28,6 +28,21 @@
                                 @enderror
                             </div>
 
+                            <div class="fv-row mb-7">
+                                <label class="fs-6 fw-bold form-label mt-3">
+                                    <span class="required">Pedhi</span>
+                                </label>
+                                <select class="form-select form-select-solid" name="pedhi_id" id="pedhi_id" data-control="select2" data-placeholder="Select Pedhi...">
+                                    <option value="">Select Pedhi...</option>
+                                    @foreach($pedhis as $pedhi)
+                                        <option value="{{ $pedhi->id }}" {{ old('pedhi_id', $party->pedhi_id) == $pedhi->id ? 'selected' : '' }}>{{ $pedhi->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('pedhi_id')
+                                    <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                @enderror
+                            </div>
+
                             <div class="row mb-7">
                                 <div class="col-md-6">
                                     <label class="fs-6 fw-bold form-label mt-3">GST</label>
@@ -70,27 +85,18 @@
                                 </div>
                             </div>
 
-                            <div class="row mb-7">
-                                <div class="col-md-6">
-                                    <label class="fs-6 fw-bold form-label mt-3">Price</label>
-                                    <input type="number" class="form-control form-control-solid" name="price" value="{{ old('price', $party->price) }}" step="0.01" min="0" placeholder="Enter Price" />
-                                    @error('price')
-                                        <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="fs-6 fw-bold form-label mt-3">Date</label>
-                                    <input type="date" class="form-control form-control-solid" name="date" value="{{ old('date', $party->date ? $party->date->format('Y-m-d') : '') }}" />
-                                    @error('date')
-                                        <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-
                             <div class="fv-row mb-7">
                                 <label class="fs-6 fw-bold form-label mt-3">Remark</label>
                                 <textarea class="form-control form-control-solid" name="remark" rows="3" placeholder="Enter Remark">{{ old('remark', $party->remark) }}</textarea>
                                 @error('remark')
+                                    <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div class="fv-row mb-7">
+                                <label class="fs-6 fw-bold form-label mt-3">List of Material</label>
+                                <textarea class="form-control form-control-solid" name="list_of_material" rows="5" placeholder="Enter List of Material">{{ old('list_of_material', $party->list_of_material) }}</textarea>
+                                @error('list_of_material')
                                     <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                 @enderror
                             </div>

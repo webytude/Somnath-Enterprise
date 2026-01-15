@@ -23,11 +23,18 @@ class SiteMaterialStoreRequest extends FormRequest
     {
         return [
             'location_id' => 'required|exists:locations,id',
+            'party_id' => 'required|exists:parties,id',
+            'gst' => 'nullable|string|max:50',
             'name' => 'required|string|max:255',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'quantity' => 'required|numeric|min:0',
             'is_inward' => 'nullable|boolean',
             'remark' => 'nullable|string',
+            'details' => 'required|array|min:1',
+            'details.*.material_name' => 'required|string|max:255',
+            'details.*.unit' => 'required|string|max:50',
+            'details.*.rate' => 'required|numeric|min:0',
+            'details.*.quantity' => 'required|numeric|min:0',
+            'details.*.gst' => 'nullable|string|max:50',
         ];
     }
 }

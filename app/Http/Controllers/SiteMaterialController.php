@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\SiteMaterial;
 use App\Models\Location;
+use App\Models\Party;
+use App\Models\SiteMaterialDetail;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\SiteMaterialStoreRequest;
 
@@ -15,7 +17,7 @@ class SiteMaterialController extends Controller
      */
     public function index()
     {
-        $siteMaterials = SiteMaterial::with('location')->latest()->get();
+        $siteMaterials = SiteMaterial::with(['location', 'party', 'details'])->latest()->get();
         return view('admin.site-material.index', compact('siteMaterials'));
     }
 
@@ -25,7 +27,8 @@ class SiteMaterialController extends Controller
     public function create()
     {
         $locations = Location::orderBy('name')->get();
-        return view('admin.site-material.create', compact('locations'));
+        $parties = Party::orderBy('name')->get();
+        return view('admin.site-material.create', compact('locations', 'parties'));
     }
 
     /**
@@ -45,7 +48,24 @@ class SiteMaterialController extends Controller
             $data['photo'] = asset('/images/site-materials/' . $name);
         }
         
-        SiteMaterial::create($data);
+        // Extract details from data
+        $details = $data['details'] ?? [];
+        unset($data['details']);
+        
+        // Create site material
+        $siteMaterial = SiteMaterial::create($data);
+        
+        // Create material details
+        foreach ($details as $detail) {
+            SiteMaterialDetail::create([
+                'site_material_id' => $siteMaterial->id,
+                'material_name' => $detail['material_name'],
+                'unit' => $detail['unit'],
+                'rate' => $detail['rate'],
+                'quantity' => $detail['quantity'],
+                'gst' => $detail['gst'] ?? null,
+            ]);
+        }
         
         return redirect()->route('site-materials.index')->with('success', 'Site material created successfully.');
     }
@@ -64,7 +84,9 @@ class SiteMaterialController extends Controller
     public function edit(SiteMaterial $siteMaterial)
     {
         $locations = Location::orderBy('name')->get();
-        return view('admin.site-material.edit', compact('siteMaterial', 'locations'));
+        $parties = Party::orderBy('name')->get();
+        $siteMaterial->load('details');
+        return view('admin.site-material.edit', compact('siteMaterial', 'locations', 'parties'));
     }
 
     /**
@@ -93,7 +115,27 @@ class SiteMaterialController extends Controller
             $data['photo'] = asset('/images/site-materials/' . $name);
         }
         
+        // Extract details from data
+        $details = $data['details'] ?? [];
+        unset($data['details']);
+        
+        // Update site material
         $siteMaterial->update($data);
+        
+        // Delete existing details
+        $siteMaterial->details()->delete();
+        
+        // Create new material details
+        foreach ($details as $detail) {
+            SiteMaterialDetail::create([
+                'site_material_id' => $siteMaterial->id,
+                'material_name' => $detail['material_name'],
+                'unit' => $detail['unit'],
+                'rate' => $detail['rate'],
+                'quantity' => $detail['quantity'],
+                'gst' => $detail['gst'] ?? null,
+            ]);
+        }
         
         return redirect()->route('site-materials.index')->with('success', 'Site material updated successfully.');
     }
@@ -111,6 +153,9 @@ class SiteMaterialController extends Controller
                 unlink(public_path($photoPath));
             }
         }
+        
+        // Delete related details (cascade should handle this, but being explicit)
+        $siteMaterial->details()->delete();
         
         $siteMaterial->delete();
         return redirect()->route('site-materials.index')->with('success', 'Site material deleted successfully.');

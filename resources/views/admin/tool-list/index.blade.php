@@ -33,6 +33,8 @@
                                 <th class="min-w-150px">Name</th>
                                 <th class="min-w-100px">Quantity</th>
                                 <th class="min-w-150px">Location</th>
+                                <th class="min-w-150px">Person Name</th>
+                                <th class="min-w-100px">Date</th>
                                 <th class="min-w-100px">Price</th>
                                 <th class="min-w-200px">Remark</th>
                                 <th class="text-end min-w-100px">Action</th>
@@ -43,7 +45,9 @@
                             <tr>
                                 <td>{{ $tool->name }}</td>
                                 <td>{{ number_format($tool->quantity, 2) }}</td>
-                                <td>{{ $tool->location }}</td>
+                                <td>{{ $tool->location->name ?? ($tool->location ?? 'N/A') }}</td>
+                                <td>{{ $tool->person_name ?? 'N/A' }}</td>
+                                <td>{{ $tool->date ? $tool->date->format('d/m/Y') : 'N/A' }}</td>
                                 <td>{{ $tool->price ? '₹' . number_format($tool->price, 2) : 'N/A' }}</td>
                                 <td>{{ Str::limit($tool->remark, 50) ?? 'N/A' }}</td>
                                 <td class="text-end">
@@ -71,7 +75,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="6" class="text-center">No tools found.</td>
+                                <td colspan="8" class="text-center">No tools found.</td>
                             </tr>
                             @endforelse
                         </tbody>

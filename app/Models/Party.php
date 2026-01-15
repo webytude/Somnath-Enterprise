@@ -11,20 +11,20 @@ class Party extends Model
 
     protected $fillable = [
         'name',
+        'pedhi_id',
         'gst',
         'address',
         'mobile',
         'contact_person_name',
         'contact_person_mobile',
         'remark',
-        'price',
-        'date',
+        'list_of_material',
         'created_by',
         'updated_by',
     ];
 
-    protected $casts = [
-        'price' => 'decimal:2',
-        'date' => 'date',
-    ];
+    public function pedhi()
+    {
+        return $this->belongsTo(Pedhi::class);
+    }
 }

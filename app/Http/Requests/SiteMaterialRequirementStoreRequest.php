@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class SiteProgressStoreRequest extends FormRequest
+class SiteMaterialRequirementStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,12 +23,13 @@ class SiteProgressStoreRequest extends FormRequest
     {
         return [
             'location_id' => 'required|exists:locations,id',
-            'work_name' => 'required|string|max:255',
-            'work_site' => 'required|string|max:255',
-            'work_stage' => 'nullable|string',
-            'remark' => 'nullable|string',
-            'photo_url' => 'nullable|url|max:500',
-            'date' => 'required|date',
+            'details' => 'required|array|min:1',
+            'details.*.material_name' => 'required|string|max:255',
+            'details.*.unit' => 'required|string|max:50',
+            'details.*.rate' => 'required|numeric|min:0',
+            'details.*.quantity' => 'required|numeric|min:0',
+            'details.*.date' => 'required|date',
+            'details.*.remark' => 'nullable|string',
         ];
     }
 }

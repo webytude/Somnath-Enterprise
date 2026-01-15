@@ -22,9 +22,11 @@ class ToolListStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'location_id' => 'required|exists:locations,id',
             'name' => 'required|string|max:255',
             'quantity' => 'required|numeric|min:0',
-            'location' => 'required|string|max:255',
+            'person_name' => 'required|string|max:255',
+            'date' => 'required|date',
             'price' => 'nullable|numeric|min:0',
             'remark' => 'nullable|string',
         ];

@@ -23,6 +23,7 @@ use App\Http\Controllers\ToolListController;
 use App\Http\Controllers\GstBillListController;
 use App\Http\Controllers\ScrapMaterialController;
 use App\Http\Controllers\ScrapListController;
+use App\Http\Controllers\SiteMaterialRequirementController;
 // Route::get('/', function () {
 //     return view('admin.auth.login');
 // });
@@ -74,6 +75,8 @@ Route::middleware(['auth', 'staff.permission'])->group(function () {
     Route::resource('scrap-materials', ScrapMaterialController::class);
 
     Route::resource('scrap-lists', ScrapListController::class);
+
+    Route::resource('site-material-requirements', SiteMaterialRequirementController::class);
 
     Route::get('my-profile', [ProfileController::class, 'index'])->name('user.getProfile');
     Route::get('edit-profile', [ProfileController::class, 'edit'])->name('user.editProfile');

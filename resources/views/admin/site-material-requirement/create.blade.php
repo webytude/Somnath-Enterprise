@@ -1,10 +1,10 @@
-@section('title','Add Site Material')
+@section('title','Add Site Material Requirement')
 @extends('admin.layouts.main')
 @section('main_contant')
 <div class="toolbar bg-transparent pt-6 mb-5" id="kt_toolbar">
     <div id="kt_toolbar_container" class="container-fluid d-flex flex-stack">
         <div data-kt-swapper="true" data-kt-swapper-mode="prepend" data-kt-swapper-parent="{default: '#kt_content_container', 'lg': '#kt_toolbar_container'}" class="page-title d-flex flex-column align-items-start me-3 mb-5 mb-lg-0">
-            <h1 class="d-flex text-dark fw-bolder fs-3 flex-column mb-0">Add Site Material</h1>
+            <h1 class="d-flex text-dark fw-bolder fs-3 flex-column mb-0">Add Site Material Requirement</h1>
         </div>
     </div>
 </div>
@@ -12,9 +12,9 @@
     <div id="kt_content_container" class="container-fluid">
         <div class="row g-7">
             <div class="col-xl-8">
-                <div class="card card-flush h-lg-100" id="kt_site_material_form_main">
+                <div class="card card-flush h-lg-100" id="kt_site_material_requirement_form_main">
                     <div class="card-body pt-5">
-                        <form method="POST" id="kt_site_material_form" class="form fv-plugins-bootstrap5 fv-plugins-framework" action="{{ route('site-materials.store') }}" enctype="multipart/form-data">
+                        <form method="POST" id="kt_site_material_requirement_form" class="form fv-plugins-bootstrap5 fv-plugins-framework" action="{{ route('site-material-requirements.store') }}">
                             @csrf
                             
                             <div class="fv-row mb-7">
@@ -28,39 +28,6 @@
                                     @endforeach
                                 </select>
                                 @error('location_id')
-                                    <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
-                                @enderror
-                            </div>
-
-                            <div class="fv-row mb-7">
-                                <label class="fs-6 fw-bold form-label mt-3">
-                                    <span class="required">Name</span>
-                                </label>
-                                <input type="text" class="form-control form-control-solid" name="name" value="{{ old('name') }}" placeholder="Enter Material Name" />
-                                @error('name')
-                                    <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
-                                @enderror
-                            </div>
-
-                            <div class="fv-row mb-7">
-                                <label class="fs-6 fw-bold form-label mt-3">
-                                    <span class="required">Party</span>
-                                </label>
-                                <select class="form-select form-select-solid" name="party_id" id="party_id" data-control="select2" data-placeholder="Select Party...">
-                                    <option value="">Select Party...</option>
-                                    @foreach($parties as $party)
-                                        <option value="{{ $party->id }}" {{ old('party_id') == $party->id ? 'selected' : '' }}>{{ $party->name }}</option>
-                                    @endforeach
-                                </select>
-                                @error('party_id')
-                                    <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
-                                @enderror
-                            </div>
-
-                            <div class="fv-row mb-7">
-                                <label class="fs-6 fw-bold form-label mt-3">Attach voucher/Bill</label>
-                                <input type="file" class="form-control form-control-solid" name="photo" accept="image/*" />
-                                @error('photo')
                                     <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                 @enderror
                             </div>
@@ -98,13 +65,17 @@
                                                 <input type="number" class="form-control form-control-solid material-quantity" name="details[0][quantity]" step="0.01" min="0" placeholder="Quantity" required />
                                             </div>
                                             <div class="col-md-2">
-                                                <label class="form-label">GST</label>
-                                                <input type="text" class="form-control form-control-solid material-gst" name="details[0][gst]" placeholder="Enter GST" />
+                                                <label class="form-label">Date <span class="text-danger">*</span></label>
+                                                <input type="date" class="form-control form-control-solid material-date" name="details[0][date]" required />
                                             </div>
                                             <div class="col-md-1 d-flex align-items-end">
                                                 <button type="button" class="btn btn-sm btn-danger remove-detail-row" style="display: none;">
-                                                    <i class="fas fa-trash"></i> Remove
+                                                    <i class="fas fa-trash"></i>
                                                 </button>
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label">Remark</label>
+                                                <textarea class="form-control form-control-solid material-remark" name="details[0][remark]" rows="2" placeholder="Enter Remark"></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -117,30 +88,10 @@
                                 @enderror
                             </div>
 
-                            <div class="fv-row mb-7">
-                                <div class="form-check form-check-custom form-check-solid">
-                                    <input class="form-check-input" type="checkbox" name="is_inward" value="1" id="is_inward" {{ old('is_inward') ? 'checked' : '' }} />
-                                    <label class="form-check-label" for="is_inward">
-                                        Is Inward
-                                    </label>
-                                </div>
-                                @error('is_inward')
-                                    <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
-                                @enderror
-                            </div>
-
-                            <div class="fv-row mb-7">
-                                <label class="fs-6 fw-bold form-label mt-3">Remark</label>
-                                <textarea class="form-control form-control-solid" name="remark" rows="3" placeholder="Enter Remark">{{ old('remark') }}</textarea>
-                                @error('remark')
-                                    <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
-                                @enderror
-                            </div>
-
                             <div class="separator mb-6"></div>
                             <div class="d-flex justify-content-end">
-                                <a href="{{route('site-materials.index')}}" data-kt-site-material-form="cancel" class="btn btn-light me-3">Cancel</a>
-                                <button type="submit" data-kt-site-material-form="submit" class="btn btn-primary">
+                                <a href="{{route('site-material-requirements.index')}}" data-kt-site-material-requirement-form="cancel" class="btn btn-light me-3">Cancel</a>
+                                <button type="submit" data-kt-site-material-requirement-form="submit" class="btn btn-primary">
                                     <span class="indicator-label">Save</span>
                                     <span class="indicator-progress">Please wait...
                                         <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
@@ -204,13 +155,17 @@
                             <input type="number" class="form-control form-control-solid material-quantity" name="details[${detailRowIndex}][quantity]" step="0.01" min="0" placeholder="Quantity" required />
                         </div>
                         <div class="col-md-2">
-                            <label class="form-label">GST</label>
-                            <input type="text" class="form-control form-control-solid material-gst" name="details[${detailRowIndex}][gst]" placeholder="Enter GST" />
+                            <label class="form-label">Date <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control form-control-solid material-date" name="details[${detailRowIndex}][date]" required />
                         </div>
                         <div class="col-md-1 d-flex align-items-end">
                             <button type="button" class="btn btn-sm btn-danger remove-detail-row">
-                                <i class="fas fa-trash"></i> Remove
+                                <i class="fas fa-trash"></i>
                             </button>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Remark</label>
+                            <textarea class="form-control form-control-solid material-remark" name="details[${detailRowIndex}][remark]" rows="2" placeholder="Enter Remark"></textarea>
                         </div>
                     </div>
                 </div>
@@ -230,4 +185,3 @@
     });
 </script>
 @endsection
-

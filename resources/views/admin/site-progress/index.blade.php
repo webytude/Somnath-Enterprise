@@ -30,8 +30,10 @@
                     <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_site_progress">
                         <thead>
                             <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
+                                <th class="min-w-150px">Location</th>
                                 <th class="min-w-150px">Work Name</th>
                                 <th class="min-w-150px">Work Site</th>
+                                <th class="min-w-200px">Work Stage</th>
                                 <th class="min-w-100px">Date</th>
                                 <th class="min-w-150px">Photo</th>
                                 <th class="min-w-200px">Remark</th>
@@ -41,8 +43,10 @@
                         <tbody class="text-gray-600 fw-bold">
                             @forelse($siteProgress as $progress)
                             <tr>
+                                <td>{{ $progress->location->name ?? 'N/A' }}</td>
                                 <td>{{ $progress->work_name }}</td>
                                 <td>{{ $progress->work_site }}</td>
+                                <td>{{ Str::limit($progress->work_stage, 50) ?? 'N/A' }}</td>
                                 <td>{{ $progress->date ? $progress->date->format('d/m/Y') : 'N/A' }}</td>
                                 <td>
                                     @if($progress->photo_url)
@@ -79,7 +83,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="6" class="text-center">No site progress found.</td>
+                                <td colspan="8" class="text-center">No site progress found.</td>
                             </tr>
                             @endforelse
                         </tbody>

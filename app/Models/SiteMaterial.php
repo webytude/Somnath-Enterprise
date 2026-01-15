@@ -11,6 +11,8 @@ class SiteMaterial extends Model
 
     protected $fillable = [
         'location_id',
+        'party_id',
+        'gst',
         'name',
         'photo',
         'quantity',
@@ -28,5 +30,15 @@ class SiteMaterial extends Model
     public function location()
     {
         return $this->belongsTo(Location::class);
+    }
+
+    public function party()
+    {
+        return $this->belongsTo(Party::class);
+    }
+
+    public function details()
+    {
+        return $this->hasMany(SiteMaterialDetail::class);
     }
 }

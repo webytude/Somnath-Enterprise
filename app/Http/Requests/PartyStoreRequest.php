@@ -23,14 +23,14 @@ class PartyStoreRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
+            'pedhi_id' => 'required|exists:pedhi,id',
             'gst' => 'nullable|string|max:50',
             'address' => 'nullable|string',
             'mobile' => 'nullable|string|max:20',
             'contact_person_name' => 'nullable|string|max:255',
             'contact_person_mobile' => 'nullable|string|max:20',
             'remark' => 'nullable|string',
-            'price' => 'nullable|numeric|min:0',
-            'date' => 'nullable|date',
+            'list_of_material' => 'nullable|string',
         ];
     }
 }

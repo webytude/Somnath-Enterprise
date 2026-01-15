@@ -121,7 +121,7 @@
                 </div>
                 @endif
                 @if(!auth()->check() || !auth()->user()->isStaff())
-                <div data-kt-menu-trigger="click" class="menu-item {{ request()->routeIs(['site-materials.*', 'site-progress.*', 'tool-lists.*', 'scrap-materials.*', 'scrap-lists.*']) ? 'here show' : '' }} menu-accordion">
+                <div data-kt-menu-trigger="click" class="menu-item {{ request()->routeIs(['site-materials.*', 'site-material-requirements.*', 'site-progress.*', 'tool-lists.*', 'scrap-materials.*', 'scrap-lists.*']) ? 'here show' : '' }} menu-accordion">
                     <span class="menu-link">
                         <span class="menu-icon">
                             <span class="svg-icon svg-icon-2">
@@ -141,6 +141,16 @@
                                     <span class="bullet bullet-dot"></span>
                                 </span>
                                 <span class="menu-title">Site Material</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        <div class="menu-item">
+                            <a class="menu-link {{ request()->routeIs('site-material-requirements.*') ? 'active' : '' }}" href="{{ route('site-material-requirements.index') }}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Site Material Requirement</span>
                             </a>
                         </div>
                     </div>

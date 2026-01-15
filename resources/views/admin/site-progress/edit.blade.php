@@ -20,6 +20,21 @@
                             
                             <div class="fv-row mb-7">
                                 <label class="fs-6 fw-bold form-label mt-3">
+                                    <span class="required">Location</span>
+                                </label>
+                                <select class="form-select form-select-solid" name="location_id" id="location_id" data-control="select2" data-placeholder="Select Location...">
+                                    <option value="">Select Location...</option>
+                                    @foreach($locations as $location)
+                                        <option value="{{ $location->id }}" {{ old('location_id', $siteProgress->location_id) == $location->id ? 'selected' : '' }}>{{ $location->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('location_id')
+                                    <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div class="fv-row mb-7">
+                                <label class="fs-6 fw-bold form-label mt-3">
                                     <span class="required">Work Name</span>
                                 </label>
                                 <select class="form-select form-select-solid" name="work_name" id="work_name" data-control="select2" data-placeholder="Select Work Name...">
@@ -39,6 +54,14 @@
                                 </label>
                                 <input type="text" class="form-control form-control-solid" name="work_site" value="{{ old('work_site', $siteProgress->work_site) }}" placeholder="Enter Work Site" />
                                 @error('work_site')
+                                    <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div class="fv-row mb-7">
+                                <label class="fs-6 fw-bold form-label mt-3">Work Stage</label>
+                                <textarea class="form-control form-control-solid" name="work_stage" rows="3" placeholder="Enter Work Stage">{{ old('work_stage', $siteProgress->work_stage) }}</textarea>
+                                @error('work_stage')
                                     <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                 @enderror
                             </div>

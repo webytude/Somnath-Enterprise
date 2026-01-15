@@ -20,6 +20,21 @@
                             
                             <div class="fv-row mb-7">
                                 <label class="fs-6 fw-bold form-label mt-3">
+                                    <span class="required">Location</span>
+                                </label>
+                                <select class="form-select form-select-solid" name="location_id" id="location_id" data-control="select2" data-placeholder="Select Location...">
+                                    <option value="">Select Location...</option>
+                                    @foreach($locations as $location)
+                                        <option value="{{ $location->id }}" {{ old('location_id', $toolList->location_id) == $location->id ? 'selected' : '' }}>{{ $location->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('location_id')
+                                    <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div class="fv-row mb-7">
+                                <label class="fs-6 fw-bold form-label mt-3">
                                     <span class="required">Name</span>
                                 </label>
                                 <input type="text" class="form-control form-control-solid" name="name" value="{{ old('name', $toolList->name) }}" placeholder="Enter Tool Name" />
@@ -47,14 +62,25 @@
                                 </div>
                             </div>
 
-                            <div class="fv-row mb-7">
-                                <label class="fs-6 fw-bold form-label mt-3">
-                                    <span class="required">Location</span>
-                                </label>
-                                <input type="text" class="form-control form-control-solid" name="location" value="{{ old('location', $toolList->location) }}" placeholder="Enter Location" />
-                                @error('location')
-                                    <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
-                                @enderror
+                            <div class="row mb-7">
+                                <div class="col-md-6">
+                                    <label class="fs-6 fw-bold form-label mt-3">
+                                        <span class="required">Person Name</span>
+                                    </label>
+                                    <input type="text" class="form-control form-control-solid" name="person_name" value="{{ old('person_name', $toolList->person_name) }}" placeholder="Enter Person Name" />
+                                    @error('person_name')
+                                        <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="fs-6 fw-bold form-label mt-3">
+                                        <span class="required">Date</span>
+                                    </label>
+                                    <input type="date" class="form-control form-control-solid" name="date" value="{{ old('date', $toolList->date ? $toolList->date->format('Y-m-d') : '') }}" />
+                                    @error('date')
+                                        <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                    @enderror
+                                </div>
                             </div>
 
                             <div class="fv-row mb-7">

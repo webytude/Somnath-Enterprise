@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\ToolList;
+use App\Models\Location;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\ToolListStoreRequest;
 
@@ -14,7 +15,7 @@ class ToolListController extends Controller
      */
     public function index()
     {
-        $toolLists = ToolList::latest()->get();
+        $toolLists = ToolList::with('location')->latest()->get();
         return view('admin.tool-list.index', compact('toolLists'));
     }
 
@@ -23,7 +24,8 @@ class ToolListController extends Controller
      */
     public function create()
     {
-        return view('admin.tool-list.create');
+        $locations = Location::orderBy('name')->get();
+        return view('admin.tool-list.create', compact('locations'));
     }
 
     /**
@@ -52,7 +54,8 @@ class ToolListController extends Controller
      */
     public function edit(ToolList $toolList)
     {
-        return view('admin.tool-list.edit', compact('toolList'));
+        $locations = Location::orderBy('name')->get();
+        return view('admin.tool-list.edit', compact('toolList', 'locations'));
     }
 
     /**

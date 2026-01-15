@@ -5,31 +5,28 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class ToolList extends Model
+class SiteMaterialRequirementDetail extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'location_id',
-        'name',
+        'site_material_requirement_id',
+        'material_name',
+        'unit',
+        'rate',
         'quantity',
-        'location',
-        'person_name',
         'date',
-        'price',
         'remark',
-        'created_by',
-        'updated_by',
     ];
 
     protected $casts = [
+        'rate' => 'decimal:2',
         'quantity' => 'decimal:2',
-        'price' => 'decimal:2',
         'date' => 'date',
     ];
 
-    public function location()
+    public function siteMaterialRequirement()
     {
-        return $this->belongsTo(Location::class);
+        return $this->belongsTo(SiteMaterialRequirement::class);
     }
 }
