@@ -27,6 +27,14 @@ class SubDivisionStoreRequest extends FormRequest
         return [
             'name' => 'required|string|max:255|unique:sub_divisions,name,' . $subDivisionId,
             'division_id' => 'required|exists:divisions,id',
+            'head_of_sub_division' => 'nullable|string|max:255',
+            'address' => 'nullable|string',
+            'name_of_sub_div_head' => 'nullable|string|max:255',
+            'head_mobile_number' => 'nullable|string|max:20',
+            'sub_div_contact_person_name' => 'nullable|string|max:255',
+            'contact_person_name' => 'nullable|string|max:255',
+            'contact_person_mobile_number' => 'nullable|string|max:20',
+            'remark' => 'nullable|string',
         ];
     }
 }

@@ -36,6 +36,9 @@ class Staff extends Model
         'date_of_leaving',
         'no_of_years_service',
         'remark',
+        'rate_per_day',
+        'rate_per_month',
+        'salary_date',
         'created_by',
         'updated_by',
     ];
@@ -43,7 +46,7 @@ class Staff extends Model
     // Accessor to get full name
     public function getFullNameAttribute()
     {
-        $name = trim($this->first_name . ' ' . ($this->second_name ? $this->second_name . ' ' : '') . $this->last_name);
+        $name = trim($this->first_name . ' ' . $this->last_name . ($this->second_name ? ' ' . $this->second_name : ''));
         return $name;
     }
 
@@ -51,6 +54,7 @@ class Staff extends Model
         'dob' => 'date',
         'doj' => 'date',
         'date_of_leaving' => 'date',
+        'salary_date' => 'date',
     ];
 
     public function attendances()

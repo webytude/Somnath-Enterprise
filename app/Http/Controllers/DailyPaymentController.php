@@ -22,12 +22,12 @@ class DailyPaymentController extends Controller
         
         // Get present employees for today
         $presentStaffIds = Attendance::whereDate('attendance_date', $today)
-            ->where('is_present', true)
+            ->whereIn('attendance_status', ['present', 'present_with_bike'])
             ->pluck('staff_id')
             ->toArray();
         
         $presentStaff = Staff::whereIn('id', $presentStaffIds)
-            ->orderBy('name')
+            ->orderBy('first_name')
             ->get();
         
         // Get payments for the selected date
@@ -71,7 +71,7 @@ class DailyPaymentController extends Controller
         // Check if staff is present today
         $isPresent = Attendance::where('staff_id', $request->staff_id)
             ->whereDate('attendance_date', $today)
-            ->where('is_present', true)
+            ->whereIn('attendance_status', ['present', 'present_with_bike'])
             ->exists();
 
         if (!$isPresent) {

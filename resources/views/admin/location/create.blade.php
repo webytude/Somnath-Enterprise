@@ -18,14 +18,14 @@
                         <form method="POST" id="kt_attendance_form" class="form fv-plugins-bootstrap5 fv-plugins-framework" action="{{ route('locations.store') }}">
                         @csrf
                             <div class="fv-row mb-7">
-                                <label class="fs-6 fw-bold form-label mt-3">Pedhi Name</label>
-                                <select class="form-select form-select-solid" name="pedhi_id" id="pedhi_id" data-control="select2" data-placeholder="Select Pedhi...">
-                                    <option value="">Select Pedhi...</option>
-                                    @foreach($pedhi as $p)
-                                        <option value="{{ $p->id }}">{{ $p->name }}</option>
+                                <label class="fs-6 fw-bold form-label mt-3">Firm Name</label>
+                                <select class="form-select form-select-solid" name="firm_id" id="firm_id" data-control="select2" data-placeholder="Select Firm...">
+                                    <option value="">Select Firm...</option>
+                                    @foreach($firms as $firm)
+                                        <option value="{{ $firm->id }}">{{ $firm->name }}</option>
                                     @endforeach
                                 </select>
-                                @error('pedhi_id')
+                                @error('firm_id')
                                     <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                 @enderror
                             </div>

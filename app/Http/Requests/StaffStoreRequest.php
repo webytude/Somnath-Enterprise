@@ -48,6 +48,9 @@ class StaffStoreRequest extends FormRequest
             'date_of_leaving' => 'nullable|date',
             'no_of_years_service' => 'nullable|integer',
             'remark' => 'nullable|string',
+            'rate_per_day' => 'nullable|numeric|min:0',
+            'rate_per_month' => 'nullable|numeric|min:0',
+            'salary_date' => 'nullable|date',
         ];
     }
 }

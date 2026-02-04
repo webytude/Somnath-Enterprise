@@ -11,7 +11,7 @@ class Party extends Model
 
     protected $fillable = [
         'name',
-        'pedhi_id',
+        'firm_id',
         'gst',
         'address',
         'mobile',
@@ -23,8 +23,8 @@ class Party extends Model
         'updated_by',
     ];
 
-    public function pedhi()
+    public function firm()
     {
-        return $this->belongsTo(Pedhi::class);
+        return $this->belongsTo(Firm::class);
     }
 }

@@ -30,15 +30,15 @@
 
                             <div class="fv-row mb-7">
                                 <label class="fs-6 fw-bold form-label mt-3">
-                                    <span class="required">Pedhi</span>
+                                    <span class="required">Firm</span>
                                 </label>
-                                <select class="form-select form-select-solid" name="pedhi_id" id="pedhi_id" data-control="select2" data-placeholder="Select Pedhi...">
-                                    <option value="">Select Pedhi...</option>
-                                    @foreach($pedhis as $pedhi)
-                                        <option value="{{ $pedhi->id }}" {{ old('pedhi_id', $party->pedhi_id) == $pedhi->id ? 'selected' : '' }}>{{ $pedhi->name }}</option>
+                                <select class="form-select form-select-solid" name="firm_id" id="firm_id" data-control="select2" data-placeholder="Select Firm...">
+                                    <option value="">Select Firm...</option>
+                                    @foreach($firms as $firm)
+                                        <option value="{{ $firm->id }}" {{ old('firm_id', $party->firm_id) == $firm->id ? 'selected' : '' }}>{{ $firm->name }}</option>
                                     @endforeach
                                 </select>
-                                @error('pedhi_id')
+                                @error('firm_id')
                                     <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                 @enderror
                             </div>

@@ -12,6 +12,7 @@ use App\Http\Controllers\SubDivisionController;
 use App\Http\Controllers\PedhiController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\StaffController;
+use App\Http\Controllers\FirmController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\DailyExpenseController;
 use App\Http\Controllers\PaymentSlabController;
@@ -24,6 +25,8 @@ use App\Http\Controllers\GstBillListController;
 use App\Http\Controllers\ScrapMaterialController;
 use App\Http\Controllers\ScrapListController;
 use App\Http\Controllers\SiteMaterialRequirementController;
+use App\Http\Controllers\MaterialCategoryController;
+use App\Http\Controllers\MaterialListController;
 // Route::get('/', function () {
 //     return view('admin.auth.login');
 // });
@@ -48,12 +51,15 @@ Route::middleware(['auth', 'staff.permission'])->group(function () {
     Route::get('locations/get-sub-divisions', [LocationController::class, 'getSubDivisions'])->name('locations.getSubDivisions');
     Route::resource('locations', LocationController::class);
 
+    Route::resource('firms', FirmController::class);
+
     Route::resource('staff', StaffController::class);
     
     // Attendance routes
     Route::post('attendance/update', [AttendanceController::class, 'update'])->name('attendance.update');
     Route::get('attendance', [AttendanceController::class, 'index'])->name('attendance.index');
     Route::get('attendance/get', [AttendanceController::class, 'getAttendance'])->name('attendance.get');
+    Route::get('attendance/report', [AttendanceController::class, 'report'])->name('attendance.report');
 
     // Daily Expense routes
     Route::resource('daily-expense', DailyExpenseController::class);
@@ -77,6 +83,9 @@ Route::middleware(['auth', 'staff.permission'])->group(function () {
     Route::resource('scrap-lists', ScrapListController::class);
 
     Route::resource('site-material-requirements', SiteMaterialRequirementController::class);
+
+    Route::resource('material-categories', MaterialCategoryController::class);
+    Route::resource('material-lists', MaterialListController::class);
 
     Route::get('my-profile', [ProfileController::class, 'index'])->name('user.getProfile');
     Route::get('edit-profile', [ProfileController::class, 'edit'])->name('user.editProfile');

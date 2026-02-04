@@ -43,7 +43,7 @@
                         <tr>
                             <td>{{ $party->name }}</td>
                             <td>{{ $party->gst ?? 'N/A' }}</td>
-                            <td>{{ Str::limit($party->address, 30) ?? 'N/A' }}</td>
+                            <td>{{ \Illuminate\Support\Str::limit($party->address, 30) ?? 'N/A' }}</td>
                             <td>{{ $party->mobile ?? 'N/A' }}</td>
                             <td>{{ $party->contact_person_name ?? 'N/A' }}</td>
                             <td>{{ $party->contact_person_mobile ?? 'N/A' }}</td>

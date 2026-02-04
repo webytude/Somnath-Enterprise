@@ -20,17 +20,17 @@ class StaffController extends Controller
         // Get today's attendance
         $today = \Carbon\Carbon::today();
         $attendances = \App\Models\Attendance::whereDate('attendance_date', $today)
-            ->pluck('is_present', 'staff_id')
-            ->toArray();
+            ->get()
+            ->keyBy('staff_id');
         
-        // Get present employee count
+        // Get present employee count (present or present_with_bike)
         $presentCount = \App\Models\Attendance::whereDate('attendance_date', $today)
-            ->where('is_present', true)
+            ->whereIn('attendance_status', ['present', 'present_with_bike'])
             ->count();
         
         // Get present employees for payment
         $presentStaffIds = \App\Models\Attendance::whereDate('attendance_date', $today)
-            ->where('is_present', true)
+            ->whereIn('attendance_status', ['present', 'present_with_bike'])
             ->pluck('staff_id')
             ->toArray();
         
@@ -57,7 +57,10 @@ class StaffController extends Controller
             }
         }
         
-        return view('admin.staff.index', compact('staff', 'attendances', 'today', 'presentCount', 'presentStaff', 'dailyExpenses'));
+        // Get all locations for attendance assignment
+        $locations = \App\Models\Location::orderBy('name')->get();
+        
+        return view('admin.staff.index', compact('staff', 'attendances', 'today', 'presentCount', 'presentStaff', 'dailyExpenses', 'locations'));
     }
 
     /**

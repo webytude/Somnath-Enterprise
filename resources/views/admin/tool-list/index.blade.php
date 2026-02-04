@@ -45,7 +45,7 @@
                             <tr>
                                 <td>{{ $tool->name }}</td>
                                 <td>{{ number_format($tool->quantity, 2) }}</td>
-                                <td>{{ $tool->location->name ?? ($tool->location ?? 'N/A') }}</td>
+                                <td>{{ $tool->location->name ?? 'N/A' }}</td>
                                 <td>{{ $tool->person_name ?? 'N/A' }}</td>
                                 <td>{{ $tool->date ? $tool->date->format('d/m/Y') : 'N/A' }}</td>
                                 <td>{{ $tool->price ? '₹' . number_format($tool->price, 2) : 'N/A' }}</td>

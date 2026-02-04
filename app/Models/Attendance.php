@@ -12,18 +12,25 @@ class Attendance extends Model
     protected $fillable = [
         'staff_id',
         'attendance_date',
-        'is_present',
+        'attendance_status',
+        'overtime_hours',
+        'location_id',
         'created_by',
         'updated_by',
     ];
 
     protected $casts = [
         'attendance_date' => 'date',
-        'is_present' => 'boolean',
+        'overtime_hours' => 'decimal:2',
     ];
 
     public function staff()
     {
         return $this->belongsTo(Staff::class);
+    }
+
+    public function location()
+    {
+        return $this->belongsTo(Location::class);
     }
 }

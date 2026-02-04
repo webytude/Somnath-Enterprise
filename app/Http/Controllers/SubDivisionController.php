@@ -36,6 +36,14 @@ class SubDivisionController extends Controller
         SubDivision::create([
             'name' => $request->name,
             'division_id' => $request->division_id,
+            'head_of_sub_division' => $request->head_of_sub_division,
+            'address' => $request->address,
+            'name_of_sub_div_head' => $request->name_of_sub_div_head,
+            'head_mobile_number' => $request->head_mobile_number,
+            'sub_div_contact_person_name' => $request->sub_div_contact_person_name,
+            'contact_person_name' => $request->contact_person_name,
+            'contact_person_mobile_number' => $request->contact_person_mobile_number,
+            'remark' => $request->remark,
             'created_by' => Auth::id(),
             'updated_by' => Auth::id(),
         ]);
@@ -71,6 +79,14 @@ class SubDivisionController extends Controller
         $subDivision->update([
             'name' => $request->name,
             'division_id' => $request->division_id,
+            'head_of_sub_division' => $request->head_of_sub_division,
+            'address' => $request->address,
+            'name_of_sub_div_head' => $request->name_of_sub_div_head,
+            'head_mobile_number' => $request->head_mobile_number,
+            'sub_div_contact_person_name' => $request->sub_div_contact_person_name,
+            'contact_person_name' => $request->contact_person_name,
+            'contact_person_mobile_number' => $request->contact_person_mobile_number,
+            'remark' => $request->remark,
             'updated_by' => Auth::id(),
         ]);
 

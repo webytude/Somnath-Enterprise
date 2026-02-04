@@ -23,7 +23,7 @@ class PartyStoreRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'pedhi_id' => 'required|exists:pedhi,id',
+            'firm_id' => 'required|exists:firms,id',
             'gst' => 'nullable|string|max:50',
             'address' => 'nullable|string',
             'mobile' => 'nullable|string|max:20',

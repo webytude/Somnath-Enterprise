@@ -25,7 +25,7 @@ class LocationStoreRequest extends FormRequest
         $locationId = is_object($locationId) ? $locationId->id : $locationId;
         
         return [
-            'pedhi_id' => 'required|exists:pedhi,id',
+            'firm_id' => 'required|exists:firms,id',
             'department_id' => 'required|exists:departments,id',
             'subdepartment_id' => 'required|exists:subdepartments,id',
             'division_id' => 'required|exists:divisions,id',

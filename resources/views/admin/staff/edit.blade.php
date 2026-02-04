@@ -230,6 +230,36 @@
                                 </div>
                             </div>
 
+                            <!-- Details of Salary -->
+                            <div class="separator separator-dashed my-5"></div>
+                            <div class="mb-5">
+                                <h3 class="mb-3">Details of Salary</h3>
+                            </div>
+
+                            <div class="row mb-7">
+                                <div class="col-md-4">
+                                    <label class="fs-6 fw-bold form-label mt-3">Rate/Day</label>
+                                    <input type="number" step="0.01" class="form-control form-control-solid" name="rate_per_day" value="{{ old('rate_per_day', $staff->rate_per_day) }}" placeholder="Enter Rate Per Day" />
+                                    @error('rate_per_day')
+                                        <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="fs-6 fw-bold form-label mt-3">Rate/Month</label>
+                                    <input type="number" step="0.01" class="form-control form-control-solid" name="rate_per_month" value="{{ old('rate_per_month', $staff->rate_per_month) }}" placeholder="Enter Rate Per Month" />
+                                    @error('rate_per_month')
+                                        <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="fs-6 fw-bold form-label mt-3">Date</label>
+                                    <input type="date" class="form-control form-control-solid" name="salary_date" value="{{ old('salary_date', $staff->salary_date ? $staff->salary_date->format('Y-m-d') : '') }}" />
+                                    @error('salary_date')
+                                        <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
                             <!-- Additional Information -->
                             <div class="separator separator-dashed my-5"></div>
                             <div class="mb-5">

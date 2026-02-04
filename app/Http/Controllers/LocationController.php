@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Location;
-use App\Models\Pedhi;
+use App\Models\Firm;
 use App\Models\Department;
 use App\Models\Subdepartment;
 use App\Models\Division;
@@ -19,7 +19,7 @@ class LocationController extends Controller
      */
     public function index()
     {
-        $locations = Location::with(['pedhi', 'department', 'subdepartment', 'division', 'subDivision'])->latest()->get();
+        $locations = Location::with(['firm', 'department', 'subdepartment', 'division', 'subDivision'])->latest()->get();
         return view('admin.location.index', compact('locations'));
     }
 
@@ -28,9 +28,9 @@ class LocationController extends Controller
      */
     public function create()
     {
-        $pedhi = Pedhi::orderBy('name')->get();
+        $firms = Firm::orderBy('name')->get();
         $departments = Department::orderBy('name')->get();
-        return view('admin.location.create', compact('pedhi', 'departments'));
+        return view('admin.location.create', compact('firms', 'departments'));
     }
 
     /**
@@ -39,7 +39,7 @@ class LocationController extends Controller
     public function store(LocationStoreRequest $request)
     {
         Location::create([
-            'pedhi_id' => $request->pedhi_id,
+            'firm_id' => $request->firm_id,
             'department_id' => $request->department_id,
             'subdepartment_id' => $request->subdepartment_id,
             'division_id' => $request->division_id,
@@ -69,12 +69,12 @@ class LocationController extends Controller
     public function edit(string $id)
     {
         $location = Location::findOrFail($id);
-        $pedhi = Pedhi::orderBy('name')->get();
+        $firms = Firm::orderBy('name')->get();
         $departments = Department::orderBy('name')->get();
         $subdepartments = Subdepartment::where('department_id', $location->department_id)->orderBy('name')->get();
         $divisions = Division::where('subdepartment_id', $location->subdepartment_id)->orderBy('name')->get();
         $subDivisions = SubDivision::where('division_id', $location->division_id)->orderBy('name')->get();
-        return view('admin.location.edit', compact('location', 'pedhi', 'departments', 'subdepartments', 'divisions', 'subDivisions'));
+        return view('admin.location.edit', compact('location', 'firms', 'departments', 'subdepartments', 'divisions', 'subDivisions'));
     }
 
     /**
@@ -84,7 +84,7 @@ class LocationController extends Controller
     {
         $location = Location::findOrFail($id);
         $location->update([
-            'pedhi_id' => $request->pedhi_id,
+            'firm_id' => $request->firm_id,
             'department_id' => $request->department_id,
             'subdepartment_id' => $request->subdepartment_id,
             'division_id' => $request->division_id,

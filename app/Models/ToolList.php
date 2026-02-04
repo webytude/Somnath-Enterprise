@@ -13,7 +13,6 @@ class ToolList extends Model
         'location_id',
         'name',
         'quantity',
-        'location',
         'person_name',
         'date',
         'price',

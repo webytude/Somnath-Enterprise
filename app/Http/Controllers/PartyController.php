@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Party;
-use App\Models\Pedhi;
+use App\Models\Firm;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\PartyStoreRequest;
 
@@ -24,8 +24,8 @@ class PartyController extends Controller
      */
     public function create()
     {
-        $pedhis = Pedhi::orderBy('name')->get();
-        return view('admin.party.create', compact('pedhis'));
+        $firms = Firm::orderBy('name')->get();
+        return view('admin.party.create', compact('firms'));
     }
 
     /**
@@ -54,8 +54,8 @@ class PartyController extends Controller
      */
     public function edit(Party $party)
     {
-        $pedhis = Pedhi::orderBy('name')->get();
-        return view('admin.party.edit', compact('party', 'pedhis'));
+        $firms = Firm::orderBy('name')->get();
+        return view('admin.party.edit', compact('party', 'firms'));
     }
 
     /**

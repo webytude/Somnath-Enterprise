@@ -10,7 +10,20 @@ class Division extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'department_id', 'subdepartment_id', 'created_by', 'updated_by'
+        'name', 
+        'department_id', 
+        'subdepartment_id',
+        'head_of_division_name',
+        'address',
+        'head_mobile_number',
+        'contact_number',
+        'contact_person_name',
+        'contact_person_mobile_number',
+        'bank_name',
+        'bank_account_no',
+        'ifsc_code',
+        'created_by', 
+        'updated_by'
     ];
 
     // A division belongs to one department
@@ -25,10 +38,10 @@ class Division extends Model
         return $this->belongsTo(Subdepartment::class);
     }
 
-    // A division has many pedhi
-    public function pedhi()
+    // A division has many firms
+    public function firms()
     {
-        return $this->hasMany(Pedhi::class);
+        return $this->hasMany(Firm::class);
     }
 
     // A division has many sub divisions

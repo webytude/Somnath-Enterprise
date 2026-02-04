@@ -30,7 +30,7 @@
                     <thead>
                         <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
                             <th class="min-w-125px">Name</th>
-                            <th class="min-w-125px">Pedhi</th>
+                            <th class="min-w-125px">Firm</th>
                             <th class="min-w-125px">Department</th>
                             <th class="min-w-125px">Sub Department</th>
                             <th class="min-w-125px">Division</th>
@@ -43,12 +43,12 @@
                         @foreach($locations as $location)
                         <tr>
                             <td>{{ $location->name }}</td>
-                            <td>{{ $location->pedhi->name }}</td>
+                            <td>{{ $location->firm ? $location->firm->name : '-' }}</td>
                             <td>{{ $location->department->name }}</td>
                             <td>{{ $location->subdepartment->name }}</td>
                             <td>{{ $location->division->name }}</td>
                             <td>{{ $location->subDivision ? $location->subDivision->name : '-' }}</td>
-                            <td>{{ Str::limit($location->location, 50) }}</td>
+                            <td>{{ \Illuminate\Support\Str::limit($location->location, 50) }}</td>
                             <td class="text-end">
                                 <a href="{{ route('locations.edit', $location) }}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
                                     <span class="svg-icon svg-icon-3">
