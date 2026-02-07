@@ -16,11 +16,13 @@ class Contractor extends Model
         'bank_name',
         'ifsc',
         'branch_name',
+        'bank_account_no',
         'address',
         'mobile',
         'contact_person',
         'contact_person_mobile',
         'ref_by',
+        'ref_cont_no',
         'payment_term',
         'amount',
         'remaining_amount',
@@ -37,5 +39,17 @@ class Contractor extends Model
     public function paymentSlab()
     {
         return $this->belongsTo(PaymentSlab::class);
+    }
+
+    // Many-to-many relationship with materials
+    public function materials()
+    {
+        return $this->belongsToMany(MaterialList::class, 'contractor_materials', 'contractor_id', 'material_list_id');
+    }
+
+    // Many-to-many relationship with locations
+    public function locations()
+    {
+        return $this->belongsToMany(Location::class, 'contractor_locations', 'contractor_id', 'location_id');
     }
 }

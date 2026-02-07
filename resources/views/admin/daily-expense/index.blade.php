@@ -31,6 +31,7 @@
                         <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
                             <th class="min-w-125px">Date</th>
                             <th class="min-w-150px">Staff</th>
+                            <th class="min-w-150px">Location</th>
                             <th class="min-w-125px">Amount</th>
                             <th class="min-w-200px">Description</th>
                             <th class="min-w-200px">Remark</th>
@@ -42,6 +43,7 @@
                         <tr>
                             <td>{{ $expense->date ? $expense->date->format('d/m/Y') : 'N/A' }}</td>
                             <td>{{ $expense->staff ? $expense->staff->full_name : '-' }}</td>
+                            <td>{{ $expense->location ? $expense->location->name : '-' }}</td>
                             <td>₹{{ number_format($expense->amount, 2) }}</td>
                             <td>{{ $expense->description ?? '-' }}</td>
                             <td>{{ $expense->remark ?? '-' }}</td>
@@ -70,7 +72,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" class="text-center">No daily expenses found.</td>
+                            <td colspan="7" class="text-center">No daily expenses found.</td>
                         </tr>
                         @endforelse
                     </tbody>

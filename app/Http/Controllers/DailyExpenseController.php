@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\DailyExpense;
 use App\Models\Staff;
+use App\Models\Location;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\DailyExpenseStoreRequest;
 
@@ -15,7 +16,7 @@ class DailyExpenseController extends Controller
      */
     public function index()
     {
-        $query = DailyExpense::with('staff');
+        $query = DailyExpense::with(['staff', 'location']);
         
         // If logged in as staff, only show their expenses
         if (Auth::check() && Auth::user()->isStaff() && Auth::user()->staff) {
@@ -38,7 +39,9 @@ class DailyExpenseController extends Controller
             $staff = Staff::orderBy('first_name')->get();
         }
         
-        return view('admin.daily-expense.create', compact('staff'));
+        $locations = Location::orderBy('name')->get();
+        
+        return view('admin.daily-expense.create', compact('staff', 'locations'));
     }
 
     /**
@@ -54,6 +57,7 @@ class DailyExpenseController extends Controller
         
         DailyExpense::create([
             'staff_id' => $staffId,
+            'location_id' => $request->location_id,
             'date' => $request->date,
             'amount' => $request->amount,
             'description' => $request->description,
@@ -91,7 +95,9 @@ class DailyExpenseController extends Controller
             $staff = Staff::orderBy('first_name')->get();
         }
         
-        return view('admin.daily-expense.edit', compact('expense', 'staff'));
+        $locations = Location::orderBy('name')->get();
+        
+        return view('admin.daily-expense.edit', compact('expense', 'staff', 'locations'));
     }
 
     /**
@@ -112,6 +118,7 @@ class DailyExpenseController extends Controller
         
         $expense->update([
             'staff_id' => $staffId,
+            'location_id' => $request->location_id,
             'date' => $request->date,
             'amount' => $request->amount,
             'description' => $request->description,

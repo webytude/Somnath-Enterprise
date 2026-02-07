@@ -11,6 +11,7 @@ class SiteMaterialRequirement extends Model
 
     protected $fillable = [
         'location_id',
+        'work_id',
         'created_by',
         'updated_by',
     ];
@@ -18,6 +19,11 @@ class SiteMaterialRequirement extends Model
     public function location()
     {
         return $this->belongsTo(Location::class);
+    }
+
+    public function work()
+    {
+        return $this->belongsTo(Work::class);
     }
 
     public function details()

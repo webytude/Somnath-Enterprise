@@ -34,21 +34,22 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-4">
+                                    <label class="fs-6 fw-bold form-label mt-3">Father Name</label>
+                                    <input type="text" class="form-control form-control-solid" name="second_name" value="{{ old('second_name') }}" placeholder="Enter Father Name" />
+                                    @error('second_name')
+                                        <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-4">
                                     <label class="fs-6 fw-bold form-label mt-3">
-                                        <span class="required">Last Name</span>
+                                        <span class="required">Surname</span>
                                     </label>
                                     <input type="text" class="form-control form-control-solid" name="last_name" value="{{ old('last_name') }}" placeholder="Enter Last Name" />
                                     @error('last_name')
                                         <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <div class="col-md-4">
-                                    <label class="fs-6 fw-bold form-label mt-3">Second Name / Surname</label>
-                                    <input type="text" class="form-control form-control-solid" name="second_name" value="{{ old('second_name') }}" placeholder="Enter Second Name / Surname" />
-                                    @error('second_name')
-                                        <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
-                                    @enderror
-                                </div>
+                                
                             </div>
 
                             <div class="row mb-7">
@@ -139,6 +140,46 @@
                                         <option value="Widowed" {{ old('marital_status') == 'Widowed' ? 'selected' : '' }}>Widowed</option>
                                     </select>
                                     @error('marital_status')
+                                        <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="row mb-7">
+                                <div class="col-md-4">
+                                    <label class="fs-6 fw-bold form-label mt-3">Relative Name</label>
+                                    <input type="text" class="form-control form-control-solid" name="relative_name" value="{{ old('relative_name') }}" placeholder="Enter Relative Name" />
+                                    @error('relative_name')
+                                        <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="fs-6 fw-bold form-label mt-3">Relation</label>
+                                    <select class="form-select form-select-solid" name="relation" data-control="select2" data-placeholder="Select Relation...">
+                                        <option value="">Select Relation...</option>
+                                        <option value="Father" {{ old('relation') == 'Father' ? 'selected' : '' }}>Father</option>
+                                        <option value="Mother" {{ old('relation') == 'Mother' ? 'selected' : '' }}>Mother</option>
+                                        <option value="Brother" {{ old('relation') == 'Brother' ? 'selected' : '' }}>Brother</option>
+                                        <option value="Sister" {{ old('relation') == 'Sister' ? 'selected' : '' }}>Sister</option>
+                                        <option value="Spouse" {{ old('relation') == 'Spouse' ? 'selected' : '' }}>Spouse</option>
+                                        <option value="Son" {{ old('relation') == 'Son' ? 'selected' : '' }}>Son</option>
+                                        <option value="Daughter" {{ old('relation') == 'Daughter' ? 'selected' : '' }}>Daughter</option>
+                                        <option value="Husband" {{ old('relation') == 'Husband' ? 'selected' : '' }}>Husband</option>
+                                        <option value="Wife" {{ old('relation') == 'Wife' ? 'selected' : '' }}>Wife</option>
+                                        <option value="Uncle" {{ old('relation') == 'Uncle' ? 'selected' : '' }}>Uncle</option>
+                                        <option value="Aunt" {{ old('relation') == 'Aunt' ? 'selected' : '' }}>Aunt</option>
+                                        <option value="Grandfather" {{ old('relation') == 'Grandfather' ? 'selected' : '' }}>Grandfather</option>
+                                        <option value="Grandmother" {{ old('relation') == 'Grandmother' ? 'selected' : '' }}>Grandmother</option>
+                                        <option value="Other" {{ old('relation') == 'Other' ? 'selected' : '' }}>Other</option>
+                                    </select>
+                                    @error('relation')
+                                        <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="fs-6 fw-bold form-label mt-3">Relative Mobile No.</label>
+                                    <input type="text" class="form-control form-control-solid" name="relative_mobile_no" value="{{ old('relative_mobile_no') }}" placeholder="Enter Relative Mobile Number" />
+                                    @error('relative_mobile_no')
                                         <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                     @enderror
                                 </div>

@@ -11,6 +11,7 @@ class DailyExpense extends Model
 
     protected $fillable = [
         'staff_id',
+        'location_id',
         'date',
         'amount',
         'description',
@@ -28,5 +29,11 @@ class DailyExpense extends Model
     public function staff()
     {
         return $this->belongsTo(Staff::class);
+    }
+
+    // A daily expense belongs to one location
+    public function location()
+    {
+        return $this->belongsTo(Location::class);
     }
 }

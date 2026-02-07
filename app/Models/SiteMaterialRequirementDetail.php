@@ -16,6 +16,7 @@ class SiteMaterialRequirementDetail extends Model
         'rate',
         'quantity',
         'date',
+        'time_within_days',
         'remark',
     ];
 

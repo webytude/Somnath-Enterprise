@@ -11,25 +11,41 @@
 <div class="post d-flex flex-column-fluid" id="kt_post">
     <div id="kt_content_container" class="container-fluid">
         <div class="row g-7">
-            <div class="col-xl-8">
+            <div class="col-xl-9">
                 <div class="card card-flush h-lg-100" id="kt_site_material_requirement_form_main">
                     <div class="card-body pt-5">
                         <form method="POST" id="kt_site_material_requirement_form" class="form fv-plugins-bootstrap5 fv-plugins-framework" action="{{ route('site-material-requirements.store') }}">
                             @csrf
                             
-                            <div class="fv-row mb-7">
-                                <label class="fs-6 fw-bold form-label mt-3">
-                                    <span class="required">Location</span>
-                                </label>
-                                <select class="form-select form-select-solid" name="location_id" id="location_id" data-control="select2" data-placeholder="Select Location...">
-                                    <option value="">Select Location...</option>
-                                    @foreach($locations as $location)
-                                        <option value="{{ $location->id }}" {{ old('location_id') == $location->id ? 'selected' : '' }}>{{ $location->name }}</option>
-                                    @endforeach
-                                </select>
-                                @error('location_id')
-                                    <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
-                                @enderror
+                            <div class="row mb-7">
+                                <div class="col-md-6">
+                                    <label class="fs-6 fw-bold form-label mt-3">
+                                        <span class="required">Location</span>
+                                    </label>
+                                    <select class="form-select form-select-solid" name="location_id" id="location_id" data-control="select2" data-placeholder="Select Location...">
+                                        <option value="">Select Location...</option>
+                                        @foreach($locations as $location)
+                                            <option value="{{ $location->id }}" {{ old('location_id') == $location->id ? 'selected' : '' }}>{{ $location->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('location_id')
+                                        <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="fs-6 fw-bold form-label mt-3">
+                                        Work
+                                    </label>
+                                    <select class="form-select form-select-solid" name="work_id" id="work_id" data-control="select2" data-placeholder="Select Work...">
+                                        <option value="">Select Work...</option>
+                                        @foreach($works as $work)
+                                            <option value="{{ $work->id }}" {{ old('work_id') == $work->id ? 'selected' : '' }}>{{ $work->name_of_work }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('work_id')
+                                        <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                    @enderror
+                                </div>
                             </div>
 
                             <div class="fv-row mb-7">
@@ -39,7 +55,7 @@
                                 <div id="material-details-container">
                                     <div class="material-detail-row mb-3 p-4 border rounded">
                                         <div class="row g-3">
-                                            <div class="col-md-3">
+                                            <div class="col-md-2">
                                                 <label class="form-label">Material Name <span class="text-danger">*</span></label>
                                                 <input type="text" class="form-control form-control-solid material-name" name="details[0][material_name]" placeholder="Enter Material Name" required />
                                             </div>
@@ -67,6 +83,10 @@
                                             <div class="col-md-2">
                                                 <label class="form-label">Date <span class="text-danger">*</span></label>
                                                 <input type="date" class="form-control form-control-solid material-date" name="details[0][date]" required />
+                                            </div>
+                                            <div class="col-md-1">
+                                                <label class="form-label">Time Within</label>
+                                                <input type="number" class="form-control form-control-solid material-time-within" name="details[0][time_within_days]" min="0" placeholder="Days" />
                                             </div>
                                             <div class="col-md-1 d-flex align-items-end">
                                                 <button type="button" class="btn btn-sm btn-danger remove-detail-row" style="display: none;">
@@ -129,7 +149,7 @@
             const newRow = $(`
                 <div class="material-detail-row mb-3 p-4 border rounded">
                     <div class="row g-3">
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <label class="form-label">Material Name <span class="text-danger">*</span></label>
                             <input type="text" class="form-control form-control-solid material-name" name="details[${detailRowIndex}][material_name]" placeholder="Enter Material Name" required />
                         </div>
@@ -157,6 +177,10 @@
                         <div class="col-md-2">
                             <label class="form-label">Date <span class="text-danger">*</span></label>
                             <input type="date" class="form-control form-control-solid material-date" name="details[${detailRowIndex}][date]" required />
+                        </div>
+                        <div class="col-md-1">
+                            <label class="form-label">Time Within</label>
+                            <input type="number" class="form-control form-control-solid material-time-within" name="details[${detailRowIndex}][time_within_days]" min="0" placeholder="Days" />
                         </div>
                         <div class="col-md-1 d-flex align-items-end">
                             <button type="button" class="btn btn-sm btn-danger remove-detail-row">

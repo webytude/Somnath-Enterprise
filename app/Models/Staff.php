@@ -23,6 +23,9 @@ class Staff extends Model
         'present_address',
         'mobile_number',
         'other_contact_number',
+        'relative_name',
+        'relation',
+        'relative_mobile_no',
         'gender',
         'marital_status',
         'blood_group',
@@ -46,7 +49,7 @@ class Staff extends Model
     // Accessor to get full name
     public function getFullNameAttribute()
     {
-        $name = trim($this->first_name . ' ' . $this->last_name . ($this->second_name ? ' ' . $this->second_name : ''));
+        $name = trim($this->first_name . ' '. $this->second_name . ' ' . $this->last_name  );
         return $name;
     }
 

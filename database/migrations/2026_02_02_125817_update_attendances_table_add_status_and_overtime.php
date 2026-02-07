@@ -16,7 +16,7 @@ return new class extends Migration
             $table->dropColumn('is_present');
             
             // Add attendance_status enum column
-            $table->enum('attendance_status', ['absent', 'present', 'present_with_bike'])->default('absent')->after('attendance_date');
+            $table->enum('attendance_status', ['absent', 'present', 'present_with_bike', 'half_day'])->default('absent')->after('attendance_date');
             
             // Add overtime_hours column
             $table->decimal('overtime_hours', 5, 2)->nullable()->default(0)->after('attendance_status');

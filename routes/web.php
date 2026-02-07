@@ -11,6 +11,7 @@ use App\Http\Controllers\DivisionController;
 use App\Http\Controllers\SubDivisionController;
 use App\Http\Controllers\PedhiController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\WorkController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\FirmController;
 use App\Http\Controllers\AttendanceController;
@@ -50,6 +51,12 @@ Route::middleware(['auth', 'staff.permission'])->group(function () {
     Route::get('locations/get-divisions', [LocationController::class, 'getDivisions'])->name('locations.getDivisions');
     Route::get('locations/get-sub-divisions', [LocationController::class, 'getSubDivisions'])->name('locations.getSubDivisions');
     Route::resource('locations', LocationController::class);
+
+    Route::get('works/get-subdepartments', [WorkController::class, 'getSubdepartments'])->name('works.getSubdepartments');
+    Route::get('works/get-divisions', [WorkController::class, 'getDivisions'])->name('works.getDivisions');
+    Route::get('works/get-sub-divisions', [WorkController::class, 'getSubDivisions'])->name('works.getSubDivisions');
+    Route::get('works/get-locations', [WorkController::class, 'getLocations'])->name('works.getLocations');
+    Route::resource('works', WorkController::class);
 
     Route::resource('firms', FirmController::class);
 

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\SiteMaterialRequirement;
 use App\Models\SiteMaterialRequirementDetail;
 use App\Models\Location;
+use App\Models\Work;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\SiteMaterialRequirementStoreRequest;
 
@@ -26,7 +27,8 @@ class SiteMaterialRequirementController extends Controller
     public function create()
     {
         $locations = Location::orderBy('name')->get();
-        return view('admin.site-material-requirement.create', compact('locations'));
+        $works = Work::orderBy('name_of_work')->get();
+        return view('admin.site-material-requirement.create', compact('locations', 'works'));
     }
 
     /**
@@ -53,6 +55,7 @@ class SiteMaterialRequirementController extends Controller
                 'rate' => $detail['rate'],
                 'quantity' => $detail['quantity'],
                 'date' => $detail['date'],
+                'time_within_days' => $detail['time_within_days'] ?? null,
                 'remark' => $detail['remark'] ?? null,
             ]);
         }
@@ -75,8 +78,9 @@ class SiteMaterialRequirementController extends Controller
     public function edit(SiteMaterialRequirement $siteMaterialRequirement)
     {
         $locations = Location::orderBy('name')->get();
+        $works = Work::orderBy('name_of_work')->get();
         $siteMaterialRequirement->load('details');
-        return view('admin.site-material-requirement.edit', compact('siteMaterialRequirement', 'locations'));
+        return view('admin.site-material-requirement.edit', compact('siteMaterialRequirement', 'locations', 'works'));
     }
 
     /**
@@ -106,6 +110,7 @@ class SiteMaterialRequirementController extends Controller
                 'rate' => $detail['rate'],
                 'quantity' => $detail['quantity'],
                 'date' => $detail['date'],
+                'time_within_days' => $detail['time_within_days'] ?? null,
                 'remark' => $detail['remark'] ?? null,
             ]);
         }

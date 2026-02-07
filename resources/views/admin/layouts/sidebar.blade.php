@@ -42,7 +42,7 @@
                 </div>
                 @endif
                 @if(!auth()->check() || !auth()->user()->isStaff())
-                <div data-kt-menu-trigger="click" class="menu-item {{ request()->routeIs(['departments.*', 'sub-departments.*', 'division.*', 'sub-division.*', 'locations.*', 'firms.*']) ? 'here show' : '' }} menu-accordion">
+                <div data-kt-menu-trigger="click" class="menu-item {{ request()->routeIs(['departments.*', 'sub-departments.*', 'division.*', 'sub-division.*', 'locations.*', 'firms.*', 'works.*']) ? 'here show' : '' }} menu-accordion">
                     <span class="menu-link">
                         <span class="menu-icon">
                             <span class="svg-icon svg-icon-2">
@@ -115,6 +115,16 @@
                                     <span class="bullet bullet-dot"></span>
                                 </span>
                                 <span class="menu-title">Location</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        <div class="menu-item">
+                            <a class="menu-link {{ request()->routeIs('works.*') ? 'active' : '' }}" href="{{ route('works.index') }}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Work</span>
                             </a>
                         </div>
                     </div>

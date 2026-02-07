@@ -29,6 +29,7 @@ class DailyExpenseStoreRequest extends FormRequest
         
         return [
             'staff_id' => $staffIdRule,
+            'location_id' => 'nullable|exists:locations,id',
             'date' => 'required|date',
             'amount' => 'required|numeric|min:0',
             'description' => 'nullable|string',

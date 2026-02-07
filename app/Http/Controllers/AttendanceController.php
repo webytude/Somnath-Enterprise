@@ -41,7 +41,7 @@ class AttendanceController extends Controller
         $request->validate([
             'staff_id' => 'required|exists:staff,id',
             'date' => 'required|date',
-            'attendance_status' => 'required|in:absent,present,present_with_bike',
+            'attendance_status' => 'required|in:absent,present,present_with_bike,half_day',
             'overtime_hours' => 'nullable|numeric|min:0|max:24',
             'location_id' => 'nullable|exists:locations,id',
         ]);

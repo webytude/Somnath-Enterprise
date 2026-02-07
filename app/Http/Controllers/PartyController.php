@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Party;
 use App\Models\Firm;
+use App\Models\MaterialCategory;
+use App\Models\Location;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\PartyStoreRequest;
 
@@ -25,7 +27,9 @@ class PartyController extends Controller
     public function create()
     {
         $firms = Firm::orderBy('name')->get();
-        return view('admin.party.create', compact('firms'));
+        $materialCategories = MaterialCategory::with('materialLists')->orderBy('name')->get();
+        $locations = Location::orderBy('name')->get();
+        return view('admin.party.create', compact('firms', 'materialCategories', 'locations'));
     }
 
     /**
@@ -36,7 +40,21 @@ class PartyController extends Controller
         $data = $request->validated();
         $data['created_by'] = Auth::user()->id;
         
-        Party::create($data);
+        $materialIds = $request->input('material_ids', []);
+        $locationIds = $request->input('location_ids', []);
+        
+        // Remove material_ids and location_ids from data as they're not fillable
+        unset($data['material_ids'], $data['location_ids']);
+        
+        $party = Party::create($data);
+        
+        // Sync materials and locations
+        if (!empty($materialIds)) {
+            $party->materials()->sync($materialIds);
+        }
+        if (!empty($locationIds)) {
+            $party->locations()->sync($locationIds);
+        }
         
         return redirect()->route('parties.index')->with('success', 'Party created successfully.');
     }
@@ -55,7 +73,10 @@ class PartyController extends Controller
     public function edit(Party $party)
     {
         $firms = Firm::orderBy('name')->get();
-        return view('admin.party.edit', compact('party', 'firms'));
+        $materialCategories = MaterialCategory::with('materialLists')->orderBy('name')->get();
+        $locations = Location::orderBy('name')->get();
+        $party->load('materials', 'locations');
+        return view('admin.party.edit', compact('party', 'firms', 'materialCategories', 'locations'));
     }
 
     /**
@@ -66,7 +87,17 @@ class PartyController extends Controller
         $data = $request->validated();
         $data['updated_by'] = Auth::user()->id;
         
+        $materialIds = $request->input('material_ids', []);
+        $locationIds = $request->input('location_ids', []);
+        
+        // Remove material_ids and location_ids from data as they're not fillable
+        unset($data['material_ids'], $data['location_ids']);
+        
         $party->update($data);
+        
+        // Sync materials and locations
+        $party->materials()->sync($materialIds);
+        $party->locations()->sync($locationIds);
         
         return redirect()->route('parties.index')->with('success', 'Party updated successfully.');
     }

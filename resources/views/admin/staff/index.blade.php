@@ -216,11 +216,12 @@
                                                     >
                                                         <option value="absent" {{ $currentStatus == 'absent' ? 'selected' : '' }}>Absent</option>
                                                         <option value="present" {{ $currentStatus == 'present' ? 'selected' : '' }}>Present</option>
+                                                        <option value="half_day" {{ $currentStatus == 'half_day' ? 'selected' : '' }}>Half Day</option>
                                                         <option value="present_with_bike" {{ $currentStatus == 'present_with_bike' ? 'selected' : '' }}>Present with Bike</option>
                                                     </select>
                                                     <div class="mt-1">
                                                         <span class="badge 
-                                                            @if($currentStatus == 'present' || $currentStatus == 'present_with_bike') badge-success 
+                                                            @if($currentStatus == 'present' || $currentStatus == 'present_with_bike' || $currentStatus == 'half_day') badge-success 
                                                             @else badge-danger 
                                                             @endif
                                                         " id="badge_{{ $s->id }}">
@@ -228,6 +229,8 @@
                                                                 Present
                                                             @elseif($currentStatus == 'present_with_bike')
                                                                 Present with Bike
+                                                            @elseif($currentStatus == 'half_day')
+                                                                Half Day
                                                             @else
                                                                 Absent
                                                             @endif

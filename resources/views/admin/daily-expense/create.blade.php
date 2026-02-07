@@ -39,6 +39,18 @@
                                 </div>
                             @endif
                             <div class="fv-row mb-7">
+                                <label class="fs-6 fw-bold form-label mt-3">Location</label>
+                                <select class="form-select form-select-solid" name="location_id" data-control="select2" data-placeholder="Select Location...">
+                                    <option value="">Select Location...</option>
+                                    @foreach($locations as $location)
+                                        <option value="{{ $location->id }}" {{ old('location_id') == $location->id ? 'selected' : '' }}>{{ $location->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('location_id')
+                                    <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="fv-row mb-7">
                                 <label class="fs-6 fw-bold form-label mt-3">
                                     <span class="required">Date</span>
                                 </label>

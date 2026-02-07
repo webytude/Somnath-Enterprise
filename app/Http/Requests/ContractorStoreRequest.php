@@ -28,15 +28,21 @@ class ContractorStoreRequest extends FormRequest
             'bank_name' => 'nullable|string|max:255',
             'ifsc' => 'nullable|string|max:20',
             'branch_name' => 'nullable|string|max:255',
+            'bank_account_no' => 'nullable|string|max:50',
             'address' => 'nullable|string',
             'mobile' => 'nullable|string|max:20',
             'contact_person' => 'nullable|string|max:255',
             'contact_person_mobile' => 'nullable|string|max:20',
             'ref_by' => 'nullable|string|max:255',
+            'ref_cont_no' => 'nullable|string|max:255',
             'payment_term' => 'nullable|string|max:255',
             'amount' => 'nullable|numeric|min:0',
             'remaining_amount' => 'nullable|numeric|min:0',
             'payment_slab_id' => 'nullable|exists:payment_slabs,id',
+            'material_ids' => 'nullable|array',
+            'material_ids.*' => 'exists:material_lists,id',
+            'location_ids' => 'nullable|array',
+            'location_ids.*' => 'exists:locations,id',
         ];
     }
 }
