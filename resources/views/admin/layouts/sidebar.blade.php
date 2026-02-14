@@ -54,7 +54,7 @@
                                 </svg>
                             </span>
                         </span>
-                        <span class="menu-title">Manage Pedhi</span>
+                        <span class="menu-title">Manage Works</span>
                         <span class="menu-arrow"></span>
                     </span>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">

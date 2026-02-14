@@ -79,7 +79,7 @@
                                 @enderror
                             </div>
                             <div class="fv-row mb-7">
-                                <label class="fs-6 fw-bold form-label mt-3">Name</label>
+                                <label class="fs-6 fw-bold form-label mt-3">Name of Location</label>
                                 <input type="text" class="form-control form-control-solid" name="name" value="{{ $location->name }}" placeholder="Enter Location name" />
                                 @error('name')
                                     <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
