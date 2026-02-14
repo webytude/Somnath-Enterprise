@@ -445,6 +445,9 @@
                         } else if (attendanceStatus === 'present_with_bike') {
                             badge.removeClass('badge-danger badge-success').addClass('badge-warning').text('Present with Bike');
                             overtimeInput.prop('disabled', false);
+                        }else if (attendanceStatus === 'half_day') {
+                            badge.removeClass('badge-danger badge-success').addClass('badge-warning').text('Half Day');
+                            overtimeInput.prop('disabled', false);
                         } else {
                             badge.removeClass('badge-success badge-warning').addClass('badge-danger').text('Absent');
                             overtimeInput.prop('disabled', true).val(0);
