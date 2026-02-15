@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Contractor;
 use App\Models\PaymentSlab;
-use App\Models\MaterialCategory;
 use App\Models\Location;
+use App\Models\Work;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\ContractorStoreRequest;
 
@@ -27,9 +27,8 @@ class ContractorController extends Controller
     public function create()
     {
         $paymentSlabs = PaymentSlab::orderBy('name')->get();
-        $materialCategories = MaterialCategory::with('materialLists')->orderBy('name')->get();
         $locations = Location::orderBy('name')->get();
-        return view('admin.contractor.create', compact('paymentSlabs', 'materialCategories', 'locations'));
+        return view('admin.contractor.create', compact('paymentSlabs', 'locations'));
     }
 
     /**
@@ -40,20 +39,20 @@ class ContractorController extends Controller
         $data = $request->validated();
         $data['created_by'] = Auth::user()->id;
         
-        $materialIds = $request->input('material_ids', []);
         $locationIds = $request->input('location_ids', []);
+        $workIds = $request->input('work_ids', []);
         
-        // Remove material_ids and location_ids from data as they're not fillable
-        unset($data['material_ids'], $data['location_ids']);
+        // Remove location_ids and work_ids from data as they're not fillable
+        unset($data['location_ids'], $data['work_ids']);
         
         $contractor = Contractor::create($data);
         
-        // Sync materials and locations
-        if (!empty($materialIds)) {
-            $contractor->materials()->sync($materialIds);
-        }
+        // Sync locations and works
         if (!empty($locationIds)) {
             $contractor->locations()->sync($locationIds);
+        }
+        if (!empty($workIds)) {
+            $contractor->works()->sync($workIds);
         }
         
         return redirect()->route('contractors.index')->with('success', 'Contractor/Vendor created successfully.');
@@ -73,10 +72,9 @@ class ContractorController extends Controller
     public function edit(Contractor $contractor)
     {
         $paymentSlabs = PaymentSlab::orderBy('name')->get();
-        $materialCategories = MaterialCategory::with('materialLists')->orderBy('name')->get();
         $locations = Location::orderBy('name')->get();
-        $contractor->load('materials', 'locations');
-        return view('admin.contractor.edit', compact('contractor', 'paymentSlabs', 'materialCategories', 'locations'));
+        $contractor->load('locations', 'works');
+        return view('admin.contractor.edit', compact('contractor', 'paymentSlabs', 'locations'));
     }
 
     /**
@@ -87,19 +85,37 @@ class ContractorController extends Controller
         $data = $request->validated();
         $data['updated_by'] = Auth::user()->id;
         
-        $materialIds = $request->input('material_ids', []);
         $locationIds = $request->input('location_ids', []);
+        $workIds = $request->input('work_ids', []);
         
-        // Remove material_ids and location_ids from data as they're not fillable
-        unset($data['material_ids'], $data['location_ids']);
+        // Remove location_ids and work_ids from data as they're not fillable
+        unset($data['location_ids'], $data['work_ids']);
         
         $contractor->update($data);
         
-        // Sync materials and locations
-        $contractor->materials()->sync($materialIds);
+        // Sync locations and works
         $contractor->locations()->sync($locationIds);
+        $contractor->works()->sync($workIds);
         
         return redirect()->route('contractors.index')->with('success', 'Contractor/Vendor updated successfully.');
+    }
+
+    /**
+     * Get works by location IDs (for AJAX)
+     */
+    public function getWorksByLocations(Request $request)
+    {
+        $locationIds = $request->input('location_ids', []);
+        
+        if (empty($locationIds)) {
+            return response()->json([]);
+        }
+        
+        $works = Work::whereIn('location_id', $locationIds)
+            ->orderBy('name_of_work')
+            ->get(['id', 'name_of_work', 'location_id']);
+        
+        return response()->json($works);
     }
 
     /**

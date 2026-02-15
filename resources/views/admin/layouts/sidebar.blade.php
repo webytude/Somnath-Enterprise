@@ -131,7 +131,7 @@
                 </div>
                 @endif
                 @if(!auth()->check() || !auth()->user()->isStaff())
-                <div data-kt-menu-trigger="click" class="menu-item {{ request()->routeIs(['site-materials.*', 'site-material-requirements.*', 'site-progress.*', 'tool-lists.*', 'scrap-materials.*', 'scrap-lists.*', 'material-categories.*', 'material-lists.*']) ? 'here show' : '' }} menu-accordion">
+                <div data-kt-menu-trigger="click" class="menu-item {{ request()->routeIs(['site-material-requirements.*', 'material-inwards.*', 'site-progress.*', 'tool-lists.*', 'scrap-materials.*', 'scrap-lists.*', 'material-categories.*', 'material-lists.*']) ? 'here show' : '' }} menu-accordion">
                     <span class="menu-link">
                         <span class="menu-icon">
                             <span class="svg-icon svg-icon-2">
@@ -146,21 +146,21 @@
                     </span>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
                         <div class="menu-item">
-                            <a class="menu-link {{ request()->routeIs('site-materials.*') ? 'active' : '' }}" href="{{ route('site-materials.index') }}">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title">Site Material</span>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="menu-sub menu-sub-accordion menu-active-bg">
-                        <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('site-material-requirements.*') ? 'active' : '' }}" href="{{ route('site-material-requirements.index') }}">
                                 <span class="menu-bullet">
                                     <span class="bullet bullet-dot"></span>
                                 </span>
                                 <span class="menu-title">Site Material Requirement</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        <div class="menu-item">
+                            <a class="menu-link {{ request()->routeIs('material-inwards.*') ? 'active' : '' }}" href="{{ route('material-inwards.index') }}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Material Inward</span>
                             </a>
                         </div>
                     </div>
@@ -226,7 +226,7 @@
                     </div>
                 </div>
                 @endif
-                <div data-kt-menu-trigger="click" class="menu-item {{ request()->routeIs(['payment-slabs.*', 'daily-expense.*', 'parties.*', 'contractors.*', 'gst-bill-lists.*']) ? 'here show' : '' }} menu-accordion">
+                <div data-kt-menu-trigger="click" class="menu-item {{ request()->routeIs(['payment-slabs.*', 'daily-expense.*', 'parties.*', 'contractors.*', 'gst-bill-lists.*', 'bill-inwards.*']) ? 'here show' : '' }} menu-accordion">
                     <span class="menu-link">
                         <span class="menu-icon">
                             <span class="svg-icon svg-icon-2">
@@ -279,6 +279,43 @@
                                     <span class="bullet bullet-dot"></span>
                                 </span>
                                 <span class="menu-title">GST Bill List</span>
+                            </a>
+                        </div>
+                    </div>
+                   
+                    @endif
+                </div>
+                <div data-kt-menu-trigger="click" class="menu-item {{ request()->routeIs(['bill-inwards.*', 'bill-outwards.*']) ? 'here show' : '' }} menu-accordion">
+                    <span class="menu-link">
+                        <span class="menu-icon">
+                            <span class="svg-icon svg-icon-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <path opacity="0.3" d="M3 13V11C3 10.4 3.4 10 4 10H20C20.6 10 21 10.4 21 11V13C21 13.6 20.6 14 20 14H4C3.4 14 3 13.6 3 13Z" fill="currentColor"/>
+                                    <path d="M13 21H11C10.4 21 10 20.6 10 20V4C10 3.4 10.4 3 11 3H13C13.6 3 14 3.4 14 4V20C14 20.6 13.6 21 13 21ZM22 8V6C22 5.4 21.6 5 21 5H19C18.4 5 18 5.4 18 6V8C18 8.6 18.4 9 19 9H21C21.6 9 22 8.6 22 8ZM22 18V16C22 15.4 21.6 15 21 15H19C18.4 15 18 15.4 18 16V18C18 18.6 18.4 19 19 19H21C21.6 19 22 18.6 22 18ZM6 8V6C6 5.4 5.6 5 5 5H3C2.4 5 2 5.4 2 6V8C2 8.6 2.4 9 3 9H5C5.6 9 6 8.6 6 8ZM6 18V16C6 15.4 5.6 15 5 15H3C2.4 15 2 15.4 2 16V18C2 18.6 2.4 19 3 19H5C5.6 19 6 18.6 6 18Z" fill="currentColor"/>
+                                </svg>
+                            </span>
+                        </span>
+                        <span class="menu-title">Manage GST Bill</span>
+                        <span class="menu-arrow"></span>
+                    </span>
+                    @if(!auth()->check() || !auth()->user()->isStaff())
+                    <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        <div class="menu-item">
+                            <a class="menu-link {{ request()->routeIs('bill-inwards.*') ? 'active' : '' }}" href="{{ route('bill-inwards.index') }}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Bill Inward</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        <div class="menu-item">
+                            <a class="menu-link {{ request()->routeIs('bill-outwards.*') ? 'active' : '' }}" href="{{ route('bill-outwards.index') }}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Bill Outward</span>
                             </a>
                         </div>
                     </div>

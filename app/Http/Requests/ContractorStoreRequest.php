@@ -39,10 +39,10 @@ class ContractorStoreRequest extends FormRequest
             'amount' => 'nullable|numeric|min:0',
             'remaining_amount' => 'nullable|numeric|min:0',
             'payment_slab_id' => 'nullable|exists:payment_slabs,id',
-            'material_ids' => 'nullable|array',
-            'material_ids.*' => 'exists:material_lists,id',
             'location_ids' => 'nullable|array',
             'location_ids.*' => 'exists:locations,id',
+            'work_ids' => 'nullable|array',
+            'work_ids.*' => 'exists:works,id',
         ];
     }
 }

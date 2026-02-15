@@ -11,7 +11,7 @@
 <div class="post d-flex flex-column-fluid" id="kt_post">
     <div id="kt_content_container" class="container-fluid">
         <div class="row g-7">
-            <div class="col-xl-9">
+            <div class="col-xl-12">
                 <div class="card card-flush h-lg-100" id="kt_site_material_requirement_form_main">
                     <div class="card-body pt-5">
                         <form method="POST" id="kt_site_material_requirement_form" class="form fv-plugins-bootstrap5 fv-plugins-framework" action="{{ route('site-material-requirements.store') }}">
@@ -56,25 +56,25 @@
                                     <div class="material-detail-row mb-3 p-4 border rounded">
                                         <div class="row g-3">
                                             <div class="col-md-2">
-                                                <label class="form-label">Material Name <span class="text-danger">*</span></label>
-                                                <input type="text" class="form-control form-control-solid material-name" name="details[0][material_name]" placeholder="Enter Material Name" required />
+                                                <label class="form-label">Material Category <span class="text-danger">*</span></label>
+                                                <select class="form-select form-select-solid material-category" name="details[0][material_category_id]" data-row-index="0" required>
+                                                    <option value="">Select Category</option>
+                                                    @foreach($materialCategories as $category)
+                                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="form-label">Material <span class="text-danger">*</span></label>
+                                                <select class="form-select form-select-solid material-select" name="details[0][material_id]" data-row-index="0" required>
+                                                    <option value="">Select Material</option>
+                                                </select>
                                             </div>
                                             <div class="col-md-2">
                                                 <label class="form-label">Unit <span class="text-danger">*</span></label>
                                                 <select class="form-select form-select-solid material-unit" name="details[0][unit]" required>
                                                     <option value="">Select Unit</option>
-                                                    <option value="KG">KG</option>
-                                                    <option value="Bags">Bags</option>
-                                                    <option value="Pieces">Pieces</option>
-                                                    <option value="Ton">Ton</option>
-                                                    <option value="Quintal">Quintal</option>
-                                                    <option value="Meter">Meter</option>
-                                                    <option value="Liter">Liter</option>
                                                 </select>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <label class="form-label">Rate <span class="text-danger">*</span></label>
-                                                <input type="number" class="form-control form-control-solid material-rate" name="details[0][rate]" step="0.01" min="0" placeholder="Rate" required />
                                             </div>
                                             <div class="col-md-2">
                                                 <label class="form-label">Quantity <span class="text-danger">*</span></label>
@@ -131,6 +131,7 @@
 <script>
     $(document).ready(function() {
         let detailRowIndex = 1;
+        var materialCategories = @json($materialCategories->keyBy('id'));
 
         function updateRemoveButtons() {
             const rows = $('.material-detail-row');
@@ -144,31 +145,82 @@
             });
         }
 
+        // Handle material category change
+        $(document).on('change', '.material-category', function() {
+            var rowIndex = $(this).data('row-index');
+            var categoryId = $(this).val();
+            var materialSelect = $(this).closest('.material-detail-row').find('.material-select[data-row-index="' + rowIndex + '"]');
+            var unitSelect = $(this).closest('.material-detail-row').find('.material-unit');
+            
+            // Clear material and unit
+            materialSelect.html('<option value="">Select Material</option>');
+            unitSelect.html('<option value="">Select Unit</option>');
+            
+            if (categoryId) {
+                var category = materialCategories[categoryId];
+                if (category && category.material_lists) {
+                    var uniqueUnits = [];
+                    var unitsMap = {};
+                    
+                    // Populate materials and collect unique units
+                    category.material_lists.forEach(function(material) {
+                        materialSelect.append('<option value="' + material.id + '" data-unit="' + material.unit + '">' + material.name + '</option>');
+                        
+                        // Collect unique units
+                        if (material.unit && !unitsMap[material.unit]) {
+                            unitsMap[material.unit] = true;
+                            uniqueUnits.push(material.unit);
+                        }
+                    });
+                    
+                    // Populate unit dropdown with unique units from category materials
+                    uniqueUnits.sort().forEach(function(unit) {
+                        unitSelect.append('<option value="' + unit + '">' + unit + '</option>');
+                    });
+                }
+            }
+        });
+
+        // Handle material select change
+        $(document).on('change', '.material-select', function() {
+            var rowIndex = $(this).data('row-index');
+            var selectedOption = $(this).find('option:selected');
+            var unitSelect = $(this).closest('.material-detail-row').find('.material-unit');
+            
+            if (selectedOption.val()) {
+                var materialUnit = selectedOption.data('unit') || '';
+                // Auto-select the unit from material, but user can manually change it
+                if (materialUnit) {
+                    unitSelect.val(materialUnit);
+                }
+            }
+        });
+
         $('#add-detail-row').on('click', function() {
             const container = $('#material-details-container');
             const newRow = $(`
                 <div class="material-detail-row mb-3 p-4 border rounded">
                     <div class="row g-3">
                         <div class="col-md-2">
-                            <label class="form-label">Material Name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control form-control-solid material-name" name="details[${detailRowIndex}][material_name]" placeholder="Enter Material Name" required />
+                            <label class="form-label">Material Category <span class="text-danger">*</span></label>
+                            <select class="form-select form-select-solid material-category" name="details[${detailRowIndex}][material_category_id]" data-row-index="${detailRowIndex}" required>
+                                <option value="">Select Category</option>
+                                @foreach($materialCategories as $category)
+                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Material <span class="text-danger">*</span></label>
+                            <select class="form-select form-select-solid material-select" name="details[${detailRowIndex}][material_id]" data-row-index="${detailRowIndex}" required>
+                                <option value="">Select Material</option>
+                            </select>
                         </div>
                         <div class="col-md-2">
                             <label class="form-label">Unit <span class="text-danger">*</span></label>
                             <select class="form-select form-select-solid material-unit" name="details[${detailRowIndex}][unit]" required>
                                 <option value="">Select Unit</option>
-                                <option value="KG">KG</option>
-                                <option value="Bags">Bags</option>
-                                <option value="Pieces">Pieces</option>
-                                <option value="Ton">Ton</option>
-                                <option value="Quintal">Quintal</option>
-                                <option value="Meter">Meter</option>
-                                <option value="Liter">Liter</option>
                             </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label">Rate <span class="text-danger">*</span></label>
-                            <input type="number" class="form-control form-control-solid material-rate" name="details[${detailRowIndex}][rate]" step="0.01" min="0" placeholder="Rate" required />
                         </div>
                         <div class="col-md-2">
                             <label class="form-label">Quantity <span class="text-danger">*</span></label>
@@ -202,6 +254,10 @@
         $(document).on('click', '.remove-detail-row', function() {
             $(this).closest('.material-detail-row').remove();
             updateRemoveButtons();
+            // Update row numbers after removal
+            $('#material-details-container').find('.material-detail-row').each(function(index) {
+                $(this).find('h6').text('Material Detail #' + (index + 1));
+            });
         });
 
         // Initialize remove buttons visibility on page load

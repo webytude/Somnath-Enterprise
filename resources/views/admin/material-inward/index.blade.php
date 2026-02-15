@@ -1,4 +1,4 @@
-@section('title','Manage Site Material Requirement')
+@section('title','Manage Material Inward')
 @extends('admin.layouts.main')
 @section('main_contant')
 <div class="toolbar bg-transparent pt-6 mb-5" id="kt_toolbar">
@@ -8,60 +8,54 @@
         <div class="card mb-5 mb-xl-12">
             <div class="card-header border-0 pt-6">
                 <div class="card-title">
-                    <h1 class="d-flex text-dark fw-bolder fs-3 flex-column mb-0">Manage Site Material Requirement</h1>
+                    <h1 class="d-flex text-dark fw-bolder fs-3 flex-column mb-0">Manage Material Inward</h1>
                 </div>
                 <div class="card-toolbar">
                     <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
-                        <a href="{{ route('site-material-requirements.create') }}" type="button" class="btn btn-primary">
+                        <a href="{{ route('material-inwards.create') }}" type="button" class="btn btn-primary">
                             <span class="svg-icon svg-icon-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                     <rect opacity="0.5" x="11.364" y="20.364" width="16" height="2" rx="1" transform="rotate(-90 11.364 20.364)" fill="currentColor" />
                                     <rect x="4.36396" y="11.364" width="16" height="2" rx="1" fill="currentColor" />
                                 </svg>
                             </span>
-                            Add Site Material Requirement
+                            Add Material Inward
                         </a>
                     </div>
                 </div>
             </div>
             <div class="card-body py-4">
                 @include('global.show_session')
-                <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_site_material_requirements">
+                <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_material_inwards">
                     <thead>
                         <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
                             <th class="min-w-150px">Location</th>
                             <th class="min-w-150px">Work</th>
-                            <th class="min-w-200px">Material Details</th>
+                            <th class="min-w-150px">Party</th>
+                            <th class="min-w-150px">Bill/Voucher No.</th>
+                            <th class="min-w-150px">Bill/Voucher Date</th>
+                            <th class="min-w-150px">Total Amount</th>
                             <th class="text-end min-w-100px">Action</th>
                         </tr>
                     </thead>
                     <tbody class="text-gray-600 fw-bold">
-                        @forelse($siteMaterialRequirements as $requirement)
+                        @forelse($materialInwards as $materialInward)
                         <tr>
-                            <td>{{ $requirement->location->name ?? 'N/A' }}</td>
-                            <td>{{ $requirement->work->name_of_work ?? 'N/A' }}</td>
-                            <td>
-                                @if($requirement->details->count() > 0)
-                                    <div class="d-flex flex-column">
-                                        @foreach($requirement->details as $detail)
-                                            <div class="mb-2 p-2 border rounded">
-                                                <strong>{{ $detail->material ? $detail->material->name : 'N/A' }}</strong><br>
-                                                <small>Unit: {{ $detail->unit }} | Qty: {{ number_format($detail->quantity, 2) }} | Date: {{ $detail->date->format('d-m-Y') }}</small>
-                                                @if($detail->time_within_days)
-                                                    <br><small>Time Within: {{ $detail->time_within_days }} days</small>
-                                                @endif
-                                                @if($detail->remark)
-                                                    <br><small class="text-muted">Remark: {{ $detail->remark }}</small>
-                                                @endif
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                @else
-                                    <span class="text-muted">No details</span>
-                                @endif
-                            </td>
+                            <td>{{ $materialInward->location->name ?? 'N/A' }}</td>
+                            <td>{{ $materialInward->work->name_of_work ?? 'N/A' }}</td>
+                            <td>{{ $materialInward->party->name ?? 'N/A' }}</td>
+                            <td>{{ $materialInward->bill_voucher_number ?? 'N/A' }}</td>
+                            <td>{{ $materialInward->bill_voucher_date ? $materialInward->bill_voucher_date->format('d-m-Y') : 'N/A' }}</td>
+                            <td>₹ {{ number_format($materialInward->total_bill_voucher_amount, 2) }}</td>
                             <td class="text-end">
-                                <a href="{{ route('site-material-requirements.edit', $requirement) }}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
+                                <a href="{{ route('material-inwards.show', $materialInward) }}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" title="View">
+                                    <span class="svg-icon svg-icon-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                            <path d="M14.0185 10.3162L11.0635 7.36125L12.1368 6.28796L17.1368 11.288L12.1368 16.288L11.0635 15.2147L14.0185 12.2597H3.13672V10.3162H14.0185Z" fill="currentColor" />
+                                        </svg>
+                                    </span>
+                                </a>
+                                <a href="{{ route('material-inwards.edit', $materialInward) }}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" title="Edit">
                                     <span class="svg-icon svg-icon-3">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                             <path opacity="0.3" d="M21.4 8.35303L19.241 10.511L13.485 4.755L15.643 2.59595C16.0248 2.21423 16.5426 1.99988 17.0825 1.99988C17.6224 1.99988 18.1402 2.21423 18.522 2.59595L21.4 5.474C21.7817 5.85581 21.9962 6.37355 21.9962 6.91345C21.9962 7.45335 21.7817 7.97122 21.4 8.35303ZM3.68699 21.932L9.88699 19.865L4.13099 14.109L2.06399 20.309C1.98815 20.5354 1.97703 20.7787 2.03189 21.0111C2.08674 21.2436 2.2054 21.4561 2.37449 21.6248C2.54359 21.7934 2.75641 21.9115 2.989 21.9658C3.22158 22.0201 3.4647 22.0084 3.69099 21.932H3.68699Z" fill="currentColor" />
@@ -69,9 +63,9 @@
                                         </svg>
                                     </span>
                                 </a>
-                                <form action="{{ route('site-material-requirements.destroy', $requirement) }}" method="POST" style="display:inline">
+                                <form action="{{ route('material-inwards.destroy', $materialInward) }}" method="POST" style="display:inline">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm" onclick="return confirm('Are you sure you want to delete this site material requirement?')">
+                                    <button type="submit" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm" onclick="return confirm('Are you sure you want to delete this material inward?')" title="Delete">
                                         <span class="svg-icon svg-icon-3">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                                 <path d="M5 9C5 8.44772 5.44772 8 6 8H18C18.5523 8 19 8.44772 19 9V18C19 19.6569 17.6569 21 16 21H8C6.34315 21 5 19.6569 5 18V9Z" fill="currentColor" />
@@ -85,7 +79,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="3" class="text-center">No site material requirements found.</td>
+                            <td colspan="7" class="text-center">No material inwards found.</td>
                         </tr>
                         @endforelse
                     </tbody>

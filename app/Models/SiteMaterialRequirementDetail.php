@@ -11,9 +11,8 @@ class SiteMaterialRequirementDetail extends Model
 
     protected $fillable = [
         'site_material_requirement_id',
-        'material_name',
+        'material_id',
         'unit',
-        'rate',
         'quantity',
         'date',
         'time_within_days',
@@ -21,7 +20,6 @@ class SiteMaterialRequirementDetail extends Model
     ];
 
     protected $casts = [
-        'rate' => 'decimal:2',
         'quantity' => 'decimal:2',
         'date' => 'date',
     ];
@@ -29,5 +27,10 @@ class SiteMaterialRequirementDetail extends Model
     public function siteMaterialRequirement()
     {
         return $this->belongsTo(SiteMaterialRequirement::class);
+    }
+
+    public function material()
+    {
+        return $this->belongsTo(\App\Models\MaterialList::class, 'material_id');
     }
 }

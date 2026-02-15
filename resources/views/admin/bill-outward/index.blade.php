@@ -1,4 +1,4 @@
-@section('title','Manage Site Material')
+@section('title','Manage Bill Outward')
 @extends('admin.layouts.main')
 @section('main_contant')
 <div class="toolbar bg-transparent pt-6 mb-5" id="kt_toolbar">
@@ -8,75 +8,60 @@
         <div class="card mb-5 mb-xl-12">
             <div class="card-header border-0 pt-6">
                 <div class="card-title">
-                    <h1 class="d-flex text-dark fw-bolder fs-3 flex-column mb-0">Manage Site Material</h1>
+                    <h1 class="d-flex text-dark fw-bolder fs-3 flex-column mb-0">Manage Bill Outward</h1>
                 </div>
                 <div class="card-toolbar">
                     <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
-                        <a href="{{ route('site-materials.create') }}" type="button" class="btn btn-primary">
+                        <a href="{{ route('bill-outwards.create') }}" type="button" class="btn btn-primary">
                             <span class="svg-icon svg-icon-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                     <rect opacity="0.5" x="11.364" y="20.364" width="16" height="2" rx="1" transform="rotate(-90 11.364 20.364)" fill="currentColor" />
                                     <rect x="4.36396" y="11.364" width="16" height="2" rx="1" fill="currentColor" />
                                 </svg>
                             </span>
-                            Add Site Material
+                            Add Bill Outward
                         </a>
                     </div>
                 </div>
             </div>
             <div class="card-body py-4">
                 @include('global.show_session')
-                <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_site_materials">
+                <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_bill_outwards">
                     <thead>
                         <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
-                            <th class="min-w-100px">Photo</th>
-                            <th class="min-w-150px">Name</th>
-                            <th class="min-w-150px">Location</th>
+                            <th class="min-w-150px">Firm</th>
                             <th class="min-w-150px">Party</th>
-                            <th class="min-w-100px">GST</th>
-                            <th class="min-w-150px">Details</th>
-                            <th class="min-w-100px">Is Inward</th>
-                            <th class="min-w-150px">Remark</th>
+                            <th class="min-w-150px">Bill No.</th>
+                            <th class="min-w-150px">Bill Date</th>
+                            <th class="min-w-150px">Total Amount</th>
+                            <th class="min-w-100px">Payment Status</th>
                             <th class="text-end min-w-100px">Action</th>
                         </tr>
                     </thead>
                     <tbody class="text-gray-600 fw-bold">
-                        @forelse($siteMaterials as $material)
+                        @forelse($billOutwards as $billOutward)
                         <tr>
+                            <td>{{ $billOutward->firm->name ?? 'N/A' }}</td>
+                            <td>{{ $billOutward->party->name ?? 'N/A' }}</td>
+                            <td>{{ $billOutward->bill_number ?? 'N/A' }}</td>
+                            <td>{{ $billOutward->bill_date ? $billOutward->bill_date->format('d-m-Y') : 'N/A' }}</td>
+                            <td>₹ {{ number_format($billOutward->total_bill_amount, 2) }}</td>
                             <td>
-                                @if($material->photo)
-                                    <img src="{{ $material->photo }}" alt="{{ $material->name }}" class="w-80px h-80px rounded" style="object-fit: cover;">
+                                @if($billOutward->payment_status == 'Received')
+                                    <span class="badge badge-success">Received</span>
                                 @else
-                                    <div class="symbol symbol-80px">
-                                        <div class="symbol-label fs-2 fw-semibold text-primary bg-light-primary">No Image</div>
-                                    </div>
+                                    <span class="badge badge-warning">Pending</span>
                                 @endif
                             </td>
-                            <td>{{ $material->name }}</td>
-                            <td>{{ $material->location->name ?? 'N/A' }}</td>
-                            <td>{{ $material->party->name ?? 'N/A' }}</td>
-                            <td>{{ $material->gst ?? 'N/A' }}</td>
-                            <td>
-                                @if($material->details->count() > 0)
-                                    <div class="d-flex flex-column">
-                                        @foreach($material->details as $detail)
-                                            <span class="badge badge-light-info mb-1">{{ $detail->material_name }} - {{ $detail->quantity }} {{ $detail->unit }}</span>
-                                        @endforeach
-                                    </div>
-                                @else
-                                    <span class="text-muted">No details</span>
-                                @endif
-                            </td>
-                            <td>
-                                @if($material->is_inward)
-                                    <span class="badge badge-success">Yes</span>
-                                @else
-                                    <span class="badge badge-danger">No</span>
-                                @endif
-                            </td>
-                            <td>{{ $material->remark ?? 'N/A' }}</td>
                             <td class="text-end">
-                                <a href="{{ route('site-materials.edit', $material) }}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
+                                <a href="{{ route('bill-outwards.show', $billOutward) }}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" title="View">
+                                    <span class="svg-icon svg-icon-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                            <path d="M14.0185 10.3162L11.0635 7.36125L12.1368 6.28796L17.1368 11.288L12.1368 16.288L11.0635 15.2147L14.0185 12.2597H3.13672V10.3162H14.0185Z" fill="currentColor" />
+                                        </svg>
+                                    </span>
+                                </a>
+                                <a href="{{ route('bill-outwards.edit', $billOutward) }}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" title="Edit">
                                     <span class="svg-icon svg-icon-3">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                             <path opacity="0.3" d="M21.4 8.35303L19.241 10.511L13.485 4.755L15.643 2.59595C16.0248 2.21423 16.5426 1.99988 17.0825 1.99988C17.6224 1.99988 18.1402 2.21423 18.522 2.59595L21.4 5.474C21.7817 5.85581 21.9962 6.37355 21.9962 6.91345C21.9962 7.45335 21.7817 7.97122 21.4 8.35303ZM3.68699 21.932L9.88699 19.865L4.13099 14.109L2.06399 20.309C1.98815 20.5354 1.97703 20.7787 2.03189 21.0111C2.08674 21.2436 2.2054 21.4561 2.37449 21.6248C2.54359 21.7934 2.75641 21.9115 2.989 21.9658C3.22158 22.0201 3.4647 22.0084 3.69099 21.932H3.68699Z" fill="currentColor" />
@@ -84,9 +69,9 @@
                                         </svg>
                                     </span>
                                 </a>
-                                <form action="{{ route('site-materials.destroy', $material) }}" method="POST" style="display:inline">
+                                <form action="{{ route('bill-outwards.destroy', $billOutward) }}" method="POST" style="display:inline">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm" onclick="return confirm('Are you sure you want to delete this site material?')">
+                                    <button type="submit" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm" onclick="return confirm('Are you sure you want to delete this bill outward?')" title="Delete">
                                         <span class="svg-icon svg-icon-3">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                                 <path d="M5 9C5 8.44772 5.44772 8 6 8H18C18.5523 8 19 8.44772 19 9V18C19 19.6569 17.6569 21 16 21H8C6.34315 21 5 19.6569 5 18V9Z" fill="currentColor" />
@@ -100,7 +85,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="9" class="text-center">No site materials found.</td>
+                            <td colspan="7" class="text-center">No bill outwards found.</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -110,4 +95,3 @@
     </div>
 </div>
 @endsection
-

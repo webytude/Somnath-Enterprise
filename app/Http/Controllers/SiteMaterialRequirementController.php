@@ -7,6 +7,7 @@ use App\Models\SiteMaterialRequirement;
 use App\Models\SiteMaterialRequirementDetail;
 use App\Models\Location;
 use App\Models\Work;
+use App\Models\MaterialCategory;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\SiteMaterialRequirementStoreRequest;
 
@@ -17,7 +18,7 @@ class SiteMaterialRequirementController extends Controller
      */
     public function index()
     {
-        $siteMaterialRequirements = SiteMaterialRequirement::with(['location', 'details'])->latest()->get();
+        $siteMaterialRequirements = SiteMaterialRequirement::with(['location', 'details.material'])->latest()->get();
         return view('admin.site-material-requirement.index', compact('siteMaterialRequirements'));
     }
 
@@ -28,7 +29,8 @@ class SiteMaterialRequirementController extends Controller
     {
         $locations = Location::orderBy('name')->get();
         $works = Work::orderBy('name_of_work')->get();
-        return view('admin.site-material-requirement.create', compact('locations', 'works'));
+        $materialCategories = MaterialCategory::with('materialLists')->orderBy('name')->get();
+        return view('admin.site-material-requirement.create', compact('locations', 'works', 'materialCategories'));
     }
 
     /**
@@ -50,9 +52,8 @@ class SiteMaterialRequirementController extends Controller
         foreach ($details as $detail) {
             SiteMaterialRequirementDetail::create([
                 'site_material_requirement_id' => $siteMaterialRequirement->id,
-                'material_name' => $detail['material_name'],
+                'material_id' => $detail['material_id'],
                 'unit' => $detail['unit'],
-                'rate' => $detail['rate'],
                 'quantity' => $detail['quantity'],
                 'date' => $detail['date'],
                 'time_within_days' => $detail['time_within_days'] ?? null,
@@ -68,7 +69,7 @@ class SiteMaterialRequirementController extends Controller
      */
     public function show(SiteMaterialRequirement $siteMaterialRequirement)
     {
-        $siteMaterialRequirement->load(['location', 'details']);
+        $siteMaterialRequirement->load(['location', 'details.material']);
         return view('admin.site-material-requirement.show', compact('siteMaterialRequirement'));
     }
 
@@ -79,8 +80,9 @@ class SiteMaterialRequirementController extends Controller
     {
         $locations = Location::orderBy('name')->get();
         $works = Work::orderBy('name_of_work')->get();
-        $siteMaterialRequirement->load('details');
-        return view('admin.site-material-requirement.edit', compact('siteMaterialRequirement', 'locations', 'works'));
+        $materialCategories = MaterialCategory::with('materialLists')->orderBy('name')->get();
+        $siteMaterialRequirement->load('details.material');
+        return view('admin.site-material-requirement.edit', compact('siteMaterialRequirement', 'locations', 'works', 'materialCategories'));
     }
 
     /**
@@ -105,9 +107,8 @@ class SiteMaterialRequirementController extends Controller
         foreach ($details as $detail) {
             SiteMaterialRequirementDetail::create([
                 'site_material_requirement_id' => $siteMaterialRequirement->id,
-                'material_name' => $detail['material_name'],
+                'material_id' => $detail['material_id'],
                 'unit' => $detail['unit'],
-                'rate' => $detail['rate'],
                 'quantity' => $detail['quantity'],
                 'date' => $detail['date'],
                 'time_within_days' => $detail['time_within_days'] ?? null,
@@ -116,6 +117,19 @@ class SiteMaterialRequirementController extends Controller
         }
         
         return redirect()->route('site-material-requirements.index')->with('success', 'Site material requirement updated successfully.');
+    }
+
+    /**
+     * Get materials by category ID
+     */
+    public function getMaterialsByCategory(Request $request)
+    {
+        $categoryId = $request->get('category_id');
+        $materials = \App\Models\MaterialList::where('material_category_id', $categoryId)
+            ->orderBy('name')
+            ->get(['id', 'name', 'unit']);
+        
+        return response()->json($materials);
     }
 
     /**

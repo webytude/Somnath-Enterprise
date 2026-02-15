@@ -17,7 +17,6 @@ use App\Http\Controllers\FirmController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\DailyExpenseController;
 use App\Http\Controllers\PaymentSlabController;
-use App\Http\Controllers\SiteMaterialController;
 use App\Http\Controllers\PartyController;
 use App\Http\Controllers\ContractorController;
 use App\Http\Controllers\SiteProgressController;
@@ -28,6 +27,9 @@ use App\Http\Controllers\ScrapListController;
 use App\Http\Controllers\SiteMaterialRequirementController;
 use App\Http\Controllers\MaterialCategoryController;
 use App\Http\Controllers\MaterialListController;
+use App\Http\Controllers\MaterialInwardController;
+use App\Http\Controllers\BillInwardController;
+use App\Http\Controllers\BillOutwardController;
 // Route::get('/', function () {
 //     return view('admin.auth.login');
 // });
@@ -73,10 +75,9 @@ Route::middleware(['auth', 'staff.permission'])->group(function () {
 
     Route::resource('payment-slabs', PaymentSlabController::class);
 
-    Route::resource('site-materials', SiteMaterialController::class);
-
     Route::resource('parties', PartyController::class);
 
+    Route::get('contractors/get-works-by-locations', [ContractorController::class, 'getWorksByLocations'])->name('contractors.getWorksByLocations');
     Route::resource('contractors', ContractorController::class);
 
     Route::resource('site-progress', SiteProgressController::class);
@@ -90,9 +91,19 @@ Route::middleware(['auth', 'staff.permission'])->group(function () {
     Route::resource('scrap-lists', ScrapListController::class);
 
     Route::resource('site-material-requirements', SiteMaterialRequirementController::class);
+    Route::get('site-material-requirements/get-materials-by-category', [SiteMaterialRequirementController::class, 'getMaterialsByCategory'])->name('site-material-requirements.getMaterialsByCategory');
 
     Route::resource('material-categories', MaterialCategoryController::class);
     Route::resource('material-lists', MaterialListController::class);
+    
+    Route::get('material-inwards/get-party-details', [MaterialInwardController::class, 'getPartyDetails'])->name('material-inwards.getPartyDetails');
+    Route::resource('material-inwards', MaterialInwardController::class);
+    
+    Route::get('bill-inwards/get-party-details', [BillInwardController::class, 'getPartyDetails'])->name('bill-inwards.getPartyDetails');
+    Route::resource('bill-inwards', BillInwardController::class);
+    
+    Route::get('bill-outwards/get-party-details', [BillOutwardController::class, 'getPartyDetails'])->name('bill-outwards.getPartyDetails');
+    Route::resource('bill-outwards', BillOutwardController::class);
 
     Route::get('my-profile', [ProfileController::class, 'index'])->name('user.getProfile');
     Route::get('edit-profile', [ProfileController::class, 'edit'])->name('user.editProfile');

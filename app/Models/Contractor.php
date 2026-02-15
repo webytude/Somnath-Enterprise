@@ -41,15 +41,15 @@ class Contractor extends Model
         return $this->belongsTo(PaymentSlab::class);
     }
 
-    // Many-to-many relationship with materials
-    public function materials()
-    {
-        return $this->belongsToMany(MaterialList::class, 'contractor_materials', 'contractor_id', 'material_list_id');
-    }
-
     // Many-to-many relationship with locations
     public function locations()
     {
         return $this->belongsToMany(Location::class, 'contractor_locations', 'contractor_id', 'location_id');
+    }
+
+    // Many-to-many relationship with works
+    public function works()
+    {
+        return $this->belongsToMany(Work::class, 'contractor_works', 'contractor_id', 'work_id');
     }
 }

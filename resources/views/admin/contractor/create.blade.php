@@ -122,39 +122,6 @@
                                 </div>
                             </div>
 
-                            <!-- List of Materials -->
-                            <div class="separator separator-dashed my-5"></div>
-                            <div class="mb-5">
-                                <h3 class="mb-3">List of Materials</h3>
-                            </div>
-
-                            <div class="row mb-7">
-                                <div class="col-md-12">
-                                    <label class="fs-6 fw-bold form-label mt-3 mb-3">Material Category</label>
-                                    <div class="row">
-                                        @foreach($materialCategories as $category)
-                                        <div class="col-md-4 mb-3">
-                                            <div class="form-check form-check-custom form-check-solid">
-                                                <input class="form-check-input material-category-checkbox" type="checkbox" value="{{ $category->id }}" id="category_{{ $category->id }}" data-category-id="{{ $category->id }}" />
-                                                <label class="form-check-label" for="category_{{ $category->id }}">
-                                                    {{ $category->name }}
-                                                </label>
-                                            </div>
-                                        </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row mb-7">
-                                <div class="col-md-12">
-                                    <label class="fs-6 fw-bold form-label mt-3 mb-3">Materials</label>
-                                    <div id="materials-container" class="border rounded p-4" style="min-height: 100px; max-height: 300px; overflow-y: auto;">
-                                        <p class="text-muted">Select material categories to view materials</p>
-                                    </div>
-                                </div>
-                            </div>
-
                             <!-- List of Locations -->
                             <div class="separator separator-dashed my-5"></div>
                             <div class="mb-5">
@@ -169,7 +136,7 @@
                                             @foreach($locations as $location)
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-check form-check-custom form-check-solid">
-                                                    <input class="form-check-input" type="checkbox" name="location_ids[]" value="{{ $location->id }}" id="location_{{ $location->id }}" {{ in_array($location->id, old('location_ids', [])) ? 'checked' : '' }} />
+                                                    <input class="form-check-input location-checkbox" type="checkbox" name="location_ids[]" value="{{ $location->id }}" id="location_{{ $location->id }}" data-location-id="{{ $location->id }}" {{ in_array($location->id, old('location_ids', [])) ? 'checked' : '' }} />
                                                     <label class="form-check-label" for="location_{{ $location->id }}">
                                                         {{ $location->name }}
                                                     </label>
@@ -179,6 +146,24 @@
                                         </div>
                                     </div>
                                     @error('location_ids')
+                                        <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <!-- List of Works -->
+                            <div class="separator separator-dashed my-5"></div>
+                            <div class="mb-5">
+                                <h3 class="mb-3">List of Works</h3>
+                            </div>
+
+                            <div class="row mb-7">
+                                <div class="col-md-12">
+                                    <label class="fs-6 fw-bold form-label mt-3 mb-3">Works</label>
+                                    <div id="works-container" class="border rounded p-4" style="min-height: 100px; max-height: 300px; overflow-y: auto;">
+                                        <p class="text-muted">Select locations to view works</p>
+                                    </div>
+                                    @error('work_ids')
                                         <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                     @enderror
                                 </div>
@@ -206,41 +191,84 @@
 @section('custom_scripts')
 <script>
     $(document).ready(function() {
-        var materialCategories = @json($materialCategories->keyBy('id'));
+        var selectedLocationIds = [];
         
-        // Handle material category checkbox change
-        $('.material-category-checkbox').on('change', function() {
-            var categoryId = $(this).data('category-id');
-            var category = materialCategories[categoryId];
-            var materialsContainer = $('#materials-container');
+        // Handle location checkbox change
+        $('.location-checkbox').on('change', function() {
+            var locationId = $(this).data('location-id');
+            var worksContainer = $('#works-container');
             
             if ($(this).is(':checked')) {
-                // Add materials for this category
-                if (category && category.material_lists) {
-                    var materialsHtml = '';
-                    category.material_lists.forEach(function(material) {
-                        materialsHtml += '<div class="col-md-4 mb-3">';
-                        materialsHtml += '<div class="form-check form-check-custom form-check-solid">';
-                        materialsHtml += '<input class="form-check-input material-checkbox" type="checkbox" name="material_ids[]" value="' + material.id + '" id="material_' + material.id + '" />';
-                        materialsHtml += '<label class="form-check-label" for="material_' + material.id + '">' + material.name + '</label>';
-                        materialsHtml += '</div></div>';
-                    });
-                    
-                    if (materialsContainer.find('p.text-muted').length > 0) {
-                        materialsContainer.empty();
-                    }
-                    materialsContainer.append('<div class="row" data-category-id="' + categoryId + '">' + materialsHtml + '</div>');
+                if (!selectedLocationIds.includes(locationId)) {
+                    selectedLocationIds.push(locationId);
                 }
             } else {
-                // Remove materials for this category
-                materialsContainer.find('div[data-category-id="' + categoryId + '"]').remove();
-                
-                // If no materials left, show message
-                if (materialsContainer.find('.row[data-category-id]').length === 0) {
-                    materialsContainer.html('<p class="text-muted">Select material categories to view materials</p>');
-                }
+                selectedLocationIds = selectedLocationIds.filter(id => id !== locationId);
+                // Remove works for this location
+                worksContainer.find('div[data-location-id="' + locationId + '"]').remove();
+            }
+            
+            // Fetch works for selected locations
+            if (selectedLocationIds.length > 0) {
+                $.ajax({
+                    url: '{{ route("contractors.getWorksByLocations") }}',
+                    method: 'GET',
+                    data: { location_ids: selectedLocationIds },
+                    success: function(response) {
+                        // Clear existing works
+                        worksContainer.empty();
+                        
+                        // Group works by location
+                        var worksByLocation = {};
+                        response.forEach(function(work) {
+                            if (!worksByLocation[work.location_id]) {
+                                worksByLocation[work.location_id] = [];
+                            }
+                            worksByLocation[work.location_id].push(work);
+                        });
+                        
+                        // Display works grouped by location
+                        Object.keys(worksByLocation).forEach(function(locationId) {
+                            var locationWorks = worksByLocation[locationId];
+                            var locationName = $('.location-checkbox[data-location-id="' + locationId + '"]').closest('.form-check').find('label').text();
+                            
+                            var worksHtml = '<div class="row mb-3" data-location-id="' + locationId + '">';
+                            locationWorks.forEach(function(work) {
+                                worksHtml += '<div class="col-md-4 mb-2">';
+                                worksHtml += '<div class="form-check form-check-custom form-check-solid">';
+                                worksHtml += '<input class="form-check-input work-checkbox" type="checkbox" name="work_ids[]" value="' + work.id + '" id="work_' + work.id + '" />';
+                                worksHtml += '<label class="form-check-label" for="work_' + work.id + '">' + work.name_of_work + '</label>';
+                                worksHtml += '</div></div>';
+                            });
+                            worksHtml += '</div>';
+                            worksContainer.append(worksHtml);
+                        });
+                        
+                        if (worksContainer.find('.row[data-location-id]').length === 0) {
+                            worksContainer.html('<p class="text-muted">No works found for selected locations</p>');
+                        }
+                    },
+                    error: function() {
+                        worksContainer.html('<p class="text-danger">Error loading works</p>');
+                    }
+                });
+            } else {
+                worksContainer.html('<p class="text-muted">Select locations to view works</p>');
             }
         });
+        
+        // Initialize if locations are already selected (from old input)
+        $('.location-checkbox:checked').each(function() {
+            var locationId = $(this).data('location-id');
+            if (!selectedLocationIds.includes(locationId)) {
+                selectedLocationIds.push(locationId);
+            }
+        });
+        
+        // Load works on page load if locations are selected
+        if (selectedLocationIds.length > 0) {
+            $('.location-checkbox:checked').first().trigger('change');
+        }
     });
 </script>
 @endsection
