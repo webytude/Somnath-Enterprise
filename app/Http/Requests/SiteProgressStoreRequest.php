@@ -23,9 +23,12 @@ class SiteProgressStoreRequest extends FormRequest
     {
         return [
             'location_id' => 'required|exists:locations,id',
-            'work_name' => 'required|string|max:255',
+            'work_id' => 'nullable|exists:works,id',
+            'work_name' => 'nullable|string|max:255',
             'work_site' => 'required|string|max:255',
             'work_stage' => 'nullable|string',
+            'stage_id' => 'nullable|exists:stages,id',
+            'stage_percentage' => 'nullable|numeric|min:0|max:100',
             'remark' => 'nullable|string',
             'photo_url' => 'nullable|url|max:500',
             'date' => 'required|date',

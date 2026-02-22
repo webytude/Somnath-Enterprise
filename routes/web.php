@@ -30,6 +30,8 @@ use App\Http\Controllers\MaterialListController;
 use App\Http\Controllers\MaterialInwardController;
 use App\Http\Controllers\BillInwardController;
 use App\Http\Controllers\BillOutwardController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\StageController;
 // Route::get('/', function () {
 //     return view('admin.auth.login');
 // });
@@ -80,6 +82,7 @@ Route::middleware(['auth', 'staff.permission'])->group(function () {
     Route::get('contractors/get-works-by-locations', [ContractorController::class, 'getWorksByLocations'])->name('contractors.getWorksByLocations');
     Route::resource('contractors', ContractorController::class);
 
+    Route::get('site-progress/get-works-by-location', [SiteProgressController::class, 'getWorksByLocation'])->name('site-progress.getWorksByLocation');
     Route::resource('site-progress', SiteProgressController::class);
 
     Route::resource('tool-lists', ToolListController::class);
@@ -90,20 +93,32 @@ Route::middleware(['auth', 'staff.permission'])->group(function () {
 
     Route::resource('scrap-lists', ScrapListController::class);
 
-    Route::resource('site-material-requirements', SiteMaterialRequirementController::class);
     Route::get('site-material-requirements/get-materials-by-category', [SiteMaterialRequirementController::class, 'getMaterialsByCategory'])->name('site-material-requirements.getMaterialsByCategory');
+    Route::get('site-material-requirements/get-works-by-location', [SiteMaterialRequirementController::class, 'getWorksByLocation'])->name('site-material-requirements.getWorksByLocation');
+    Route::resource('site-material-requirements', SiteMaterialRequirementController::class);
 
     Route::resource('material-categories', MaterialCategoryController::class);
     Route::resource('material-lists', MaterialListController::class);
+    Route::resource('stages', StageController::class);
     
     Route::get('material-inwards/get-party-details', [MaterialInwardController::class, 'getPartyDetails'])->name('material-inwards.getPartyDetails');
+    Route::get('material-inwards/get-works-by-location', [MaterialInwardController::class, 'getWorksByLocation'])->name('material-inwards.getWorksByLocation');
+    Route::get('material-inwards/get-materials-by-party', [MaterialInwardController::class, 'getMaterialsByParty'])->name('material-inwards.getMaterialsByParty');
     Route::resource('material-inwards', MaterialInwardController::class);
     
     Route::get('bill-inwards/get-party-details', [BillInwardController::class, 'getPartyDetails'])->name('bill-inwards.getPartyDetails');
+    Route::get('bill-inwards/get-materials-by-party', [BillInwardController::class, 'getMaterialsByParty'])->name('bill-inwards.getMaterialsByParty');
     Route::resource('bill-inwards', BillInwardController::class);
     
     Route::get('bill-outwards/get-party-details', [BillOutwardController::class, 'getPartyDetails'])->name('bill-outwards.getPartyDetails');
+    Route::get('bill-outwards/get-materials-by-party', [BillOutwardController::class, 'getMaterialsByParty'])->name('bill-outwards.getMaterialsByParty');
+    Route::get('bill-outwards/get-works-by-party', [BillOutwardController::class, 'getWorksByParty'])->name('bill-outwards.getWorksByParty');
     Route::resource('bill-outwards', BillOutwardController::class);
+    
+    Route::get('payments/get-staff-payable', [PaymentController::class, 'getStaffPayable'])->name('payments.getStaffPayable');
+    Route::get('payments/get-party-bills', [PaymentController::class, 'getPartyBills'])->name('payments.getPartyBills');
+    Route::get('payments/get-vendor-bills', [PaymentController::class, 'getVendorBills'])->name('payments.getVendorBills');
+    Route::resource('payments', PaymentController::class);
 
     Route::get('my-profile', [ProfileController::class, 'index'])->name('user.getProfile');
     Route::get('edit-profile', [ProfileController::class, 'edit'])->name('user.editProfile');

@@ -45,7 +45,6 @@ class LocationController extends Controller
             'division_id' => $request->division_id,
             'sub_division_id' => $request->sub_division_id,
             'name' => $request->name,
-            'location' => $request->location,
             'remark' => $request->remark,
             'created_by' => Auth::id(),
             'updated_by' => Auth::id(),
@@ -90,7 +89,6 @@ class LocationController extends Controller
             'division_id' => $request->division_id,
             'sub_division_id' => $request->sub_division_id,
             'name' => $request->name,
-            'location' => $request->location,
             'remark' => $request->remark,
             'updated_by' => Auth::id(),
         ]);

@@ -41,9 +41,6 @@
                                         </label>
                                         <select class="form-select form-select-solid" name="work_id" id="work_id" data-control="select2" data-placeholder="Select Work...">
                                             <option value="">Select Work...</option>
-                                            @foreach($works as $work)
-                                                <option value="{{ $work->id }}" {{ old('work_id') == $work->id ? 'selected' : '' }}>{{ $work->name_of_work }}</option>
-                                            @endforeach
                                         </select>
                                         @error('work_id')
                                             <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
@@ -149,9 +146,6 @@
                                                 <td>
                                                     <select class="form-select form-select-solid material-select" name="details[0][material_id]" required>
                                                         <option value="">Select from List</option>
-                                                        @foreach($materials as $material)
-                                                            <option value="{{ $material->id }}" data-unit="{{ $material->unit }}">{{ $material->name }}</option>
-                                                        @endforeach
                                                     </select>
                                                 </td>
                                                 <td>
@@ -254,12 +248,88 @@
     $(document).ready(function() {
         let detailRowIndex = 1;
 
-        // Auto-fill Party GST and PAN
+        // Handle location change - auto-populate and select work
+        $('#location_id').on('change', function() {
+            var locationId = $(this).val();
+            var workSelect = $('#work_id');
+            
+            // Clear work options
+            workSelect.empty();
+            workSelect.append('<option value="">Select Work...</option>');
+            
+            if (locationId) {
+                $.ajax({
+                    url: '{{ route("material-inwards.getWorksByLocation") }}',
+                    type: 'GET',
+                    data: { location_id: locationId },
+                    success: function(data) {
+                        if (data && data.length > 0) {
+                            $.each(data, function(key, work) {
+                                workSelect.append('<option value="' + work.id + '">' + work.name_of_work + '</option>');
+                            });
+                            
+                            // Auto-select if only one work
+                            if (data.length === 1) {
+                                workSelect.val(data[0].id).trigger('change');
+                            }
+                            
+                            // Trigger select2 update
+                            workSelect.trigger('change');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching works:', error);
+                    }
+                });
+            }
+        });
+
+        // Handle party change - auto-fill GST/PAN and load materials
         $('#party_id').on('change', function() {
+            var partyId = $(this).val();
             var selectedOption = $(this).find('option:selected');
+            
+            // Auto-fill Party GST and PAN
             $('#party_gst').val(selectedOption.data('gst') || '');
             $('#party_pan').val(selectedOption.data('pan') || '');
+            
+            // Load materials for this party
+            loadMaterialsByParty(partyId);
         });
+
+        // Function to load materials by party
+        function loadMaterialsByParty(partyId) {
+            if (!partyId) {
+                // Clear all material selects
+                $('.material-select').each(function() {
+                    $(this).html('<option value="">Select from List</option>');
+                });
+                return;
+            }
+
+            $.ajax({
+                url: '{{ route("material-inwards.getMaterialsByParty") }}',
+                type: 'GET',
+                data: { party_id: partyId },
+                success: function(data) {
+                    // Update all material select dropdowns
+                    $('.material-select').each(function() {
+                        var currentValue = $(this).val();
+                        $(this).html('<option value="">Select from List</option>');
+                        
+                        if (data && data.length > 0) {
+                            $.each(data, function(key, material) {
+                                var selected = (currentValue == material.id) ? ' selected' : '';
+                                $(this).append('<option value="' + material.id + '" data-unit="' + material.unit + '"' + selected + '>' + material.name + '</option>');
+                            }.bind(this));
+                        }
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching materials:', error);
+                }
+            });
+        }
 
         // Calculate amount when quantity or rate changes
         $(document).on('input', '.material-quantity, .material-rate', function() {
@@ -310,15 +380,32 @@
 
         // Add new material row
         $('#add-detail-row').on('click', function() {
+            var currentPartyId = $('#party_id').val();
+            var materialOptions = '<option value="">Select from List</option>';
+            
+            // If party is selected, load materials via AJAX
+            if (currentPartyId) {
+                $.ajax({
+                    url: '{{ route("material-inwards.getMaterialsByParty") }}',
+                    type: 'GET',
+                    data: { party_id: currentPartyId },
+                    async: false,
+                    success: function(data) {
+                        if (data && data.length > 0) {
+                            $.each(data, function(key, material) {
+                                materialOptions += '<option value="' + material.id + '" data-unit="' + material.unit + '">' + material.name + '</option>';
+                            });
+                        }
+                    }
+                });
+            }
+            
             var newRow = `
                 <tr class="material-detail-row">
                     <td>${detailRowIndex + 1}</td>
                     <td>
                         <select class="form-select form-select-solid material-select" name="details[${detailRowIndex}][material_id]" required>
-                            <option value="">Select from List</option>
-                            @foreach($materials as $material)
-                                <option value="{{ $material->id }}" data-unit="{{ $material->unit }}">{{ $material->name }}</option>
-                            @endforeach
+                            ${materialOptions}
                         </select>
                     </td>
                     <td>
@@ -388,7 +475,7 @@
         // Initialize
         updateRemoveButtons();
         
-        // Trigger party change if already selected
+        // Trigger party change if already selected to load materials
         if ($('#party_id').val()) {
             $('#party_id').trigger('change');
         }

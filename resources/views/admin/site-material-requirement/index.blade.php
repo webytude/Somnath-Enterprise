@@ -50,9 +50,6 @@
                                                 @if($detail->time_within_days)
                                                     <br><small>Time Within: {{ $detail->time_within_days }} days</small>
                                                 @endif
-                                                @if($detail->remark)
-                                                    <br><small class="text-muted">Remark: {{ $detail->remark }}</small>
-                                                @endif
                                             </div>
                                         @endforeach
                                     </div>

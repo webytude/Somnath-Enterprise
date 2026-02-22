@@ -131,7 +131,7 @@
                 </div>
                 @endif
                 @if(!auth()->check() || !auth()->user()->isStaff())
-                <div data-kt-menu-trigger="click" class="menu-item {{ request()->routeIs(['site-material-requirements.*', 'material-inwards.*', 'site-progress.*', 'tool-lists.*', 'scrap-materials.*', 'scrap-lists.*', 'material-categories.*', 'material-lists.*']) ? 'here show' : '' }} menu-accordion">
+                <div data-kt-menu-trigger="click" class="menu-item {{ request()->routeIs(['site-material-requirements.*', 'material-inwards.*', 'site-progress.*', 'tool-lists.*', 'scrap-materials.*', 'scrap-lists.*', 'material-categories.*', 'material-lists.*', 'stages.*']) ? 'here show' : '' }} menu-accordion">
                     <span class="menu-link">
                         <span class="menu-icon">
                             <span class="svg-icon svg-icon-2">
@@ -221,6 +221,16 @@
                                     <span class="bullet bullet-dot"></span>
                                 </span>
                                 <span class="menu-title">Material List</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        <div class="menu-item">
+                            <a class="menu-link {{ request()->routeIs('stages.*') ? 'active' : '' }}" href="{{ route('stages.index') }}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Stage</span>
                             </a>
                         </div>
                     </div>
@@ -319,8 +329,34 @@
                             </a>
                         </div>
                     </div>
-                    @endif
                 </div>
+                @endif
+                @if(!auth()->check() || !auth()->user()->isStaff())
+                <div data-kt-menu-trigger="click" class="menu-item {{ request()->routeIs('payments.*') ? 'here show' : '' }} menu-accordion">
+                    <span class="menu-link">
+                        <span class="menu-icon">
+                            <span class="svg-icon svg-icon-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <path opacity="0.3" d="M3 13V11C3 10.4 3.4 10 4 10H20C20.6 10 21 10.4 21 11V13C21 13.6 20.6 14 20 14H4C3.4 14 3 13.6 3 13ZM16 17V15C16 14.4 16.4 14 17 14H20C20.6 14 21 14.4 21 15V17C21 17.6 20.6 18 20 18H17C16.4 18 16 17.6 16 17Z" fill="currentColor"/>
+                                    <path d="M13 21V7C13 6.4 12.6 6 12 6H4C3.4 6 3 6.4 3 7V21C3 21.6 3.4 22 4 22H12C12.6 22 13 21.6 13 21Z" fill="currentColor"/>
+                                </svg>
+                            </span>
+                        </span>
+                        <span class="menu-title">Manage Payment</span>
+                        <span class="menu-arrow"></span>
+                    </span>
+                    <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        <div class="menu-item">
+                            <a class="menu-link {{ request()->routeIs('payments.*') ? 'active' : '' }}" href="{{ route('payments.index') }}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Payment</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                @endif
             </div>
         </div>
     </div>

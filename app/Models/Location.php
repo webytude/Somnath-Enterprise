@@ -11,7 +11,7 @@ class Location extends Model
 
     protected $fillable = [
         'firm_id', 'department_id', 'subdepartment_id', 'division_id', 'sub_division_id',
-        'name', 'location', 'remark', 'created_by', 'updated_by'
+        'name', 'remark', 'created_by', 'updated_by'
     ];
 
     // A location belongs to one firm

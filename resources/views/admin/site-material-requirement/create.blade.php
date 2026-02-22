@@ -38,9 +38,6 @@
                                     </label>
                                     <select class="form-select form-select-solid" name="work_id" id="work_id" data-control="select2" data-placeholder="Select Work...">
                                         <option value="">Select Work...</option>
-                                        @foreach($works as $work)
-                                            <option value="{{ $work->id }}" {{ old('work_id') == $work->id ? 'selected' : '' }}>{{ $work->name_of_work }}</option>
-                                        @endforeach
                                     </select>
                                     @error('work_id')
                                         <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
@@ -132,6 +129,42 @@
     $(document).ready(function() {
         let detailRowIndex = 1;
         var materialCategories = @json($materialCategories->keyBy('id'));
+
+        // Handle location change - auto-populate and select work
+        $('#location_id').on('change', function() {
+            var locationId = $(this).val();
+            var workSelect = $('#work_id');
+            
+            // Clear work options
+            workSelect.empty();
+            workSelect.append('<option value="">Select Work...</option>');
+            
+            if (locationId) {
+                $.ajax({
+                    url: '{{ route("site-material-requirements.getWorksByLocation") }}',
+                    type: 'GET',
+                    data: { location_id: locationId },
+                    success: function(data) {
+                        if (data && data.length > 0) {
+                            $.each(data, function(key, work) {
+                                workSelect.append('<option value="' + work.id + '">' + work.name_of_work + '</option>');
+                            });
+                            
+                            // Auto-select if only one work
+                            if (data.length === 1) {
+                                workSelect.val(data[0].id).trigger('change');
+                            }
+                            
+                            // Trigger select2 update
+                            workSelect.trigger('change');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching works:', error);
+                    }
+                });
+            }
+        });
 
         function updateRemoveButtons() {
             const rows = $('.material-detail-row');

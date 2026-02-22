@@ -29,10 +29,8 @@ class MaterialInwardController extends Controller
     public function create()
     {
         $locations = Location::orderBy('name')->get();
-        $works = Work::orderBy('name_of_work')->get();
         $parties = Party::orderBy('name')->get();
-        $materials = MaterialList::with('materialCategory')->orderBy('name')->get();
-        return view('admin.material-inward.create', compact('locations', 'works', 'parties', 'materials'));
+        return view('admin.material-inward.create', compact('locations', 'parties'));
     }
 
     /**
@@ -98,11 +96,15 @@ class MaterialInwardController extends Controller
     public function edit(MaterialInward $materialInward)
     {
         $locations = Location::orderBy('name')->get();
-        $works = Work::orderBy('name_of_work')->get();
         $parties = Party::orderBy('name')->get();
-        $materials = MaterialList::with('materialCategory')->orderBy('name')->get();
         $materialInward->load('details.material');
-        return view('admin.material-inward.edit', compact('materialInward', 'locations', 'works', 'parties', 'materials'));
+        
+        // Get current work and materials for the party
+        $currentWork = $materialInward->work_id ? Work::find($materialInward->work_id) : null;
+        $currentParty = $materialInward->party_id ? Party::with('materials')->find($materialInward->party_id) : null;
+        $currentPartyMaterials = $currentParty && $currentParty->materials ? $currentParty->materials : collect();
+        
+        return view('admin.material-inward.edit', compact('materialInward', 'locations', 'parties', 'currentWork', 'currentPartyMaterials'));
     }
 
     /**
@@ -197,5 +199,34 @@ class MaterialInwardController extends Controller
             ]);
         }
         return response()->json(['gst' => '', 'pan' => '']);
+    }
+
+    /**
+     * Get works by location ID
+     */
+    public function getWorksByLocation(Request $request)
+    {
+        $locationId = $request->get('location_id');
+        $works = Work::where('location_id', $locationId)
+            ->orderBy('name_of_work')
+            ->get(['id', 'name_of_work']);
+        
+        return response()->json($works);
+    }
+
+    /**
+     * Get materials by party ID
+     */
+    public function getMaterialsByParty(Request $request)
+    {
+        $partyId = $request->get('party_id');
+        $party = Party::find($partyId);
+        
+        if ($party) {
+            $materials = $party->materials()->orderBy('material_lists.name')->get(['material_lists.id', 'material_lists.name', 'material_lists.unit']);
+            return response()->json($materials);
+        }
+        
+        return response()->json([]);
     }
 }

@@ -39,9 +39,14 @@
                                     </label>
                                     <select class="form-select form-select-solid" name="work_id" id="work_id" data-control="select2" data-placeholder="Select Work...">
                                         <option value="">Select Work...</option>
-                                        @foreach($works as $work)
-                                            <option value="{{ $work->id }}" {{ old('work_id', $siteMaterialRequirement->work_id) == $work->id ? 'selected' : '' }}>{{ $work->name_of_work }}</option>
-                                        @endforeach
+                                        @if($siteMaterialRequirement->work_id)
+                                            @php
+                                                $currentWork = \App\Models\Work::find($siteMaterialRequirement->work_id);
+                                            @endphp
+                                            @if($currentWork)
+                                                <option value="{{ $currentWork->id }}" selected>{{ $currentWork->name_of_work }}</option>
+                                            @endif
+                                        @endif
                                     </select>
                                     @error('work_id')
                                         <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
@@ -218,6 +223,55 @@
     $(document).ready(function() {
         let detailRowIndex = {{ old('details') ? count(old('details')) : ($siteMaterialRequirement->details->count() > 0 ? $siteMaterialRequirement->details->count() : 1) }};
         var materialCategories = @json($materialCategories->keyBy('id'));
+        var currentWorkId = {{ $siteMaterialRequirement->work_id ?? 'null' }};
+        var currentLocationId = {{ $siteMaterialRequirement->location_id ?? 'null' }};
+
+        // Function to load works for a location
+        function loadWorksByLocation(locationId, selectedWorkId = null) {
+            var workSelect = $('#work_id');
+            
+            // Clear work options
+            workSelect.empty();
+            workSelect.append('<option value="">Select Work...</option>');
+            
+            if (locationId) {
+                $.ajax({
+                    url: '{{ route("site-material-requirements.getWorksByLocation") }}',
+                    type: 'GET',
+                    data: { location_id: locationId },
+                    success: function(data) {
+                        if (data && data.length > 0) {
+                            $.each(data, function(key, work) {
+                                var selected = (selectedWorkId && work.id == selectedWorkId) ? ' selected' : '';
+                                workSelect.append('<option value="' + work.id + '"' + selected + '>' + work.name_of_work + '</option>');
+                            });
+                            
+                            // Auto-select if only one work and no work is currently selected
+                            if (data.length === 1 && !selectedWorkId) {
+                                workSelect.val(data[0].id).trigger('change');
+                            }
+                            
+                            // Trigger select2 update
+                            workSelect.trigger('change');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching works:', error);
+                    }
+                });
+            }
+        }
+
+        // Load works for current location on page load
+        if (currentLocationId) {
+            loadWorksByLocation(currentLocationId, currentWorkId);
+        }
+
+        // Handle location change - auto-populate and select work
+        $('#location_id').on('change', function() {
+            var locationId = $(this).val();
+            loadWorksByLocation(locationId);
+        });
 
         function updateRemoveButtons() {
             const rows = $('.material-detail-row');

@@ -30,9 +30,7 @@ class BillOutwardController extends Controller
     {
         $firms = Firm::orderBy('name')->get();
         $parties = Party::orderBy('name')->get();
-        $materials = MaterialList::with('materialCategory')->orderBy('name')->get();
-        $works = Work::orderBy('name_of_work')->get();
-        return view('admin.bill-outward.create', compact('firms', 'parties', 'materials', 'works'));
+        return view('admin.bill-outward.create', compact('firms', 'parties'));
     }
 
     /**
@@ -135,10 +133,28 @@ class BillOutwardController extends Controller
     {
         $firms = Firm::orderBy('name')->get();
         $parties = Party::orderBy('name')->get();
-        $materials = MaterialList::with('materialCategory')->orderBy('name')->get();
-        $works = Work::orderBy('name_of_work')->get();
         $billOutward->load('details.material', 'details.work');
-        return view('admin.bill-outward.edit', compact('billOutward', 'firms', 'parties', 'materials', 'works'));
+        
+        // Get current party materials and works
+        $currentParty = $billOutward->party_id ? Party::with(['materials', 'locations'])->find($billOutward->party_id) : null;
+        $currentPartyMaterials = $currentParty && $currentParty->materials ? $currentParty->materials : collect();
+        
+        // Get works from party locations
+        $currentPartyWorks = collect();
+        if ($currentParty && $currentParty->locations) {
+            $locationIds = $currentParty->locations->pluck('id');
+            $currentPartyWorks = Work::whereIn('location_id', $locationIds)->orderBy('name_of_work')->get();
+        }
+        
+        // Also include works that are already selected in the details (in case they're not in party locations)
+        $existingWorkIds = $billOutward->details->whereNotNull('work_id')->pluck('work_id')->unique();
+        if ($existingWorkIds->isNotEmpty()) {
+            $existingWorks = Work::whereIn('id', $existingWorkIds)->orderBy('name_of_work')->get();
+            // Merge with current party works, avoiding duplicates
+            $currentPartyWorks = $currentPartyWorks->merge($existingWorks)->unique('id')->values();
+        }
+        
+        return view('admin.bill-outward.edit', compact('billOutward', 'firms', 'parties', 'currentPartyMaterials', 'currentPartyWorks'));
     }
 
     /**
@@ -269,5 +285,41 @@ class BillOutwardController extends Controller
             ]);
         }
         return response()->json(['gst' => '', 'address' => '']);
+    }
+
+    /**
+     * Get materials by party ID
+     */
+    public function getMaterialsByParty(Request $request)
+    {
+        $partyId = $request->get('party_id');
+        $party = Party::find($partyId);
+        
+        if ($party) {
+            $materials = $party->materials()->orderBy('material_lists.name')->get(['material_lists.id', 'material_lists.name', 'material_lists.unit']);
+            return response()->json($materials);
+        }
+        
+        return response()->json([]);
+    }
+
+    /**
+     * Get works by party locations
+     */
+    public function getWorksByParty(Request $request)
+    {
+        $partyId = $request->get('party_id');
+        $party = Party::with('locations')->find($partyId);
+        
+        if ($party && $party->locations) {
+            $locationIds = $party->locations->pluck('id');
+            $works = Work::whereIn('location_id', $locationIds)
+                ->orderBy('name_of_work')
+                ->get(['id', 'name_of_work']);
+            
+            return response()->json($works);
+        }
+        
+        return response()->json([]);
     }
 }

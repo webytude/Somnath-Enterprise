@@ -86,13 +86,6 @@
                                 @enderror
                             </div>
                             <div class="fv-row mb-7">
-                                <label class="fs-6 fw-bold form-label mt-3">Location</label>
-                                <textarea class="form-control form-control-solid" name="location" rows="3" placeholder="Enter Location...">{{ $location->location }}</textarea>
-                                @error('location')
-                                    <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
-                                @enderror
-                            </div>
-                            <div class="fv-row mb-7">
                                 <label class="fs-6 fw-bold form-label mt-3">Remark</label>
                                 <textarea class="form-control form-control-solid" name="remark" rows="3" placeholder="Enter Remark...">{{ $location->remark }}</textarea>
                                 @error('remark')

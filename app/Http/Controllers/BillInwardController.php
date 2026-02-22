@@ -29,8 +29,7 @@ class BillInwardController extends Controller
     {
         $firms = Firm::orderBy('name')->get();
         $parties = Party::orderBy('name')->get();
-        $materials = MaterialList::with('materialCategory')->orderBy('name')->get();
-        return view('admin.bill-inward.create', compact('firms', 'parties', 'materials'));
+        return view('admin.bill-inward.create', compact('firms', 'parties'));
     }
 
     /**
@@ -96,9 +95,12 @@ class BillInwardController extends Controller
     {
         $firms = Firm::orderBy('name')->get();
         $parties = Party::orderBy('name')->get();
-        $materials = MaterialList::with('materialCategory')->orderBy('name')->get();
         $billInward->load('details.material');
-        return view('admin.bill-inward.edit', compact('billInward', 'firms', 'parties', 'materials'));
+        
+        // Get current party materials
+        $currentPartyMaterials = $billInward->party_id ? Party::with('materials')->find($billInward->party_id)->materials ?? collect() : collect();
+        
+        return view('admin.bill-inward.edit', compact('billInward', 'firms', 'parties', 'currentPartyMaterials'));
     }
 
     /**
@@ -192,5 +194,21 @@ class BillInwardController extends Controller
             ]);
         }
         return response()->json(['gst' => '', 'pan' => '']);
+    }
+
+    /**
+     * Get materials by party ID
+     */
+    public function getMaterialsByParty(Request $request)
+    {
+        $partyId = $request->get('party_id');
+        $party = Party::find($partyId);
+        
+        if ($party) {
+            $materials = $party->materials()->orderBy('material_lists.name')->get(['material_lists.id', 'material_lists.name', 'material_lists.unit']);
+            return response()->json($materials);
+        }
+        
+        return response()->json([]);
     }
 }

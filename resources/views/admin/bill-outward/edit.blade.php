@@ -1,10 +1,10 @@
-@section('title','Add Bill Outward')
+@section('title','Edit Bill Outward')
 @extends('admin.layouts.main')
 @section('main_contant')
 <div class="toolbar bg-transparent pt-6 mb-5" id="kt_toolbar">
     <div id="kt_toolbar_container" class="container-fluid d-flex flex-stack">
         <div data-kt-swapper="true" data-kt-swapper-mode="prepend" data-kt-swapper-parent="{default: '#kt_content_container', 'lg': '#kt_toolbar_container'}" class="page-title d-flex flex-column align-items-start me-3 mb-5 mb-lg-0">
-            <h1 class="d-flex text-dark fw-bolder fs-3 flex-column mb-0">Add Bill Outward</h1>
+            <h1 class="d-flex text-dark fw-bolder fs-3 flex-column mb-0">Edit Bill Outward</h1>
         </div>
     </div>
 </div>
@@ -14,8 +14,9 @@
             <div class="col-xl-12">
                 <div class="card card-flush h-lg-100" id="kt_bill_outward_form_main">
                     <div class="card-body pt-5">
-                        <form method="POST" id="kt_bill_outward_form" class="form fv-plugins-bootstrap5 fv-plugins-framework" action="{{ route('bill-outwards.store') }}" enctype="multipart/form-data">
+                        <form method="POST" id="kt_bill_outward_form" class="form fv-plugins-bootstrap5 fv-plugins-framework" action="{{ route('bill-outwards.update', $billOutward->id) }}" enctype="multipart/form-data">
                             @csrf
+                            @method('PUT')
                             
                             <!-- Section 1: OUR FIRM -->
                             <div class="mb-7">
@@ -28,7 +29,7 @@
                                         <select class="form-select form-select-solid" name="firm_id" id="firm_id" data-control="select2" data-placeholder="Select Firm..." required>
                                             <option value="">Select Firm...</option>
                                             @foreach($firms as $firm)
-                                                <option value="{{ $firm->id }}" data-gst="{{ $firm->gst }}" {{ old('firm_id') == $firm->id ? 'selected' : '' }}>{{ $firm->name }}</option>
+                                                <option value="{{ $firm->id }}" data-gst="{{ $firm->gst }}" {{ old('firm_id', $billOutward->firm_id) == $firm->id ? 'selected' : '' }}>{{ $firm->name }}</option>
                                             @endforeach
                                         </select>
                                         @error('firm_id')
@@ -37,7 +38,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label class="fs-6 fw-bold form-label mt-3">GST (Auto)</label>
-                                        <input type="text" class="form-control form-control-solid" id="firm_gst" name="firm_gst" value="{{ old('firm_gst') }}" placeholder="Auto-filled from Firm" readonly />
+                                        <input type="text" class="form-control form-control-solid" id="firm_gst" name="firm_gst" value="{{ old('firm_gst', $billOutward->firm_gst) }}" placeholder="Auto-filled from Firm" readonly />
                                     </div>
                                 </div>
                             </div>
@@ -48,20 +49,27 @@
                                 <div class="row mb-7">
                                     <div class="col-md-4">
                                         <label class="fs-6 fw-bold form-label mt-3">Bill No.</label>
-                                        <input type="text" class="form-control form-control-solid" name="bill_number" value="{{ old('bill_number') }}" placeholder="Enter Bill Number" />
+                                        <input type="text" class="form-control form-control-solid" name="bill_number" value="{{ old('bill_number', $billOutward->bill_number) }}" placeholder="Enter Bill Number" />
                                         @error('bill_number')
                                             <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                         @enderror
                                     </div>
                                     <div class="col-md-4">
                                         <label class="fs-6 fw-bold form-label mt-3">Bill Date</label>
-                                        <input type="date" class="form-control form-control-solid" name="bill_date" value="{{ old('bill_date') }}" />
+                                        <input type="date" class="form-control form-control-solid" name="bill_date" value="{{ old('bill_date', $billOutward->bill_date ? $billOutward->bill_date->format('Y-m-d') : '') }}" />
                                         @error('bill_date')
                                             <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                         @enderror
                                     </div>
                                     <div class="col-md-4">
                                         <label class="fs-6 fw-bold form-label mt-3">Attach Bill</label>
+                                        @if($billOutward->bill_attachment)
+                                            <div class="mb-2">
+                                                <a href="{{ $billOutward->bill_attachment }}" target="_blank" class="btn btn-sm btn-light-primary">
+                                                    <i class="fas fa-file"></i> View Current File
+                                                </a>
+                                            </div>
+                                        @endif
                                         <input type="file" class="form-control form-control-solid" name="bill_attachment" accept=".pdf,.jpg,.jpeg,.png" />
                                         @error('bill_attachment')
                                             <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
@@ -81,7 +89,7 @@
                                         <select class="form-select form-select-solid" name="party_id" id="party_id" data-control="select2" data-placeholder="Select Party..." required>
                                             <option value="">Select Party...</option>
                                             @foreach($parties as $party)
-                                                <option value="{{ $party->id }}" data-gst="{{ $party->gst }}" data-address="{{ $party->address }}" {{ old('party_id') == $party->id ? 'selected' : '' }}>{{ $party->name }}</option>
+                                                <option value="{{ $party->id }}" data-gst="{{ $party->gst }}" data-address="{{ $party->address }}" {{ old('party_id', $billOutward->party_id) == $party->id ? 'selected' : '' }}>{{ $party->name }}</option>
                                             @endforeach
                                         </select>
                                         @error('party_id')
@@ -90,11 +98,11 @@
                                     </div>
                                     <div class="col-md-4">
                                         <label class="fs-6 fw-bold form-label mt-3">Party GST (Auto)</label>
-                                        <input type="text" class="form-control form-control-solid" id="party_gst" name="party_gst" value="{{ old('party_gst') }}" placeholder="Auto-filled from Party" readonly />
+                                        <input type="text" class="form-control form-control-solid" id="party_gst" name="party_gst" value="{{ old('party_gst', $billOutward->party_gst) }}" placeholder="Auto-filled from Party" readonly />
                                     </div>
                                     <div class="col-md-4">
                                         <label class="fs-6 fw-bold form-label mt-3">Party Address (Auto)</label>
-                                        <textarea class="form-control form-control-solid" id="party_address" name="party_address" rows="2" placeholder="Auto-filled from Party" readonly>{{ old('party_address') }}</textarea>
+                                        <textarea class="form-control form-control-solid" id="party_address" name="party_address" rows="2" placeholder="Auto-filled from Party" readonly>{{ old('party_address', $billOutward->party_address) }}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -118,49 +126,71 @@
                                             </tr>
                                         </thead>
                                         <tbody id="material-details-tbody">
+                                            @php
+                                                $oldDetails = old('details');
+                                                $existingDetails = $billOutward->details;
+                                                $detailsToShow = $oldDetails ?? $existingDetails;
+                                                $detailIndex = 0;
+                                            @endphp
+                                            @foreach($detailsToShow as $detail)
                                             <tr class="material-detail-row">
-                                                <td>1</td>
+                                                <td>{{ $loop->iteration }}</td>
                                                 <td>
-                                                    <select class="form-select form-select-solid item-type-select" name="details[0][item_type]" data-row-index="0" required>
+                                                    @php
+                                                        $isMaterial = is_object($detail) ? $detail->material_id : (isset($detail['material_id']) && !empty($detail['material_id']));
+                                                        $isWork = is_object($detail) ? $detail->work_id : (isset($detail['work_id']) && !empty($detail['work_id']));
+                                                        $itemType = $isMaterial ? 'material' : ($isWork ? 'work' : '');
+                                                        $materialId = is_object($detail) ? $detail->material_id : ($detail['material_id'] ?? '');
+                                                        $workId = is_object($detail) ? $detail->work_id : ($detail['work_id'] ?? '');
+                                                    @endphp
+                                                    <select class="form-select form-select-solid item-type-select" name="details[{{ $detailIndex }}][item_type]" data-row-index="{{ $detailIndex }}" required>
                                                         <option value="">Select Type</option>
-                                                        <option value="material">Material</option>
-                                                        <option value="work">Work</option>
+                                                        <option value="material" {{ $itemType == 'material' ? 'selected' : '' }}>Material</option>
+                                                        <option value="work" {{ $itemType == 'work' ? 'selected' : '' }}>Work</option>
                                                     </select>
-                                                    <select class="form-select form-select-solid material-select mt-2" name="details[0][material_id]" data-row-index="0" style="display: none;">
+                                                    <select class="form-select form-select-solid material-select mt-2" name="details[{{ $detailIndex }}][material_id]" data-row-index="{{ $detailIndex }}" style="display: {{ $itemType == 'material' ? 'block' : 'none' }};">
                                                         <option value="">Select from List</option>
+                                                        @foreach($currentPartyMaterials as $material)
+                                                            <option value="{{ $material->id }}" data-unit="{{ $material->unit }}" {{ $materialId == $material->id ? 'selected' : '' }}>{{ $material->name }}</option>
+                                                        @endforeach
                                                     </select>
-                                                    <select class="form-select form-select-solid work-select mt-2" name="details[0][work_id]" data-row-index="0" style="display: none;">
+                                                    <select class="form-select form-select-solid work-select mt-2" name="details[{{ $detailIndex }}][work_id]" data-row-index="{{ $detailIndex }}" style="display: {{ $itemType == 'work' ? 'block' : 'none' }};">
                                                         <option value="">Select from List</option>
+                                                        @foreach($currentPartyWorks as $work)
+                                                            <option value="{{ $work->id }}" {{ (int)$workId == (int)$work->id ? 'selected' : '' }}>{{ $work->name_of_work }}</option>
+                                                        @endforeach
                                                     </select>
                                                 </td>
                                                 <td>
-                                                    <input type="number" class="form-control form-control-solid material-quantity" name="details[0][quantity]" step="0.01" min="0" placeholder="Qty" required />
+                                                    <input type="number" class="form-control form-control-solid material-quantity" name="details[{{ $detailIndex }}][quantity]" step="0.01" min="0" value="{{ is_object($detail) ? $detail->quantity : ($detail['quantity'] ?? '') }}" placeholder="Qty" required />
                                                 </td>
                                                 <td>
-                                                    <input type="text" class="form-control form-control-solid material-unit" name="details[0][unit]" placeholder="Unit" required />
+                                                    <input type="text" class="form-control form-control-solid material-unit" name="details[{{ $detailIndex }}][unit]" value="{{ is_object($detail) ? $detail->unit : ($detail['unit'] ?? '') }}" placeholder="Unit" required />
                                                 </td>
                                                 <td>
-                                                    <input type="number" class="form-control form-control-solid material-rate" name="details[0][rate]" step="0.01" min="0" placeholder="Rate" required />
+                                                    <input type="number" class="form-control form-control-solid material-rate" name="details[{{ $detailIndex }}][rate]" step="0.01" min="0" value="{{ is_object($detail) ? $detail->rate : ($detail['rate'] ?? '') }}" placeholder="Rate" required />
                                                 </td>
                                                 <td>
-                                                    <input type="number" class="form-control form-control-solid material-amount" name="details[0][amount]" step="0.01" min="0" placeholder="Amount" readonly />
+                                                    <input type="number" class="form-control form-control-solid material-amount" name="details[{{ $detailIndex }}][amount]" step="0.01" min="0" value="{{ is_object($detail) ? $detail->amount : ($detail['amount'] ?? '') }}" placeholder="Amount" readonly />
                                                 </td>
                                                 <td>
-                                                    <select class="form-select form-select-solid material-gst" name="details[0][gst_percentage]">
-                                                        <option value="0">0%</option>
-                                                        <option value="5">5%</option>
-                                                        <option value="18">18%</option>
+                                                    <select class="form-select form-select-solid material-gst" name="details[{{ $detailIndex }}][gst_percentage]">
+                                                        <option value="0" {{ (is_object($detail) ? $detail->gst_percentage : ($detail['gst_percentage'] ?? 0)) == 0 ? 'selected' : '' }}>0%</option>
+                                                        <option value="5" {{ (is_object($detail) ? $detail->gst_percentage : ($detail['gst_percentage'] ?? 0)) == 5 ? 'selected' : '' }}>5%</option>
+                                                        <option value="18" {{ (is_object($detail) ? $detail->gst_percentage : ($detail['gst_percentage'] ?? 0)) == 18 ? 'selected' : '' }}>18%</option>
                                                     </select>
                                                 </td>
                                                 <td>
-                                                    <input type="number" class="form-control form-control-solid material-subtotal" name="details[0][sub_total]" step="0.01" min="0" placeholder="Sub Total" readonly />
+                                                    <input type="number" class="form-control form-control-solid material-subtotal" name="details[{{ $detailIndex }}][sub_total]" step="0.01" min="0" value="{{ is_object($detail) ? $detail->sub_total : ($detail['sub_total'] ?? '') }}" placeholder="Sub Total" readonly />
                                                 </td>
                                                 <td>
-                                                    <button type="button" class="btn btn-sm btn-danger remove-detail-row" style="display: none;">
+                                                    <button type="button" class="btn btn-sm btn-danger remove-detail-row">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
                                                 </td>
                                             </tr>
+                                            @php $detailIndex++; @endphp
+                                            @endforeach
                                         </tbody>
                                     </table>
                                 </div>
@@ -179,7 +209,7 @@
                                     <div class="row mb-3">
                                         <div class="col-md-6">
                                             <label class="fs-6 fw-bold form-label">Add Bhadu/Labour</label>
-                                            <input type="number" class="form-control form-control-solid" name="add_bhadu_labour" id="add_bhadu_labour" step="0.01" min="0" value="{{ old('add_bhadu_labour', 0) }}" placeholder="0.00" />
+                                            <input type="number" class="form-control form-control-solid" name="add_bhadu_labour" id="add_bhadu_labour" step="0.01" min="0" value="{{ old('add_bhadu_labour', $billOutward->add_bhadu_labour) }}" placeholder="0.00" />
                                         </div>
                                         <div class="col-md-6">
                                             <label class="fs-6 fw-bold form-label">(B)</label>
@@ -188,7 +218,7 @@
                                     <div class="row mb-3">
                                         <div class="col-md-6">
                                             <label class="fs-6 fw-bold form-label">Total Bill Amt.</label>
-                                            <input type="number" class="form-control form-control-solid" name="total_bill_amount" id="total_bill_amount" step="0.01" min="0" value="{{ old('total_bill_amount', 0) }}" placeholder="A+B" readonly />
+                                            <input type="number" class="form-control form-control-solid" name="total_bill_amount" id="total_bill_amount" step="0.01" min="0" value="{{ old('total_bill_amount', $billOutward->total_bill_amount) }}" placeholder="A+B" readonly />
                                         </div>
                                         <div class="col-md-6">
                                             <label class="fs-6 fw-bold form-label">A+B</label>
@@ -200,7 +230,7 @@
                             <!-- Remarks -->
                             <div class="mb-7">
                                 <label class="fs-6 fw-bold form-label mt-3">Remarks</label>
-                                <textarea class="form-control form-control-solid" name="remarks" rows="3" placeholder="Enter Remarks">{{ old('remarks') }}</textarea>
+                                <textarea class="form-control form-control-solid" name="remarks" rows="3" placeholder="Enter Remarks">{{ old('remarks', $billOutward->remarks) }}</textarea>
                                 @error('remarks')
                                     <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                 @enderror
@@ -215,64 +245,64 @@
                                             <span class="required">Status</span>
                                         </label>
                                         <select class="form-select form-select-solid" name="payment_status" id="payment_status" required>
-                                            <option value="Pending" {{ old('payment_status', 'Pending') == 'Pending' ? 'selected' : '' }}>Pending</option>
-                                            <option value="Received" {{ old('payment_status') == 'Received' ? 'selected' : '' }}>Received</option>
+                                            <option value="Pending" {{ old('payment_status', $billOutward->payment_status) == 'Pending' ? 'selected' : '' }}>Pending</option>
+                                            <option value="Received" {{ old('payment_status', $billOutward->payment_status) == 'Received' ? 'selected' : '' }}>Received</option>
                                         </select>
                                         @error('payment_status')
                                             <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="row mb-7" id="payment-details-section" style="display: none;">
+                                <div class="row mb-7" id="payment-details-section" style="display: {{ old('payment_status', $billOutward->payment_status) == 'Received' ? 'block' : 'none' }};">
                                     <div class="col-12 mb-3">
                                         <label class="fs-6 fw-bold form-label">If Received - Fill Deduction Details</label>
                                         <p class="text-muted small">S.D., TDS, GST, L.C., T.C. % of Bill Amt.</p>
                                     </div>
                                     <div class="col-md-3">
                                         <label class="fs-6 fw-bold form-label mt-3">S.D. %</label>
-                                        <input type="number" class="form-control form-control-solid deduction-percentage" name="sd_percentage" id="sd_percentage" step="0.01" min="0" max="100" value="{{ old('sd_percentage', 0) }}" placeholder="0.00" />
+                                        <input type="number" class="form-control form-control-solid deduction-percentage" name="sd_percentage" id="sd_percentage" step="0.01" min="0" max="100" value="{{ old('sd_percentage', $billOutward->sd_percentage ?? 0) }}" placeholder="0.00" />
                                     </div>
                                     <div class="col-md-3">
                                         <label class="fs-6 fw-bold form-label mt-3">TDS %</label>
-                                        <input type="number" class="form-control form-control-solid deduction-percentage" name="tds_percentage" id="tds_percentage" step="0.01" min="0" max="100" value="{{ old('tds_percentage', 0) }}" placeholder="0.00" />
+                                        <input type="number" class="form-control form-control-solid deduction-percentage" name="tds_percentage" id="tds_percentage" step="0.01" min="0" max="100" value="{{ old('tds_percentage', $billOutward->tds_percentage ?? 0) }}" placeholder="0.00" />
                                     </div>
                                     <div class="col-md-3">
                                         <label class="fs-6 fw-bold form-label mt-3">GST %</label>
-                                        <input type="number" class="form-control form-control-solid deduction-percentage" name="gst_deduction_percentage" id="gst_deduction_percentage" step="0.01" min="0" max="100" value="{{ old('gst_deduction_percentage', 0) }}" placeholder="0.00" />
+                                        <input type="number" class="form-control form-control-solid deduction-percentage" name="gst_deduction_percentage" id="gst_deduction_percentage" step="0.01" min="0" max="100" value="{{ old('gst_deduction_percentage', $billOutward->gst_deduction_percentage ?? 0) }}" placeholder="0.00" />
                                     </div>
                                     <div class="col-md-3">
                                         <label class="fs-6 fw-bold form-label mt-3">L.C. %</label>
-                                        <input type="number" class="form-control form-control-solid deduction-percentage" name="lc_percentage" id="lc_percentage" step="0.01" min="0" max="100" value="{{ old('lc_percentage', 0) }}" placeholder="0.00" />
+                                        <input type="number" class="form-control form-control-solid deduction-percentage" name="lc_percentage" id="lc_percentage" step="0.01" min="0" max="100" value="{{ old('lc_percentage', $billOutward->lc_percentage ?? 0) }}" placeholder="0.00" />
                                     </div>
                                     <div class="col-md-3">
                                         <label class="fs-6 fw-bold form-label mt-3">T.C. %</label>
-                                        <input type="number" class="form-control form-control-solid deduction-percentage" name="tc_percentage" id="tc_percentage" step="0.01" min="0" max="100" value="{{ old('tc_percentage', 0) }}" placeholder="0.00" />
+                                        <input type="number" class="form-control form-control-solid deduction-percentage" name="tc_percentage" id="tc_percentage" step="0.01" min="0" max="100" value="{{ old('tc_percentage', $billOutward->tc_percentage ?? 0) }}" placeholder="0.00" />
                                     </div>
                                     <div class="col-md-3">
                                         <label class="fs-6 fw-bold form-label mt-3">Total Deduction</label>
-                                        <input type="number" class="form-control form-control-solid" name="total_deduction" id="total_deduction" step="0.01" min="0" value="{{ old('total_deduction', 0) }}" placeholder="0.00" readonly />
+                                        <input type="number" class="form-control form-control-solid" name="total_deduction" id="total_deduction" step="0.01" min="0" value="{{ old('total_deduction', $billOutward->total_deduction ?? 0) }}" placeholder="0.00" readonly />
                                     </div>
                                     <div class="col-md-3">
                                         <label class="fs-6 fw-bold form-label mt-3">Net Received Amt.</label>
-                                        <input type="number" class="form-control form-control-solid" name="net_received_amount" id="net_received_amount" step="0.01" min="0" value="{{ old('net_received_amount', 0) }}" placeholder="0.00" readonly />
+                                        <input type="number" class="form-control form-control-solid" name="net_received_amount" id="net_received_amount" step="0.01" min="0" value="{{ old('net_received_amount', $billOutward->net_received_amount ?? 0) }}" placeholder="0.00" readonly />
                                     </div>
                                     <div class="col-md-3">
                                         <label class="fs-6 fw-bold form-label mt-3">Ref. No.</label>
-                                        <input type="text" class="form-control form-control-solid" name="payment_ref_number" id="payment_ref_number" value="{{ old('payment_ref_number') }}" placeholder="Enter Reference Number" />
+                                        <input type="text" class="form-control form-control-solid" name="payment_ref_number" id="payment_ref_number" value="{{ old('payment_ref_number', $billOutward->payment_ref_number) }}" placeholder="Enter Reference Number" />
                                         @error('payment_ref_number')
                                             <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                         @enderror
                                     </div>
                                     <div class="col-md-3">
                                         <label class="fs-6 fw-bold form-label mt-3">Date</label>
-                                        <input type="date" class="form-control form-control-solid" name="payment_date" id="payment_date" value="{{ old('payment_date') }}" />
+                                        <input type="date" class="form-control form-control-solid" name="payment_date" id="payment_date" value="{{ old('payment_date', $billOutward->payment_date ? $billOutward->payment_date->format('Y-m-d') : '') }}" />
                                         @error('payment_date')
                                             <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                         @enderror
                                     </div>
                                     <div class="col-md-12">
                                         <label class="fs-6 fw-bold form-label mt-3">Remarks</label>
-                                        <textarea class="form-control form-control-solid" name="payment_remarks" id="payment_remarks" rows="2" placeholder="Enter Payment Remarks">{{ old('payment_remarks') }}</textarea>
+                                        <textarea class="form-control form-control-solid" name="payment_remarks" id="payment_remarks" rows="2" placeholder="Enter Payment Remarks">{{ old('payment_remarks', $billOutward->payment_remarks) }}</textarea>
                                         @error('payment_remarks')
                                             <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                         @enderror
@@ -284,7 +314,7 @@
                             <div class="d-flex justify-content-end">
                                 <a href="{{route('bill-outwards.index')}}" data-kt-bill-outward-form="cancel" class="btn btn-light me-3">Cancel</a>
                                 <button type="submit" data-kt-bill-outward-form="submit" class="btn btn-primary">
-                                    <span class="indicator-label">Save</span>
+                                    <span class="indicator-label">Update</span>
                                     <span class="indicator-progress">Please wait...
                                         <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
                                     </span>
@@ -302,7 +332,8 @@
 @section('custom_scripts')
 <script>
     $(document).ready(function() {
-        let detailRowIndex = 1;
+        let detailRowIndex = {{ $detailIndex }};
+        var currentPartyId = {{ $billOutward->party_id ?? 'null' }};
 
         // Auto-fill Firm GST
         $('#firm_id').on('change', function() {
@@ -360,7 +391,19 @@
         function loadWorksByParty(partyId) {
             if (!partyId) {
                 $('.work-select').each(function() {
+                    var currentValue = $(this).val();
                     $(this).html('<option value="">Select from List</option>');
+                    if (currentValue) {
+                        // Try to preserve the current value by finding it in existing options
+                        var existingOption = $(this).data('original-options');
+                        if (existingOption && existingOption.length > 0) {
+                            $.each(existingOption, function(key, work) {
+                                if (work.id == currentValue) {
+                                    $(this).append('<option value="' + work.id + '" selected>' + work.name_of_work + '</option>');
+                                }
+                            }.bind(this));
+                        }
+                    }
                 });
                 return;
             }
@@ -376,9 +419,21 @@
                         
                         if (data && data.length > 0) {
                             $.each(data, function(key, work) {
-                                var selected = (currentValue == work.id) ? ' selected' : '';
+                                var selected = '';
+                                if (currentValue) {
+                                    // Compare as integers to avoid type mismatch
+                                    if (parseInt(currentValue) == parseInt(work.id)) {
+                                        selected = ' selected';
+                                    }
+                                }
                                 $(this).append('<option value="' + work.id + '"' + selected + '>' + work.name_of_work + '</option>');
                             }.bind(this));
+                        }
+                        
+                        // If currentValue exists but wasn't found in the new options, try to preserve it
+                        if (currentValue && $(this).find('option[value="' + currentValue + '"]').length === 0) {
+                            // The work might not be in party locations, but we should still show it
+                            // This is handled by the controller including existing works
                         }
                     });
                 },
@@ -387,6 +442,10 @@
                 }
             });
         }
+
+        // Don't reload works on page load - they're already populated from the controller
+        // Only reload when party changes
+        // The controller already includes existing works in $currentPartyWorks
 
         // Show/hide payment details based on status
         $('#payment_status').on('change', function() {
@@ -398,11 +457,6 @@
                 $('#payment_ref_number, #payment_date').prop('required', false);
             }
         });
-
-        // Trigger on page load if already selected
-        if ($('#payment_status').val() === 'Received') {
-            $('#payment-details-section').show();
-        }
 
         // Handle item type selection (Material/Work)
         $(document).on('change', '.item-type-select', function() {
@@ -616,7 +670,16 @@
             });
         }
 
-        // Initialize
+        // Initialize calculations for existing rows
+        $('.material-detail-row').each(function() {
+            var quantity = parseFloat($(this).find('.material-quantity').val()) || 0;
+            var rate = parseFloat($(this).find('.material-rate').val()) || 0;
+            var amount = quantity * rate;
+            $(this).find('.material-amount').val(amount.toFixed(2));
+            calculateSubTotal($(this));
+        });
+        
+        calculateTotal();
         updateRemoveButtons();
         
         // Trigger firm/party change if already selected

@@ -31,7 +31,6 @@ class LocationStoreRequest extends FormRequest
             'division_id' => 'required|exists:divisions,id',
             'sub_division_id' => 'nullable|exists:sub_divisions,id',
             'name' => 'required|string|max:255',
-            'location' => 'required|string',
             'remark' => 'nullable|string',
         ];
     }

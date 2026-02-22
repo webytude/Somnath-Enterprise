@@ -28,9 +28,8 @@ class SiteMaterialRequirementController extends Controller
     public function create()
     {
         $locations = Location::orderBy('name')->get();
-        $works = Work::orderBy('name_of_work')->get();
         $materialCategories = MaterialCategory::with('materialLists')->orderBy('name')->get();
-        return view('admin.site-material-requirement.create', compact('locations', 'works', 'materialCategories'));
+        return view('admin.site-material-requirement.create', compact('locations', 'materialCategories'));
     }
 
     /**
@@ -79,10 +78,9 @@ class SiteMaterialRequirementController extends Controller
     public function edit(SiteMaterialRequirement $siteMaterialRequirement)
     {
         $locations = Location::orderBy('name')->get();
-        $works = Work::orderBy('name_of_work')->get();
         $materialCategories = MaterialCategory::with('materialLists')->orderBy('name')->get();
         $siteMaterialRequirement->load('details.material');
-        return view('admin.site-material-requirement.edit', compact('siteMaterialRequirement', 'locations', 'works', 'materialCategories'));
+        return view('admin.site-material-requirement.edit', compact('siteMaterialRequirement', 'locations', 'materialCategories'));
     }
 
     /**
@@ -130,6 +128,19 @@ class SiteMaterialRequirementController extends Controller
             ->get(['id', 'name', 'unit']);
         
         return response()->json($materials);
+    }
+
+    /**
+     * Get works by location ID
+     */
+    public function getWorksByLocation(Request $request)
+    {
+        $locationId = $request->get('location_id');
+        $works = Work::where('location_id', $locationId)
+            ->orderBy('name_of_work')
+            ->get(['id', 'name_of_work']);
+        
+        return response()->json($works);
     }
 
     /**

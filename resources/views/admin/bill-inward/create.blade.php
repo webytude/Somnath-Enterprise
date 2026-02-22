@@ -119,9 +119,6 @@
                                                 <td>
                                                     <select class="form-select form-select-solid material-select" name="details[0][material_id]" required>
                                                         <option value="">Select from List</option>
-                                                        @foreach($materials as $material)
-                                                            <option value="{{ $material->id }}" data-unit="{{ $material->unit }}">{{ $material->name }}</option>
-                                                        @endforeach
                                                     </select>
                                                 </td>
                                                 <td>
@@ -263,12 +260,52 @@
     $(document).ready(function() {
         let detailRowIndex = 1;
 
-        // Auto-fill Party GST and PAN
+        // Handle party change - auto-fill GST/PAN and load materials
         $('#party_id').on('change', function() {
+            var partyId = $(this).val();
             var selectedOption = $(this).find('option:selected');
+            
+            // Auto-fill Party GST and PAN
             $('#party_gst').val(selectedOption.data('gst') || '');
             $('#party_pan').val(selectedOption.data('pan') || '');
+            
+            // Load materials for this party
+            loadMaterialsByParty(partyId);
         });
+
+        // Function to load materials by party
+        function loadMaterialsByParty(partyId) {
+            if (!partyId) {
+                // Clear all material selects
+                $('.material-select').each(function() {
+                    $(this).html('<option value="">Select from List</option>');
+                });
+                return;
+            }
+
+            $.ajax({
+                url: '{{ route("bill-inwards.getMaterialsByParty") }}',
+                type: 'GET',
+                data: { party_id: partyId },
+                success: function(data) {
+                    // Update all material select dropdowns
+                    $('.material-select').each(function() {
+                        var currentValue = $(this).val();
+                        $(this).html('<option value="">Select from List</option>');
+                        
+                        if (data && data.length > 0) {
+                            $.each(data, function(key, material) {
+                                var selected = (currentValue == material.id) ? ' selected' : '';
+                                $(this).append('<option value="' + material.id + '" data-unit="' + material.unit + '"' + selected + '>' + material.name + '</option>');
+                            }.bind(this));
+                        }
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching materials:', error);
+                }
+            });
+        }
 
         // Show/hide payment details based on status
         $('#payment_status').on('change', function() {
@@ -335,15 +372,32 @@
 
         // Add new material row
         $('#add-detail-row').on('click', function() {
+            var currentPartyId = $('#party_id').val();
+            var materialOptions = '<option value="">Select from List</option>';
+            
+            // If party is selected, load materials via AJAX
+            if (currentPartyId) {
+                $.ajax({
+                    url: '{{ route("bill-inwards.getMaterialsByParty") }}',
+                    type: 'GET',
+                    data: { party_id: currentPartyId },
+                    async: false,
+                    success: function(data) {
+                        if (data && data.length > 0) {
+                            $.each(data, function(key, material) {
+                                materialOptions += '<option value="' + material.id + '" data-unit="' + material.unit + '">' + material.name + '</option>';
+                            });
+                        }
+                    }
+                });
+            }
+            
             var newRow = `
                 <tr class="material-detail-row">
                     <td>${detailRowIndex + 1}</td>
                     <td>
                         <select class="form-select form-select-solid material-select" name="details[${detailRowIndex}][material_id]" required>
-                            <option value="">Select from List</option>
-                            @foreach($materials as $material)
-                                <option value="{{ $material->id }}" data-unit="{{ $material->unit }}">{{ $material->name }}</option>
-                            @endforeach
+                            ${materialOptions}
                         </select>
                     </td>
                     <td>
