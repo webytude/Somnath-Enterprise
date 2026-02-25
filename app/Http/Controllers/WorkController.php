@@ -52,7 +52,9 @@ class WorkController extends Controller
             'estimate_cost' => $request->estimate_cost,
             'equal_above_below_on_estimate' => $request->equal_above_below_on_estimate,
             'final_amt_of_work' => $request->final_amt_of_work,
+            // add_18_percent_gst now stores GST %
             'add_18_percent_gst' => $request->add_18_percent_gst,
+            'gst_amount' => $request->gst_amount,
             'our_final_work_amt' => $request->our_final_work_amt,
             'time_limit_years_months' => $request->time_limit_years_months,
             'work_order_no' => $request->work_order_no,
@@ -116,7 +118,8 @@ class WorkController extends Controller
             'estimate_cost' => $request->estimate_cost,
             'equal_above_below_on_estimate' => $request->equal_above_below_on_estimate,
             'final_amt_of_work' => $request->final_amt_of_work,
-            'add_18_percent_gst' => $request->add_18_percent_gst,
+            'add_18_percent_gst' => $request->add_18_percent_gst, // GST %
+            'gst_amount' => $request->gst_amount,
             'our_final_work_amt' => $request->our_final_work_amt,
             'time_limit_years_months' => $request->time_limit_years_months,
             'work_order_no' => $request->work_order_no,

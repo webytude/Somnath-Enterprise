@@ -22,7 +22,8 @@ class Work extends Model
         'estimate_cost',
         'equal_above_below_on_estimate',
         'final_amt_of_work',
-        'add_18_percent_gst',
+        'add_18_percent_gst', // now used as GST percentage
+        'gst_amount',         // calculated GST amount
         'our_final_work_amt',
         'time_limit_years_months',
         'work_order_no',
@@ -38,7 +39,8 @@ class Work extends Model
     protected $casts = [
         'estimate_cost' => 'decimal:2',
         'final_amt_of_work' => 'decimal:2',
-        'add_18_percent_gst' => 'decimal:2',
+        'add_18_percent_gst' => 'decimal:2', // GST %
+        'gst_amount' => 'decimal:2',
         'our_final_work_amt' => 'decimal:2',
         'wo_date' => 'date',
         'end_date_of_work' => 'date',

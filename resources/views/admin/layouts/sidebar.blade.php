@@ -252,18 +252,6 @@
                     @if(!auth()->check() || !auth()->user()->isStaff())
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
                         <div class="menu-item">
-                            <a class="menu-link {{ request()->routeIs('payment-slabs.*') ? 'active' : '' }}" href="{{ route('payment-slabs.index') }}">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title">Payment Slab</span>
-                            </a>
-                        </div>
-                    </div>
-                    @endif
-                    @if(!auth()->check() || !auth()->user()->isStaff())
-                    <div class="menu-sub menu-sub-accordion menu-active-bg">
-                        <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('parties.*') ? 'active' : '' }}" href="{{ route('parties.index') }}">
                                 <span class="menu-bullet">
                                     <span class="bullet bullet-dot"></span>
@@ -282,17 +270,6 @@
                             </a>
                         </div>
                     </div>
-                    <div class="menu-sub menu-sub-accordion menu-active-bg">
-                        <div class="menu-item">
-                            <a class="menu-link {{ request()->routeIs('gst-bill-lists.*') ? 'active' : '' }}" href="{{ route('gst-bill-lists.index') }}">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title">GST Bill List</span>
-                            </a>
-                        </div>
-                    </div>
-                   
                     @endif
                 </div>
                 <div data-kt-menu-trigger="click" class="menu-item {{ request()->routeIs(['bill-inwards.*', 'bill-outwards.*']) ? 'here show' : '' }} menu-accordion">

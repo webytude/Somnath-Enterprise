@@ -75,7 +75,6 @@ Route::middleware(['auth', 'staff.permission'])->group(function () {
     // Daily Expense routes
     Route::resource('daily-expense', DailyExpenseController::class);
 
-    Route::resource('payment-slabs', PaymentSlabController::class);
 
     Route::resource('parties', PartyController::class);
 
@@ -87,7 +86,6 @@ Route::middleware(['auth', 'staff.permission'])->group(function () {
 
     Route::resource('tool-lists', ToolListController::class);
 
-    Route::resource('gst-bill-lists', GstBillListController::class);
 
     Route::resource('scrap-materials', ScrapMaterialController::class);
 

@@ -141,14 +141,14 @@
                             </div>
 
                             <div class="row mb-7">
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="fs-6 fw-bold form-label mt-3">Estimate Cost</label>
                                     <input type="number" step="0.01" class="form-control form-control-solid" name="estimate_cost" id="estimate_cost" value="{{ old('estimate_cost') }}" placeholder="Enter Estimate Cost" />
                                     @error('estimate_cost')
                                         <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="fs-6 fw-bold form-label mt-3">Equal(0)/Above(+)/Below(-) on Estimate</label>
                                     <select class="form-select form-select-solid" name="equal_above_below_on_estimate" id="equal_above_below_on_estimate">
                                         <option value="">Select...</option>
@@ -160,7 +160,11 @@
                                         <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3" id="percentage_on_estimate_wrapper" style="display: none;">
+                                    <label class="fs-6 fw-bold form-label mt-3">Percentage on Estimate (%)</label>
+                                    <input type="number" step="0.01" class="form-control form-control-solid" id="percentage_on_estimate" placeholder="Enter %" />
+                                </div>
+                                <div class="col-md-3">
                                     <label class="fs-6 fw-bold form-label mt-3">(A) Final Amt. of Work</label>
                                     <input type="number" step="0.01" class="form-control form-control-solid" name="final_amt_of_work" id="final_amt_of_work" value="{{ old('final_amt_of_work') }}" placeholder="Enter Final Amount" />
                                     @error('final_amt_of_work')
@@ -170,21 +174,28 @@
                             </div>
 
                             <div class="row mb-7">
-                                <div class="col-md-4">
-                                    <label class="fs-6 fw-bold form-label mt-3">Add 18% GST on (A)</label>
-                                    <input type="number" step="0.01" class="form-control form-control-solid" name="add_18_percent_gst" id="add_18_percent_gst" value="{{ old('add_18_percent_gst') }}" placeholder="Enter 18% GST" />
+                                <div class="col-md-3">
+                                    <label class="fs-6 fw-bold form-label mt-3">GST % on (A)</label>
+                                    <input type="number" step="0.01" class="form-control form-control-solid" name="add_18_percent_gst" id="add_18_percent_gst" value="{{ old('add_18_percent_gst', 18) }}" placeholder="Enter GST %" />
                                     @error('add_18_percent_gst')
                                         <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
+                                    <label class="fs-6 fw-bold form-label mt-3">GST Amount</label>
+                                    <input type="number" step="0.01" class="form-control form-control-solid" name="gst_amount" id="gst_amount" value="{{ old('gst_amount') }}" placeholder="Auto calculated" readonly />
+                                    @error('gst_amount')
+                                        <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-3">
                                     <label class="fs-6 fw-bold form-label mt-3">Our Final Work Amt.</label>
-                                    <input type="number" step="0.01" class="form-control form-control-solid" name="our_final_work_amt" id="our_final_work_amt" value="{{ old('our_final_work_amt') }}" placeholder="Enter Our Final Work Amount" />
+                                    <input type="number" step="0.01" class="form-control form-control-solid" name="our_final_work_amt" id="our_final_work_amt" value="{{ old('our_final_work_amt') }}" placeholder="Auto calculated" readonly />
                                     @error('our_final_work_amt')
                                         <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="fs-6 fw-bold form-label mt-3">Time Limit(Y-M)</label>
                                     <input type="text" class="form-control form-control-solid" name="time_limit_years_months" value="{{ old('time_limit_years_months') }}" placeholder="e.g., 2-6 (2 years 6 months)" />
                                     @error('time_limit_years_months')
@@ -414,6 +425,68 @@
         if (!$('#if_extend_date').is(':checked')) {
             $('#extended_date').closest('.col-md-4').hide();
         }
+
+        // ============================
+        // Financial Calculations (Work)
+        // ============================
+
+        function togglePercentageField() {
+            var type = $('#equal_above_below_on_estimate').val();
+            if (type === '+' || type === '-') {
+                $('#percentage_on_estimate_wrapper').show();
+            } else {
+                $('#percentage_on_estimate_wrapper').hide();
+                $('#percentage_on_estimate').val('');
+            }
+        }
+
+        function calculateFinalAndGst() {
+            var estimate = parseFloat($('#estimate_cost').val()) || 0;
+            var type = $('#equal_above_below_on_estimate').val();
+            var percent = parseFloat($('#percentage_on_estimate').val()) || 0;
+            var gstPercent = parseFloat($('#add_18_percent_gst').val()) || 0;
+            var finalAmount = 0;
+
+            if (estimate === 0 || !type || type === '0') {
+                // Equal(0) or no type selected → Final = Estimate
+                finalAmount = estimate;
+            } else if (type === '+') {
+                // Above(+) → Estimate + (% of estimate)
+                finalAmount = estimate + (estimate * percent / 100);
+            } else if (type === '-') {
+                // Below(-) → Estimate - (% of estimate)
+                finalAmount = estimate - (estimate * percent / 100);
+            }
+
+            $('#final_amt_of_work').val(finalAmount.toFixed(2));
+
+            // GST amount on (A) based on gstPercent
+            var gstAmount = finalAmount * (gstPercent / 100);
+            $('#gst_amount').val(gstAmount.toFixed(2));
+
+            // Our final work amount = Final Amt. of Work + GST Amount
+            var totalWithGst = finalAmount + gstAmount;
+            $('#our_final_work_amt').val(totalWithGst.toFixed(2));
+        }
+
+        // When estimate / type / percentage / GST % changes
+        $('#estimate_cost, #equal_above_below_on_estimate, #percentage_on_estimate, #add_18_percent_gst').on('input change', function () {
+            togglePercentageField();
+            calculateFinalAndGst();
+        });
+
+        // If user manually changes Final Amt. of Work, recompute GST Amount + final work amt
+        $('#final_amt_of_work').on('input', function () {
+            var finalAmount = parseFloat($(this).val()) || 0;
+            var gstPercent = parseFloat($('#add_18_percent_gst').val()) || 0;
+            var gstAmount = finalAmount * (gstPercent / 100);
+            $('#gst_amount').val(gstAmount.toFixed(2));
+            $('#our_final_work_amt').val((finalAmount + gstAmount).toFixed(2));
+        });
+
+        // Initial state
+        togglePercentageField();
+        calculateFinalAndGst();
     });
 </script>
 @endsection
