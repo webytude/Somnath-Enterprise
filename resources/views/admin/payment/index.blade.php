@@ -28,6 +28,7 @@
                                         <th>Recipient</th>
                                         <th>Amount Payable</th>
                                         <th>Paid Amount</th>
+                                        <th>Remaining Amount</th>
                                         <th>Ref. No.</th>
                                         <th>Payment Date</th>
                                         <th>Action</th>
@@ -55,6 +56,14 @@
                                         </td>
                                         <td>₹ {{ number_format($payment->amount_payable, 2) }}</td>
                                         <td>₹ {{ number_format($payment->paid_amount, 2) }}</td>
+                                        <td>
+                                            @php
+                                                $remainingAmount = $payment->amount_payable - $payment->paid_amount;
+                                            @endphp
+                                            <span class="badge badge-{{ $remainingAmount > 0 ? 'warning' : 'success' }}">
+                                                ₹ {{ number_format($remainingAmount, 2) }}
+                                            </span>
+                                        </td>
                                         <td>{{ $payment->ref_number ?? 'N/A' }}</td>
                                         <td>{{ $payment->payment_date ? $payment->payment_date->format('d-m-Y') : 'N/A' }}</td>
                                         <td>
@@ -77,7 +86,7 @@
                                     </tr>
                                     @empty
                                     <tr>
-                                        <td colspan="8" class="text-center">No payments found.</td>
+                                        <td colspan="9" class="text-center">No payments found.</td>
                                     </tr>
                                     @endforelse
                                 </tbody>

@@ -84,19 +84,28 @@
                                 <div class="mb-7">
                                     <h4 class="text-success mb-3">PAYMENT INFORMATION</h4>
                                     <div class="row mb-7">
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <label class="fs-6 fw-bold form-label mt-3">Reason of Payment</label>
                                             <input type="text" class="form-control form-control-solid" name="reason_of_payment" id="reason_of_payment" value="{{ old('reason_of_payment', isset($payment) ? $payment->reason_of_payment : '') }}" placeholder="Enter Reason" />
                                             @error('reason_of_payment')
                                                 <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                             @enderror
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <label class="fs-6 fw-bold form-label mt-3">
-                                                <span class="required">Amt.</span>
+                                                <span class="required">Amt. (Payable)</span>
                                             </label>
                                             <input type="number" class="form-control form-control-solid" name="amount_payable" id="amount_payable_staff" step="0.01" min="0" value="{{ old('amount_payable', isset($payment) ? $payment->amount_payable : 0) }}" placeholder="0.00" required />
                                             @error('amount_payable')
+                                                <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="fs-6 fw-bold form-label mt-3">
+                                                <span class="required">Paid Amt.</span>
+                                            </label>
+                                            <input type="number" class="form-control form-control-solid" name="paid_amount" id="paid_amount_staff" step="0.01" min="0" value="{{ old('paid_amount', isset($payment) ? $payment->paid_amount : 0) }}" placeholder="0.00" required />
+                                            @error('paid_amount')
                                                 <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                             @enderror
                                         </div>
@@ -331,9 +340,33 @@
 @section('custom_scripts')
 <script>
     $(document).ready(function() {
+        // Function to disable all fields in a section
+        function disableSectionFields(sectionId) {
+            $(sectionId + ' input, ' + sectionId + ' select, ' + sectionId + ' textarea').each(function() {
+                if ($(this).attr('name')) {
+                    $(this).prop('disabled', true);
+                }
+            });
+        }
+        
+        // Function to enable all fields in a section
+        function enableSectionFields(sectionId) {
+            $(sectionId + ' input, ' + sectionId + ' select, ' + sectionId + ' textarea').each(function() {
+                if ($(this).attr('name')) {
+                    $(this).prop('disabled', false);
+                }
+            });
+        }
+        
         // Handle payment type change
         $('#payment_type').on('change', function() {
             var paymentType = $(this).val();
+            
+            // Disable all sections first
+            disableSectionFields('#staff-payment-section');
+            disableSectionFields('#party-payment-section');
+            disableSectionFields('#vendor-payment-section');
+            disableSectionFields('#common-payment-section');
             
             // Hide all sections
             $('#staff-payment-section').hide();
@@ -341,20 +374,33 @@
             $('#vendor-payment-section').hide();
             $('#common-payment-section').hide();
             
-            // Show relevant section
+            // Show and enable relevant section
             if (paymentType === 'staff') {
                 $('#staff-payment-section').show();
                 $('#common-payment-section').show();
+                enableSectionFields('#staff-payment-section');
+                enableSectionFields('#common-payment-section');
             } else if (paymentType === 'party') {
                 $('#party-payment-section').show();
+                enableSectionFields('#party-payment-section');
             } else if (paymentType === 'vendor') {
                 $('#vendor-payment-section').show();
+                enableSectionFields('#vendor-payment-section');
             }
         });
 
         // Trigger on page load if already selected
         if ($('#payment_type').val()) {
-            $('#payment_type').trigger('change');
+            // Small delay to ensure DOM is ready
+            setTimeout(function() {
+                $('#payment_type').trigger('change');
+            }, 100);
+        } else {
+            // On initial load, disable all sections if no payment type is selected
+            disableSectionFields('#staff-payment-section');
+            disableSectionFields('#party-payment-section');
+            disableSectionFields('#vendor-payment-section');
+            disableSectionFields('#common-payment-section');
         }
         
         // Initialize vendor payment calculation if editing
@@ -366,7 +412,7 @@
         $('#staff_id').on('change', function() {
             var staffId = $(this).val();
             if (!staffId) {
-                $('#salary_payable, #expense_payable, #total_payable').val('0.00');
+                $('#salary_payable, #expense_payable, #total_payable, #amount_payable_staff, #paid_amount_staff').val('0.00');
                 return;
             }
 
@@ -378,8 +424,14 @@
                     $('#salary_payable').val(data.salary_payable);
                     $('#expense_payable').val(data.expense_payable);
                     $('#total_payable').val(data.total_payable);
-                    // Auto-fill amount payable
-                    $('#amount_payable_staff').val(data.total_payable);
+                    // Auto-fill amount payable - ensure it's a number, not string
+                    var totalPayable = parseFloat(data.total_payable) || 0;
+                    $('#amount_payable_staff').val(totalPayable.toFixed(2));
+                    // Auto-fill paid amount same as payable (user can change it)
+                    $('#paid_amount_staff').val(totalPayable.toFixed(2));
+                    
+                    // Trigger input event to ensure form recognizes the change
+                    $('#amount_payable_staff, #paid_amount_staff').trigger('input');
                 },
                 error: function(xhr, status, error) {
                     console.error('Error fetching staff payable:', error);
@@ -454,10 +506,52 @@
             calculateVendorPayment();
         });
 
+        // Staff payment - Sync paid amount with amount payable (user can change it)
+        $('#amount_payable_staff').on('input', function() {
+            var amountPayable = parseFloat($(this).val()) || 0;
+            // Only auto-fill if paid_amount is empty or same as previous payable
+            var currentPaidAmount = parseFloat($('#paid_amount_staff').val()) || 0;
+            var previousPayable = parseFloat($('#amount_payable_staff').data('previous-value')) || 0;
+            if (currentPaidAmount === previousPayable || currentPaidAmount === 0) {
+                $('#paid_amount_staff').val(amountPayable.toFixed(2));
+            }
+            $('#amount_payable_staff').data('previous-value', amountPayable);
+        });
+
         // Party payment - Sync paid amount with amount payable
         $('#amount_payable_party').on('input', function() {
             var amountPayable = parseFloat($(this).val()) || 0;
             $('#paid_amount_party').val(amountPayable.toFixed(2));
+        });
+        
+        // Form submit handler - ensure disabled fields are removed from submission
+        $('#kt_payment_form').on('submit', function(e) {
+            var paymentType = $('#payment_type').val();
+            
+            // Debug: Log values before submission
+            if (paymentType === 'staff') {
+                console.log('Staff Payment - Amount Payable:', $('#amount_payable_staff').val());
+                console.log('Staff Payment - Paid Amount:', $('#paid_amount_staff').val());
+                
+                // Ensure values are set
+                if (!$('#amount_payable_staff').val() || $('#amount_payable_staff').val() == '0') {
+                    var totalPayable = $('#total_payable').val();
+                    if (totalPayable) {
+                        $('#amount_payable_staff').val(totalPayable);
+                    }
+                }
+                if (!$('#paid_amount_staff').val() || $('#paid_amount_staff').val() == '0') {
+                    var amountPayable = $('#amount_payable_staff').val();
+                    if (amountPayable) {
+                        $('#paid_amount_staff').val(amountPayable);
+                    }
+                }
+            }
+            
+            // Remove disabled fields from form submission (they won't be submitted anyway, but this is cleaner)
+            $(this).find('input:disabled, select:disabled, textarea:disabled').each(function() {
+                $(this).prop('disabled', false).remove();
+            });
         });
     });
 </script>
