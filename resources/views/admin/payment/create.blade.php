@@ -376,14 +376,19 @@
             
             // Show and enable relevant section
             if (paymentType === 'staff') {
+                // Staff + common (date, ref no, remarks)
                 $('#staff-payment-section').show();
                 $('#common-payment-section').show();
                 enableSectionFields('#staff-payment-section');
                 enableSectionFields('#common-payment-section');
             } else if (paymentType === 'party') {
+                // Party + common (party payments को भी date चाहिए)
                 $('#party-payment-section').show();
+                $('#common-payment-section').show();
                 enableSectionFields('#party-payment-section');
+                enableSectionFields('#common-payment-section');
             } else if (paymentType === 'vendor') {
+                // Vendor section only (vendor के लिए अलग layout)
                 $('#vendor-payment-section').show();
                 enableSectionFields('#vendor-payment-section');
             }
