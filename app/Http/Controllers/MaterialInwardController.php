@@ -215,6 +215,26 @@ class MaterialInwardController extends Controller
     }
 
     /**
+     * Get parties by location ID
+     */
+    public function getPartiesByLocation(Request $request)
+    {
+        $locationId = $request->get('location_id');
+        
+        if ($locationId) {
+            $parties = Party::whereHas('locations', function($query) use ($locationId) {
+                $query->where('locations.id', $locationId);
+            })
+            ->orderBy('name')
+            ->get(['id', 'name', 'gst', 'pancard']);
+        } else {
+            $parties = Party::orderBy('name')->get(['id', 'name', 'gst', 'pancard']);
+        }
+        
+        return response()->json($parties);
+    }
+
+    /**
      * Get materials by party ID
      */
     public function getMaterialsByParty(Request $request)

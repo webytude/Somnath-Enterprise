@@ -30,7 +30,7 @@
                 <!-- Tabs -->
                 <ul class="nav nav-tabs nav-line-tabs nav-line-tabs-2x border-transparent fs-4 fw-bold mb-5">
                     <li class="nav-item mt-2">
-                        <a class="nav-link text-active-primary ms-0 me-10 active" data-bs-toggle="tab" href="#kt_tab_staff_list">
+                        <a class="nav-link text-active-primary ms-0 me-10 {{ ($activeTab ?? 'staff_list') == 'staff_list' ? 'active' : '' }}" data-bs-toggle="tab" href="#kt_tab_staff_list">
                             <span class="svg-icon svg-icon-2 me-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                     <path d="M20 14H18V10H20C20.6 10 21 10.4 21 11V13C21 13.6 20.6 14 20 14Z" fill="currentColor" opacity="0.3"/>
@@ -53,7 +53,7 @@
                         </a>
                     </li>
                     <li class="nav-item mt-2">
-                        <a class="nav-link text-active-primary ms-0 me-10" data-bs-toggle="tab" href="#kt_tab_attendance">
+                        <a class="nav-link text-active-primary ms-0 me-10 {{ ($activeTab ?? 'staff_list') == 'attendance' ? 'active' : '' }}" data-bs-toggle="tab" href="#kt_tab_attendance">
                             <span class="svg-icon svg-icon-2 me-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                     <rect x="2" y="3" width="20" height="18" rx="2" fill="currentColor" opacity="0.3"/>
@@ -79,7 +79,7 @@
                 <!-- Tab Content -->
                 <div class="tab-content" id="kt_tab_content">
                     <!-- List of Staff Tab -->
-                    <div class="tab-pane fade show active" id="kt_tab_staff_list" role="tabpanel">
+                    <div class="tab-pane fade {{ ($activeTab ?? 'staff_list') == 'staff_list' ? 'show active' : '' }}" id="kt_tab_staff_list" role="tabpanel">
                         <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_staff">
                             <thead>
                                 <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
@@ -110,7 +110,7 @@
                                     <td>{{ $s->mobile_number ?? 'N/A' }}</td>
                                     <td>{{ $s->doj ? $s->doj->format('d/m/Y') : 'N/A' }}</td>
                                     <td class="text-end">
-                                        <a href="{{ route('staff.edit', $s) }}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
+                                        <a href="{{ route('staff.edit', $s) }}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" title="Edit">
                                             <span class="svg-icon svg-icon-3">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                                     <path opacity="0.3" d="M21.4 8.35303L19.241 10.511L13.485 4.755L15.643 2.59595C16.0248 2.21423 16.5426 1.99988 17.0825 1.99988C17.6224 1.99988 18.1402 2.21423 18.522 2.59595L21.4 5.474C21.7817 5.85581 21.9962 6.37355 21.9962 6.91345C21.9962 7.45335 21.7817 7.97122 21.4 8.35303ZM3.68699 21.932L9.88699 19.865L4.13099 14.109L2.06399 20.309C1.98815 20.5354 1.97703 20.7787 2.03189 21.0111C2.08674 21.2436 2.2054 21.4561 2.37449 21.6248C2.54359 21.7934 2.75641 21.9115 2.989 21.9658C3.22158 22.0201 3.4647 22.0084 3.69099 21.932H3.68699Z" fill="currentColor" />
@@ -120,7 +120,7 @@
                                         </a>
                                         <form action="{{ route('staff.destroy', $s) }}" method="POST" style="display:inline">
                                             @csrf @method('DELETE')
-                                            <button type="submit" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm" onclick="return confirm('Are you sure you want to delete this staff?')">
+                                            <button type="submit" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm" onclick="return confirm('Are you sure you want to delete this staff?')" title="Delete">
                                                 <span class="svg-icon svg-icon-3">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                                         <path d="M5 9C5 8.44772 5.44772 8 6 8H18C18.5523 8 19 8.44772 19 9V18C19 19.6569 17.6569 21 16 21H8C6.34315 21 5 19.6569 5 18V9Z" fill="currentColor" />
@@ -142,7 +142,7 @@
                     </div>
 
                     <!-- Attendance Tab -->
-                    <div class="tab-pane fade" id="kt_tab_attendance" role="tabpanel">
+                    <div class="tab-pane fade {{ ($activeTab ?? 'staff_list') == 'attendance' ? 'show active' : '' }}" id="kt_tab_attendance" role="tabpanel">
                         <div class="card">
                             <div class="card-header">
                                 <div class="card-title">
@@ -162,14 +162,23 @@
                                             <i class="fas fa-users me-2"></i>
                                             <strong>Present Today: {{ $presentCount }}</strong> / {{ $staff->count() }}
                                         </div>
-                                        <div class="alert alert-info mb-0">
-                                            <i class="fas fa-info-circle"></i> Only today's date can be marked/unmarked. Past dates are view-only.
+                                        <div class="d-flex align-items-center gap-3">
+                                            <label class="form-label mb-0 fw-bold">Select Date:</label>
+                                            <input type="date" id="attendance_date_picker" class="form-control form-control-sm" value="{{ $selectedDate ?? $today->format('Y-m-d') }}" style="width: 180px;" />
+                                            <button type="button" id="load_attendance_btn" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-search"></i> Load Attendance
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="card-body">
                                 @include('global.show_session')
+                                @if(!$isToday)
+                                <div class="alert alert-warning mb-5">
+                                    <i class="fas fa-exclamation-triangle"></i> You are viewing attendance for <strong>{{ $today->format('d M Y') }}</strong>. You can update attendance for any date.
+                                </div>
+                                @endif
                                 <div class="table-responsive">
                                     <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_attendance">
                                         <thead>
@@ -211,7 +220,6 @@
                                                         data-staff-id="{{ $s->id }}"
                                                         data-date="{{ $today->format('Y-m-d') }}"
                                                         id="attendance_{{ $s->id }}"
-                                                        @if(!$isToday) disabled @endif
                                                         style="min-width: 150px;"
                                                     >
                                                         <option value="absent" {{ $currentStatus == 'absent' ? 'selected' : '' }}>Absent</option>
@@ -244,7 +252,7 @@
                                                         data-date="{{ $today->format('Y-m-d') }}"
                                                         id="location_{{ $s->id }}"
                                                         style="min-width: 150px;"
-                                                        @if(!$isToday || $currentStatus == 'absent') disabled @endif
+                                                        @if($currentStatus == 'absent') disabled @endif
                                                     >
                                                         <option value="">Select Location</option>
                                                         @foreach($locations as $location)
@@ -397,17 +405,7 @@
             const attendanceStatus = select.val();
             const today = new Date().toISOString().split('T')[0];
             
-            // Only allow changes for today's date
-            if (date !== today) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Not Allowed',
-                    text: 'You can only mark attendance for today\'s date.',
-                    confirmButtonText: 'OK'
-                });
-                location.reload(); // Reload to revert
-                return;
-            }
+            // Allow changes for any date (past or future)
             
             // Get overtime hours - set to 0 if absent
             let overtimeHours = 0;
@@ -684,6 +682,27 @@
             const total = $('.attendance-status-select').length;
             countBadge.text('Present Today: ' + presentCount + ' / ' + total);
         }
+        
+        // Handle date picker change
+        $('#attendance_date_picker').on('change', function() {
+            const selectedDate = $(this).val();
+            if (selectedDate) {
+                // Reload page with selected date
+                const url = new URL(window.location.href);
+                url.searchParams.set('attendance_date', selectedDate);
+                window.location.href = url.toString();
+            }
+        });
+        
+        // Handle load attendance button click
+        $('#load_attendance_btn').on('click', function() {
+            const selectedDate = $('#attendance_date_picker').val();
+            if (selectedDate) {
+                const url = new URL(window.location.href);
+                url.searchParams.set('attendance_date', selectedDate);
+                window.location.href = url.toString();
+            }
+        });
     });
 </script>
 @endsection

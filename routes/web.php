@@ -40,7 +40,7 @@ use App\Http\Controllers\StageController;
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login')->middleware('redirectIfAuthenticated');
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login')->middleware('redirectIfAuthenticated');
 Route::post('/login', [LoginController::class, 'login'])->name('post.login');
-Route::middleware(['auth', 'staff.permission'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
@@ -101,6 +101,7 @@ Route::middleware(['auth', 'staff.permission'])->group(function () {
     
     Route::get('material-inwards/get-party-details', [MaterialInwardController::class, 'getPartyDetails'])->name('material-inwards.getPartyDetails');
     Route::get('material-inwards/get-works-by-location', [MaterialInwardController::class, 'getWorksByLocation'])->name('material-inwards.getWorksByLocation');
+    Route::get('material-inwards/get-parties-by-location', [MaterialInwardController::class, 'getPartiesByLocation'])->name('material-inwards.getPartiesByLocation');
     Route::get('material-inwards/get-materials-by-party', [MaterialInwardController::class, 'getMaterialsByParty'])->name('material-inwards.getMaterialsByParty');
     Route::resource('material-inwards', MaterialInwardController::class);
     

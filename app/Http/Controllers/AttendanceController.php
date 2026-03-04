@@ -47,28 +47,31 @@ class AttendanceController extends Controller
         ]);
 
         $date = Carbon::parse($request->date);
-        $today = Carbon::today();
-
-        // Only allow updating attendance for current date
-        if (!$date->isSameDay($today)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'You can only update attendance for today\'s date.'
-            ], 403);
+        
+        // Check if attendance already exists for this date and staff
+        $existingAttendance = Attendance::where('staff_id', $request->staff_id)
+            ->whereDate('attendance_date', $date->format('Y-m-d'))
+            ->first();
+        
+        // Prepare data for update or create
+        $attendanceData = [
+            'attendance_status' => $request->attendance_status,
+            'overtime_hours' => $request->overtime_hours ?? 0,
+            'location_id' => $request->location_id,
+            'updated_by' => Auth::id(),
+        ];
+        
+        // If it's a new record, set created_by. If updating, keep original created_by
+        if (!$existingAttendance) {
+            $attendanceData['created_by'] = Auth::id();
         }
-
+        
         $attendance = Attendance::updateOrCreate(
             [
                 'staff_id' => $request->staff_id,
                 'attendance_date' => $date->format('Y-m-d'),
             ],
-            [
-                'attendance_status' => $request->attendance_status,
-                'overtime_hours' => $request->overtime_hours ?? 0,
-                'location_id' => $request->location_id,
-                'updated_by' => Auth::id(),
-                'created_by' => Auth::id(),
-            ]
+            $attendanceData
         );
 
         // Load location relationship for response

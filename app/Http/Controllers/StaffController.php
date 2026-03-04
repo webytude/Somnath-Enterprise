@@ -13,12 +13,16 @@ class StaffController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $staff = Staff::latest()->get();
         
-        // Get today's attendance
-        $today = \Carbon\Carbon::today();
+        // Get selected date from request, default to today
+        $selectedDate = $request->get('attendance_date', date('Y-m-d'));
+        $today = \Carbon\Carbon::parse($selectedDate);
+        $isToday = $today->isToday();
+        
+        // Get attendance for selected date
         $attendances = \App\Models\Attendance::whereDate('attendance_date', $today)
             ->get()
             ->keyBy('staff_id');
@@ -60,7 +64,10 @@ class StaffController extends Controller
         // Get all locations for attendance assignment
         $locations = \App\Models\Location::orderBy('name')->get();
         
-        return view('admin.staff.index', compact('staff', 'attendances', 'today', 'presentCount', 'presentStaff', 'dailyExpenses', 'locations'));
+        // Check if attendance tab should be active (if attendance_date parameter is present)
+        $activeTab = $request->has('attendance_date') ? 'attendance' : 'staff_list';
+        
+        return view('admin.staff.index', compact('staff', 'attendances', 'today', 'isToday', 'presentCount', 'presentStaff', 'dailyExpenses', 'locations', 'selectedDate', 'activeTab'));
     }
 
     /**

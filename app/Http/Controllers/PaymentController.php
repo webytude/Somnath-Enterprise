@@ -53,7 +53,33 @@ class PaymentController extends Controller
             $data['paid_amount'] = $data['amount_payable'] - $tdsAmount;
         }
         
-        Payment::create($data);
+        $payment = Payment::create($data);
+        
+        // Update bill status if this is a party payment with a bill number
+        if ($data['payment_type'] === 'party' && !empty($data['reason_bill_no']) && !empty($data['party_id'])) {
+            $bill = BillInward::where('party_id', $data['party_id'])
+                ->where('bill_number', $data['reason_bill_no'])
+                ->first();
+            
+            if ($bill) {
+                // Calculate total paid amount for this bill (payment already created, so it's included)
+                $totalPaid = Payment::where('party_id', $data['party_id'])
+                    ->where('payment_type', 'party')
+                    ->where('reason_bill_no', $data['reason_bill_no'])
+                    ->sum('paid_amount');
+                
+                // Only mark as 'Paid' if total paid >= bill amount
+                $paymentStatus = ($totalPaid >= (float)$bill->total_bill_amount) ? 'Paid' : 'Pending';
+                
+                $bill->update([
+                    'payment_status' => $paymentStatus,
+                    'payment_ref_number' => $data['ref_number'] ?? null,
+                    'payment_date' => $data['payment_date'] ?? null,
+                    'payment_remarks' => $data['remarks'] ?? null,
+                    'updated_by' => Auth::user()->id,
+                ]);
+            }
+        }
         
         return redirect()->route('payments.index')->with('success', 'Payment created successfully.');
     }
@@ -96,6 +122,32 @@ class PaymentController extends Controller
         
         $payment->update($data);
         
+        // Update bill status if this is a party payment with a bill number
+        if ($data['payment_type'] === 'party' && !empty($data['reason_bill_no']) && !empty($data['party_id'])) {
+            $bill = BillInward::where('party_id', $data['party_id'])
+                ->where('bill_number', $data['reason_bill_no'])
+                ->first();
+            
+            if ($bill) {
+                // Calculate total paid amount for this bill (all payments including updated one)
+                $totalPaid = Payment::where('party_id', $data['party_id'])
+                    ->where('payment_type', 'party')
+                    ->where('reason_bill_no', $data['reason_bill_no'])
+                    ->sum('paid_amount');
+                
+                // Only mark as 'Paid' if total paid >= bill amount
+                $paymentStatus = ($totalPaid >= (float)$bill->total_bill_amount) ? 'Paid' : 'Pending';
+                
+                $bill->update([
+                    'payment_status' => $paymentStatus,
+                    'payment_ref_number' => $data['ref_number'] ?? null,
+                    'payment_date' => $data['payment_date'] ?? null,
+                    'payment_remarks' => $data['remarks'] ?? null,
+                    'updated_by' => Auth::user()->id,
+                ]);
+            }
+        }
+        
         return redirect()->route('payments.index')->with('success', 'Payment updated successfully.');
     }
 
@@ -132,20 +184,35 @@ class PaymentController extends Controller
             ]);
         }
         
-        // Calculate salary payable (you can customize this logic)
+        // Calculate total salary and expense payable
         $salaryPayable = $staff->rate_per_month ?? 0;
-        
-        // Calculate expense payable from daily expenses
-        // Note: Currently summing all expenses. If you want to track paid expenses, add payment_id column to daily_expenses table
         $expensePayable = DailyExpense::where('staff_id', $staffId)
             ->sum('amount');
-        
         $totalPayable = $salaryPayable + $expensePayable;
         
+        // Get all previous payments for this staff to exclude already paid amounts
+        $totalPaidAmount = Payment::where('staff_id', $staffId)
+            ->where('payment_type', 'staff')
+            ->sum('paid_amount');
+        
+        // Calculate remaining payable (subtract already paid amounts)
+        $remainingTotalPayable = max(0, $totalPayable - $totalPaidAmount);
+        
+        // Proportionally calculate remaining salary and expense
+        if ($totalPayable > 0) {
+            $salaryRatio = $salaryPayable / $totalPayable;
+            $expenseRatio = $expensePayable / $totalPayable;
+            $remainingSalaryPayable = max(0, $remainingTotalPayable * $salaryRatio);
+            $remainingExpensePayable = max(0, $remainingTotalPayable * $expenseRatio);
+        } else {
+            $remainingSalaryPayable = 0;
+            $remainingExpensePayable = 0;
+        }
+        
         return response()->json([
-            'salary_payable' => number_format($salaryPayable, 2, '.', ''),
-            'expense_payable' => number_format($expensePayable, 2, '.', ''),
-            'total_payable' => number_format($totalPayable, 2, '.', '')
+            'salary_payable' => number_format($remainingSalaryPayable, 2, '.', ''),
+            'expense_payable' => number_format($remainingExpensePayable, 2, '.', ''),
+            'total_payable' => number_format($remainingTotalPayable, 2, '.', '')
         ]);
     }
 
@@ -160,16 +227,44 @@ class PaymentController extends Controller
             return response()->json(['bills' => []]);
         }
         
-        // Get pending bills for the party
-        $bills = BillInward::where('party_id', $partyId)
-            ->where('payment_status', 'Pending')
+        // Get all bills for the party (both pending and paid, to handle partial payments)
+        $allBills = BillInward::where('party_id', $partyId)
             ->orderBy('bill_date', 'desc')
-            ->get(['id', 'bill_number', 'bill_date', 'total_bill_amount']);
+            ->get(['id', 'bill_number', 'bill_date', 'total_bill_amount', 'payment_status']);
         
-        $totalPayable = $bills->sum('total_bill_amount');
+        // Get all payments for this party grouped by bill number
+        $paymentsByBill = Payment::where('party_id', $partyId)
+            ->where('payment_type', 'party')
+            ->whereNotNull('reason_bill_no')
+            ->selectRaw('reason_bill_no, SUM(paid_amount) as total_paid')
+            ->groupBy('reason_bill_no')
+            ->pluck('total_paid', 'reason_bill_no')
+            ->toArray();
+        
+        // Calculate remaining amount for each bill
+        $unpaidBills = $allBills->map(function($bill) use ($paymentsByBill) {
+            $totalPaid = isset($paymentsByBill[$bill->bill_number]) ? (float)$paymentsByBill[$bill->bill_number] : 0;
+            $remainingAmount = (float)$bill->total_bill_amount - $totalPaid;
+            
+            // Only include bills with remaining amount > 0
+            if ($remainingAmount > 0) {
+                return [
+                    'id' => $bill->id,
+                    'bill_number' => $bill->bill_number,
+                    'bill_date' => $bill->bill_date,
+                    'total_bill_amount' => $remainingAmount, // Return remaining amount, not full amount
+                    'original_amount' => $bill->total_bill_amount,
+                    'paid_amount' => $totalPaid,
+                    'remaining_amount' => $remainingAmount
+                ];
+            }
+            return null;
+        })->filter(); // Remove null values
+        
+        $totalPayable = $unpaidBills->sum('remaining_amount');
         
         return response()->json([
-            'bills' => $bills,
+            'bills' => $unpaidBills->values(),
             'total_payable' => number_format($totalPayable, 2, '.', '')
         ]);
     }
@@ -185,12 +280,35 @@ class PaymentController extends Controller
             return response()->json(['bills' => []]);
         }
         
-        // For now, return empty. You can add vendor bills logic later
-        // This might come from Material Inward or other sources
+        // Get all payments for this vendor to check which bills have been paid
+        $paidPayments = Payment::where('vendor_id', $vendorId)
+            ->where('payment_type', 'vendor')
+            ->whereNotNull('reason_bill_no')
+            ->pluck('reason_bill_no')
+            ->toArray();
+        
+        // For vendors, bills might come from Material Inward or other sources
+        // Since MaterialInward has party_id and vendors might not be directly linked,
+        // we'll track via payments table - exclude bills that have already been paid
+        
+        // Calculate total payable from unpaid bills
+        // If there are already payments for this vendor with bill numbers, exclude those bills
+        $totalPayable = 0;
+        
+        // Note: If you have a vendor bills table or MaterialInward linked to vendors,
+        // you can fetch bills here and filter out paid ones:
+        // $bills = MaterialInward::where('vendor_id', $vendorId) // if such field exists
+        //     ->whereNotIn('bill_voucher_number', $paidPayments)
+        //     ->get();
+        // $totalPayable = $bills->sum('total_bill_voucher_amount');
+        
+        // For now, return 0 to prevent showing already paid amounts
+        // The key is that if a payment exists for this vendor with a reason_bill_no,
+        // that bill won't be included in future calculations
         
         return response()->json([
             'bills' => [],
-            'total_payable' => '0.00'
+            'total_payable' => number_format($totalPayable, 2, '.', '')
         ]);
     }
 }

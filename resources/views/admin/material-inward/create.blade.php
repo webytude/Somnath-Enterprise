@@ -52,9 +52,6 @@
                                         </label>
                                         <select class="form-select form-select-solid" name="party_id" id="party_id" data-control="select2" data-placeholder="Select Party..." required>
                                             <option value="">Select Party...</option>
-                                            @foreach($parties as $party)
-                                                <option value="{{ $party->id }}" data-gst="{{ $party->gst }}" data-pan="{{ $party->pancard }}" {{ old('party_id') == $party->id ? 'selected' : '' }}>{{ $party->name }}</option>
-                                            @endforeach
                                         </select>
                                         @error('party_id')
                                             <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
@@ -248,7 +245,48 @@
     $(document).ready(function() {
         let detailRowIndex = 1;
 
-        // Handle location change - auto-populate and select work
+        // Function to load parties by location
+        function loadPartiesByLocation(locationId) {
+            var partySelect = $('#party_id');
+            var currentPartyId = partySelect.val();
+            
+            // Clear party options
+            partySelect.empty();
+            partySelect.append('<option value="">Select Party...</option>');
+            
+            // Clear party GST and PAN
+            $('#party_gst').val('');
+            $('#party_pan').val('');
+            
+            // Clear materials
+            $('.material-select').each(function() {
+                $(this).html('<option value="">Select from List</option>');
+            });
+            
+            if (locationId) {
+                $.ajax({
+                    url: '{{ route("material-inwards.getPartiesByLocation") }}',
+                    type: 'GET',
+                    data: { location_id: locationId },
+                    success: function(data) {
+                        if (data && data.length > 0) {
+                            $.each(data, function(key, party) {
+                                var selected = (currentPartyId == party.id) ? ' selected' : '';
+                                partySelect.append('<option value="' + party.id + '" data-gst="' + (party.gst || '') + '" data-pan="' + (party.pancard || '') + '"' + selected + '>' + party.name + '</option>');
+                            });
+                            
+                            // Trigger select2 update
+                            partySelect.trigger('change');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching parties:', error);
+                    }
+                });
+            }
+        }
+
+        // Handle location change - auto-populate and select work, and load parties
         $('#location_id').on('change', function() {
             var locationId = $(this).val();
             var workSelect = $('#work_id');
@@ -256,6 +294,9 @@
             // Clear work options
             workSelect.empty();
             workSelect.append('<option value="">Select Work...</option>');
+            
+            // Load parties for this location
+            loadPartiesByLocation(locationId);
             
             if (locationId) {
                 $.ajax({
@@ -283,6 +324,12 @@
                 });
             }
         });
+        
+        // Load parties on page load if location is already selected
+        var initialLocationId = $('#location_id').val();
+        if (initialLocationId) {
+            loadPartiesByLocation(initialLocationId);
+        }
 
         // Handle party change - auto-fill GST/PAN and load materials
         $('#party_id').on('change', function() {

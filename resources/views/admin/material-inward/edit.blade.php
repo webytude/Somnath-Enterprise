@@ -56,9 +56,6 @@
                                         </label>
                                         <select class="form-select form-select-solid" name="party_id" id="party_id" data-control="select2" data-placeholder="Select Party..." required>
                                             <option value="">Select Party...</option>
-                                            @foreach($parties as $party)
-                                                <option value="{{ $party->id }}" data-gst="{{ $party->gst }}" data-pan="{{ $party->pancard }}" {{ old('party_id', $materialInward->party_id) == $party->id ? 'selected' : '' }}>{{ $party->name }}</option>
-                                            @endforeach
                                         </select>
                                         @error('party_id')
                                             <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
@@ -272,6 +269,51 @@
         var currentLocationId = {{ $materialInward->location_id ?? 'null' }};
         var currentPartyId = {{ $materialInward->party_id ?? 'null' }};
 
+        // Function to load parties by location
+        function loadPartiesByLocation(locationId, selectedPartyId = null) {
+            var partySelect = $('#party_id');
+            
+            // Clear party options
+            partySelect.empty();
+            partySelect.append('<option value="">Select Party...</option>');
+            
+            // Clear party GST and PAN
+            $('#party_gst').val('');
+            $('#party_pan').val('');
+            
+            // Clear materials
+            $('.material-select').each(function() {
+                $(this).html('<option value="">Select from List</option>');
+            });
+            
+            if (locationId) {
+                $.ajax({
+                    url: '{{ route("material-inwards.getPartiesByLocation") }}',
+                    type: 'GET',
+                    data: { location_id: locationId },
+                    success: function(data) {
+                        if (data && data.length > 0) {
+                            $.each(data, function(key, party) {
+                                var selected = (selectedPartyId && party.id == selectedPartyId) ? ' selected' : '';
+                                partySelect.append('<option value="' + party.id + '" data-gst="' + (party.gst || '') + '" data-pan="' + (party.pancard || '') + '"' + selected + '>' + party.name + '</option>');
+                            });
+                            
+                            // Trigger select2 update
+                            partySelect.trigger('change');
+                            
+                            // If party was selected, trigger change to load materials
+                            if (selectedPartyId) {
+                                partySelect.trigger('change');
+                            }
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching parties:', error);
+                    }
+                });
+            }
+        }
+
         // Function to load works for a location
         function loadWorksByLocation(locationId, selectedWorkId = null) {
             var workSelect = $('#work_id');
@@ -308,14 +350,21 @@
             }
         }
 
-        // Load works for current location on page load
+        // Load works and parties for current location on page load
         if (currentLocationId) {
             loadWorksByLocation(currentLocationId, currentWorkId);
+            loadPartiesByLocation(currentLocationId, currentPartyId);
         }
 
-        // Handle location change - auto-populate and select work
+        // Handle location change - auto-populate and select work, and load parties
         $('#location_id').on('change', function() {
             var locationId = $(this).val();
+            var currentSelectedPartyId = $('#party_id').val();
+            
+            // Load parties for this location (preserve selected party if it exists in new location)
+            loadPartiesByLocation(locationId, currentSelectedPartyId);
+            
+            // Load works for this location
             loadWorksByLocation(locationId);
         });
 
