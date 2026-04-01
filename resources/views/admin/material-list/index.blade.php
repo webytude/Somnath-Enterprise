@@ -26,6 +26,23 @@
             </div>
             <div class="card-body py-4">
                 @include('global.show_session')
+                <form method="GET" action="{{ route('material-lists.index') }}" class="row mb-4 g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label for="category_id" class="form-label fw-bold">Filter by Category</label>
+                        <select name="category_id" id="category_id" class="form-select form-select-sm">
+                            <option value="">All Categories</option>
+                            @foreach($materialCategories as $category)
+                                <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                                    {{ $category->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-sm btn-primary me-2">Apply Filter</button>
+                        <a href="{{ route('material-lists.index') }}" class="btn btn-sm btn-light">Reset</a>
+                    </div>
+                </form>
                 <div class="table-responsive">
                     <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_material_lists">
                         <thead>

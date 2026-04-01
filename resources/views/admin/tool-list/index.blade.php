@@ -33,6 +33,7 @@
                                 <th class="min-w-150px">Name</th>
                                 <th class="min-w-100px">Quantity</th>
                                 <th class="min-w-150px">Location</th>
+                                <th class="min-w-150px">Shelf Location</th>
                                 <th class="min-w-150px">Person Name</th>
                                 <th class="min-w-100px">Date</th>
                                 <th class="min-w-100px">Price</th>
@@ -46,6 +47,7 @@
                                 <td>{{ $tool->name }}</td>
                                 <td>{{ number_format($tool->quantity, 2) }}</td>
                                 <td>{{ $tool->location->name ?? 'N/A' }}</td>
+                                <td>{{ $tool->shelf_location ?? 'N/A' }}</td>
                                 <td>{{ $tool->person_name ?? 'N/A' }}</td>
                                 <td>{{ $tool->date ? $tool->date->format('d/m/Y') : 'N/A' }}</td>
                                 <td>{{ $tool->price ? '₹' . number_format($tool->price, 2) : 'N/A' }}</td>

@@ -1,5 +1,5 @@
-@section('title','Manage Stage')
 @extends('admin.layouts.main')
+@section('title','Manage Order — Work Orders')
 @section('main_contant')
 <div class="toolbar bg-transparent pt-6 mb-5" id="kt_toolbar">
 </div>
@@ -8,43 +8,62 @@
         <div class="card mb-5 mb-xl-12">
             <div class="card-header border-0 pt-6">
                 <div class="card-title">
-                    <h1 class="d-flex text-dark fw-bolder fs-3 flex-column mb-0">Manage Stage</h1>
+                    <h1 class="d-flex text-dark fw-bolder fs-3 flex-column mb-0">Manage Order — Work Orders</h1>
                 </div>
                 <div class="card-toolbar">
                     <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
-                        <a href="{{ route('stages.create') }}" type="button" class="btn btn-primary">
+                        <a href="{{ route('work-orders.create') }}" type="button" class="btn btn-primary">
                             <span class="svg-icon svg-icon-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                     <rect opacity="0.5" x="11.364" y="20.364" width="16" height="2" rx="1" transform="rotate(-90 11.364 20.364)" fill="currentColor" />
                                     <rect x="4.36396" y="11.364" width="16" height="2" rx="1" fill="currentColor" />
                                 </svg>
                             </span>
-                            Add Stage
+                            New Work Order
                         </a>
                     </div>
                 </div>
             </div>
             <div class="card-body py-4">
                 @include('global.show_session')
-                <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_users">
+                <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_work_orders">
                     <thead>
                         <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
-                            <th class="min-w-125px">Stage Name</th>
-                            <th class="min-w-125px">Percentage of Stage</th>
-                            <th class="min-w-125px">Location</th>
-                            <th class="min-w-125px">Work</th>
+                            <th class="min-w-180px">W.O. Number</th>
+                            <th class="min-w-120px">Date</th>
+                            <th class="min-w-150px">Vendor</th>
+                            <th class="min-w-150px">Location</th>
+                            <th class="min-w-150px">Work</th>
+                            <th class="min-w-120px">Total Order Value</th>
+                            <th class="min-w-110px">Paid (vendor)</th>
+                            <th class="min-w-110px">Remaining</th>
                             <th class="text-end min-w-100px">Action</th>
                         </tr>
                     </thead>
                     <tbody class="text-gray-600 fw-bold">
-                        @foreach($stages as $stage)
+                        @forelse($workOrders as $wo)
                         <tr>
-                            <td>{{ $stage->name }}</td>
-                            <td>{{ number_format($stage->percentage, 2) }}%</td>
-                            <td>{{ $stage->location ? $stage->location->name : '-' }}</td>
-                            <td>{{ $stage->work ? $stage->work->name_of_work : '-' }}</td>
+                            <td><span class="fw-bold text-gray-800">{{ $wo->work_order_number }}</span></td>
+                            <td>{{ $wo->order_date ? $wo->order_date->format('d-m-Y') : 'N/A' }}</td>
+                            <td>{{ $wo->contractor->pedhi ?? 'N/A' }}</td>
+                            <td>{{ $wo->location->name ?? 'N/A' }}</td>
+                            <td>{{ $wo->work->name_of_work ?? 'N/A' }}</td>
+                            <td>₹ {{ number_format($wo->total_order_value, 2) }}</td>
+                            @php
+                                $vpt = (float) ($wo->vendor_paid_total ?? 0);
+                                $vrem = max(0, round((float) $wo->total_order_value - $vpt, 2));
+                            @endphp
+                            <td>₹ {{ number_format($vpt, 2) }}</td>
+                            <td>₹ {{ number_format($vrem, 2) }}</td>
                             <td class="text-end">
-                                <a href="{{ route('stages.edit', $stage) }}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
+                                <a href="{{ route('work-orders.show', $wo) }}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" title="View">
+                                    <span class="svg-icon svg-icon-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                            <path d="M14.0185 10.3162L11.0635 7.36125L12.1368 6.28796L17.1368 11.288L12.1368 16.288L11.0635 15.2147L14.0185 12.2597H3.13672V10.3162H14.0185Z" fill="currentColor" />
+                                        </svg>
+                                    </span>
+                                </a>
+                                <a href="{{ route('work-orders.edit', $wo) }}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" title="Edit">
                                     <span class="svg-icon svg-icon-3">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                             <path opacity="0.3" d="M21.4 8.35303L19.241 10.511L13.485 4.755L15.643 2.59595C16.0248 2.21423 16.5426 1.99988 17.0825 1.99988C17.6224 1.99988 18.1402 2.21423 18.522 2.59595L21.4 5.474C21.7817 5.85581 21.9962 6.37355 21.9962 6.91345C21.9962 7.45335 21.7817 7.97122 21.4 8.35303ZM3.68699 21.932L9.88699 19.865L4.13099 14.109L2.06399 20.309C1.98815 20.5354 1.97703 20.7787 2.03189 21.0111C2.08674 21.2436 2.2054 21.4561 2.37449 21.6248C2.54359 21.7934 2.75641 21.9115 2.989 21.9658C3.22158 22.0201 3.4647 22.0084 3.69099 21.932H3.68699Z" fill="currentColor" />
@@ -52,9 +71,9 @@
                                         </svg>
                                     </span>
                                 </a>
-                                <form action="{{ route('stages.destroy', $stage) }}" method="POST" style="display:inline">
+                                <form action="{{ route('work-orders.destroy', $wo) }}" method="POST" style="display:inline">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm" onclick="return confirm('Are you sure you want to delete this stage?')">
+                                    <button type="submit" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm" onclick="return confirm('Are you sure you want to delete this work order?')" title="Delete">
                                         <span class="svg-icon svg-icon-3">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                                 <path d="M5 9C5 8.44772 5.44772 8 6 8H18C18.5523 8 19 8.44772 19 9V18C19 19.6569 17.6569 21 16 21H8C6.34315 21 5 19.6569 5 18V9Z" fill="currentColor" />
@@ -66,7 +85,11 @@
                                 </form>
                             </td>
                         </tr>
-                        @endforeach
+                        @empty
+                        <tr>
+                            <td colspan="9" class="text-center">No work orders found.</td>
+                        </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

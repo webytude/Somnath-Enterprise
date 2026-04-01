@@ -86,6 +86,33 @@
                                     @endif
                                 </div>
                             </div>
+                            <div class="row mb-7">
+                                <div class="col-md-6">
+                                    <label class="fs-6 fw-bold form-label">Payment Status</label>
+                                    @php
+                                        $paymentStatus = $materialInward->payment_status ?? 'Pending';
+                                    @endphp
+                                    <p class="form-control-plaintext">
+                                        <span class="badge badge-{{ $paymentStatus === 'Paid' ? 'success' : 'warning' }}">
+                                            {{ $paymentStatus }}
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="fs-6 fw-bold form-label">Payment Ref. No.</label>
+                                    <p class="form-control-plaintext">{{ $materialInward->payment_ref_number ?? 'N/A' }}</p>
+                                </div>
+                            </div>
+                            <div class="row mb-7">
+                                <div class="col-md-6">
+                                    <label class="fs-6 fw-bold form-label">Payment Date</label>
+                                    <p class="form-control-plaintext">{{ $materialInward->payment_date ? $materialInward->payment_date->format('d-m-Y') : 'N/A' }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="fs-6 fw-bold form-label">Payment Remarks</label>
+                                    <p class="form-control-plaintext">{{ $materialInward->payment_remarks ?? 'N/A' }}</p>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Section 3: MATERIAL DETAILS -->

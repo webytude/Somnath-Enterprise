@@ -136,6 +136,7 @@
                                             @enderror
                                         </div>
                                     </div>
+
                                     <div class="row mb-7">
                                         <div class="col-md-6">
                                             <label class="fs-6 fw-bold form-label mt-3">List of Bill - Amt. (Payable)</label>
@@ -144,6 +145,20 @@
                                         <div class="col-md-6">
                                             <label class="fs-6 fw-bold form-label mt-3">Remarks</label>
                                             <textarea class="form-control form-control-solid" name="remarks" rows="2" placeholder="Enter Remarks">{{ old('remarks', isset($payment) ? $payment->remarks : '') }}</textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-7">
+                                        <div class="col-md-12">
+                                            <label class="fs-6 fw-bold form-label mt-3">
+                                                <span>Select Manage Material Inward (Bill/Voucher No. - Amount)</span>
+                                            </label>
+                                            <select class="form-select form-select-solid" name="material_inward_ids[]" id="material_inward_ids" data-control="select2" data-placeholder="Select Material Inward Bills..." multiple>
+                                                <!-- Options will be loaded via AJAX based on party selection -->
+                                            </select>
+                                            @error('material_inward_ids')
+                                                <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                     </div>
                                 </div>
@@ -203,15 +218,37 @@
                                                 <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                             @enderror
                                         </div>
+                                        <div class="col-md-6">
+                                            <label class="fs-6 fw-bold form-label mt-3">
+                                                <span class="required">Work Order</span>
+                                            </label>
+                                            <select class="form-select form-select-solid" name="work_order_id" id="work_order_id" data-control="select2" data-placeholder="Select Work Order...">
+                                                <option value="">Select Work Order...</option>
+                                            </select>
+                                            @error('work_order_id')
+                                                <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                            @enderror
+                                            <div class="form-text">Format: W.O. number and subject (e.g. RRE/001/2026-27-subject text).</div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-7">
+                                        <div class="col-md-4">
+                                            <label class="fs-6 fw-bold form-label mt-3">WO total value</label>
+                                            <input type="text" class="form-control form-control-solid" id="wo_total_display" value="0.00" readonly />
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="fs-6 fw-bold form-label mt-3">Paid (against WO)</label>
+                                            <input type="text" class="form-control form-control-solid" id="wo_paid_display" value="0.00" readonly />
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="fs-6 fw-bold form-label mt-3">Remaining on WO</label>
+                                            <input type="text" class="form-control form-control-solid" id="wo_remaining_display" value="0.00" readonly />
+                                        </div>
                                     </div>
                                     <div class="row mb-7">
                                         <div class="col-md-6">
                                             <label class="fs-6 fw-bold form-label mt-3">List of Bill - Amt. (Payable)</label>
                                             <input type="number" class="form-control form-control-solid" name="bill_payable" id="bill_payable_vendor" step="0.01" min="0" value="{{ old('bill_payable', isset($payment) ? $payment->bill_payable : 0) }}" placeholder="0.00" readonly />
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="fs-6 fw-bold form-label mt-3">Remarks</label>
-                                            <textarea class="form-control form-control-solid" name="remarks" rows="2" placeholder="Enter Remarks">{{ old('remarks', isset($payment) ? $payment->remarks : '') }}</textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -338,8 +375,13 @@
 @endsection
 
 @section('custom_scripts')
+@php
+    $defaultWorkOrderId = old('work_order_id', isset($payment) && $payment->work_order_id ? $payment->work_order_id : '');
+@endphp
 <script>
     $(document).ready(function() {
+        var preselectWorkOrderId = @json($defaultWorkOrderId !== '' && $defaultWorkOrderId !== null ? (string) $defaultWorkOrderId : '');
+        var currentVendorPaymentId = @json(isset($payment) && $payment->payment_type === 'vendor' ? (int) $payment->id : null);
         // Function to disable all fields in a section
         function disableSectionFields(sectionId) {
             $(sectionId + ' input, ' + sectionId + ' select, ' + sectionId + ' textarea').each(function() {
@@ -444,21 +486,38 @@
             });
         });
 
-        // Party payment - Get bills payable
+        // Party payment - Get material inward bills payable and allow multi-select
+        var currentPaymentId = {!! isset($payment) ? (int)$payment->id : 'null' !!};
         $('#party_id').on('change', function() {
             var partyId = $(this).val();
             if (!partyId) {
                 $('#bill_payable_party, #amount_payable_party').val('0.00');
+                $('#material_inward_ids').empty();
                 return;
             }
 
             $.ajax({
-                url: '{{ route("payments.getPartyBills") }}',
+                url: '{{ route("payments.getPartyMaterialInwards") }}',
                 type: 'GET',
-                data: { party_id: partyId },
+                data: { party_id: partyId, payment_id: currentPaymentId },
                 success: function(data) {
-                    $('#bill_payable_party').val(data.total_payable);
-                    $('#amount_payable_party').val(data.total_payable);
+                    var select = $('#material_inward_ids');
+                    select.empty();
+
+                    var selectedIds = {!! json_encode(old('material_inward_ids', [])) !!};
+
+                    var total = 0;
+                    if (data.bills && data.bills.length > 0) {
+                        $.each(data.bills, function(index, bill) {
+                            var amount = parseFloat(bill.total_bill_voucher_amount) || 0;
+                            var optionText = bill.bill_voucher_number + ' - ₹' + amount.toFixed(2);
+                            var selected = selectedIds.includes(String(bill.id)) || selectedIds.includes(bill.id) ? ' selected' : '';
+                            select.append('<option value="' + bill.id + '" data-amount="' + amount + '"' + selected + '>' + optionText + '</option>');
+                        });
+                    }
+
+                    // Trigger change to recalculate totals based on selected bills
+                    select.trigger('change');
                 },
                 error: function(xhr, status, error) {
                     console.error('Error fetching party bills:', error);
@@ -466,27 +525,89 @@
             });
         });
 
-        // Vendor payment - Get bills payable
-        $('#vendor_id').on('change', function() {
-            var vendorId = $(this).val();
+        // When material inward bills selection changes, recalculate payable amounts
+        $('#material_inward_ids').on('change', function() {
+            var total = 0;
+            $('#material_inward_ids option:selected').each(function() {
+                var amount = parseFloat($(this).data('amount')) || 0;
+                total += amount;
+            });
+
+            $('#bill_payable_party').val(total.toFixed(2));
+            $('#amount_payable_party').val(total.toFixed(2));
+            $('#paid_amount_party').val(total.toFixed(2));
+        });
+
+        function loadVendorWorkOrders(vendorId, preselectWoId) {
             if (!vendorId) {
+                $('#work_order_id').empty().append('<option value="">Select Work Order...</option>');
+                $('#wo_total_display, #wo_paid_display, #wo_remaining_display').val('0.00');
                 $('#bill_payable_vendor, #amount_payable_vendor').val('0.00');
+                calculateVendorPayment();
                 return;
             }
-
             $.ajax({
                 url: '{{ route("payments.getVendorBills") }}',
                 type: 'GET',
-                data: { vendor_id: vendorId },
+                data: { vendor_id: vendorId, payment_id: currentVendorPaymentId },
                 success: function(data) {
-                    $('#bill_payable_vendor').val(data.total_payable);
-                    $('#amount_payable_vendor').val(data.total_payable);
+                    var select = $('#work_order_id');
+                    select.empty().append('<option value="">Select Work Order...</option>');
+                    if (data.work_orders && data.work_orders.length) {
+                        $.each(data.work_orders, function(_, wo) {
+                            var sel = (preselectWoId && String(wo.id) === String(preselectWoId)) ? ' selected' : '';
+                            var label = $('<div>').text(wo.label).html();
+                            select.append(
+                                '<option value="' + wo.id + '"' + sel +
+                                ' data-total="' + wo.total_order_value + '"' +
+                                ' data-paid="' + wo.paid_towards_order + '"' +
+                                ' data-remaining="' + wo.remaining + '">' + label + '</option>'
+                            );
+                        });
+                    }
+                    if (preselectWoId) {
+                        select.val(String(preselectWoId));
+                    }
+                    if (select.val()) {
+                        select.trigger('change');
+                    } else {
+                        $('#wo_total_display, #wo_paid_display, #wo_remaining_display').val('0.00');
+                        $('#bill_payable_vendor').val('0.00');
+                        $('#amount_payable_vendor').val('0.00');
+                        calculateVendorPayment();
+                    }
                 },
                 error: function(xhr, status, error) {
-                    console.error('Error fetching vendor bills:', error);
+                    console.error('Error fetching vendor work orders:', error);
                 }
             });
+        }
+
+        $('#vendor_id').on('change', function() {
+            loadVendorWorkOrders($(this).val(), null);
         });
+
+        $('#work_order_id').on('change', function() {
+            var opt = $(this).find('option:selected');
+            var total = parseFloat(opt.data('total'));
+            var paid = parseFloat(opt.data('paid'));
+            var remaining = parseFloat(opt.data('remaining'));
+            if (isNaN(total)) total = 0;
+            if (isNaN(paid)) paid = 0;
+            if (isNaN(remaining)) remaining = 0;
+            $('#wo_total_display').val(total.toFixed(2));
+            $('#wo_paid_display').val(paid.toFixed(2));
+            $('#wo_remaining_display').val(remaining.toFixed(2));
+            $('#bill_payable_vendor').val(remaining.toFixed(2));
+            $('#amount_payable_vendor').val(remaining.toFixed(2));
+            calculateVendorPayment();
+        });
+
+        setTimeout(function() {
+            if ($('#payment_type').val() === 'vendor' && $('#vendor_id').val()) {
+                loadVendorWorkOrders($('#vendor_id').val(), preselectWorkOrderId);
+            }
+        }, 300);
 
         // Vendor payment - Calculate deductions
         function calculateVendorPayment() {

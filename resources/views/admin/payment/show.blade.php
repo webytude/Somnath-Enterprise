@@ -105,6 +105,7 @@
                                         <p class="form-control-plaintext">{{ $payment->remarks ?? 'N/A' }}</p>
                                     </div>
                                 </div>
+
                             </div>
 
                             <div class="mb-7">
@@ -138,6 +139,10 @@
                                     <div class="col-md-6">
                                         <label class="fs-6 fw-bold form-label">VENDOR</label>
                                         <p class="form-control-plaintext">{{ $payment->vendor->pedhi ?? 'N/A' }}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="fs-6 fw-bold form-label">Work Order</label>
+                                        <p class="form-control-plaintext">{{ $payment->workOrder ? $payment->workOrder->paymentSelectLabel() : 'N/A' }}</p>
                                     </div>
                                 </div>
                                 <div class="row mb-7">

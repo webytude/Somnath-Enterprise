@@ -13,10 +13,22 @@ class MaterialListController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $materialLists = MaterialList::with('materialCategory')->latest()->get();
-        return view('admin.material-list.index', compact('materialLists'));
+        // Fetch all categories for the filter dropdown
+        $materialCategories = MaterialCategory::orderBy('name')->get();
+
+        // Base query with relation
+        $query = MaterialList::with('materialCategory')->latest();
+
+        // Apply category filter if provided
+        if ($request->filled('category_id')) {
+            $query->where('material_category_id', $request->category_id);
+        }
+
+        $materialLists = $query->get();
+
+        return view('admin.material-list.index', compact('materialLists', 'materialCategories'));
     }
 
     /**

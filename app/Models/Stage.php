@@ -12,6 +12,8 @@ class Stage extends Model
     protected $fillable = [
         'name',
         'percentage',
+        'location_id',
+        'work_id',
         'created_by',
         'updated_by',
     ];
@@ -19,4 +21,17 @@ class Stage extends Model
     protected $casts = [
         'percentage' => 'decimal:2',
     ];
+
+    /**
+     * Relationships
+     */
+    public function location()
+    {
+        return $this->belongsTo(Location::class);
+    }
+
+    public function work()
+    {
+        return $this->belongsTo(Work::class);
+    }
 }

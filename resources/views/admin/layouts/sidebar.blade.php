@@ -297,6 +297,34 @@
                 </div>
                 @endif
 
+                <!-- Manage Order -->
+                @if(!auth()->check() || !auth()->user()->isStaff())
+                <div data-kt-menu-trigger="click" class="menu-item {{ request()->routeIs('work-orders.*') ? 'here show' : '' }} menu-accordion">
+                    <span class="menu-link">
+                        <span class="menu-icon">
+                            <span class="svg-icon svg-icon-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <path opacity="0.3" d="M3 13V11C3 10.4 3.4 10 4 10H20C20.6 10 21 10.4 21 11V13C21 13.6 20.6 14 20 14H4C3.4 14 3 13.6 3 13Z" fill="currentColor"/>
+                                    <path d="M13 21V7C13 6.4 12.6 6 12 6H4C3.4 6 3 6.4 3 7V21C3 21.6 3.4 22 4 22H12C12.6 22 13 21.6 13 21Z" fill="currentColor"/>
+                                </svg>
+                            </span>
+                        </span>
+                        <span class="menu-title">Manage Order</span>
+                        <span class="menu-arrow"></span>
+                    </span>
+                    <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        <div class="menu-item">
+                            <a class="menu-link {{ request()->routeIs('work-orders.*') ? 'active' : '' }}" href="{{ route('work-orders.index') }}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Work Order</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
                 <!-- Manage Payment -->
                 @if(!auth()->check() || !auth()->user()->isStaff())
                 <div data-kt-menu-trigger="click" class="menu-item {{ request()->routeIs('payments.*') ? 'here show' : '' }} menu-accordion">
@@ -327,7 +355,7 @@
 
                 <!-- Manage Scrap -->
                 @if(!auth()->check() || !auth()->user()->isStaff())
-                <div data-kt-menu-trigger="click" class="menu-item {{ request()->routeIs(['scrap-materials.*', 'scrap-lists.*']) ? 'here show' : '' }} menu-accordion">
+                <!-- <div data-kt-menu-trigger="click" class="menu-item {{ request()->routeIs(['scrap-materials.*', 'scrap-lists.*']) ? 'here show' : '' }} menu-accordion">
                     <span class="menu-link">
                         <span class="menu-icon">
                             <span class="svg-icon svg-icon-2">
@@ -360,7 +388,7 @@
                             </a>
                         </div>
                     </div>
-                </div>
+                </div> -->
                 @endif
             </div>
         </div>

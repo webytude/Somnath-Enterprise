@@ -22,6 +22,10 @@ class MaterialInward extends Model
         'bill_voucher_attachment',
         'add_bhadu',
         'total_bill_voucher_amount',
+        'payment_status',
+        'payment_ref_number',
+        'payment_date',
+        'payment_remarks',
         'remarks',
         'created_by',
         'updated_by',
@@ -30,6 +34,7 @@ class MaterialInward extends Model
     protected $casts = [
         'bill_voucher_date' => 'date',
         'material_inward_at_site_date' => 'date',
+        'payment_date' => 'date',
         'add_bhadu' => 'decimal:2',
         'total_bill_voucher_amount' => 'decimal:2',
     ];

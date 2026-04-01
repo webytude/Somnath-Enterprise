@@ -35,6 +35,7 @@
                             <th class="min-w-150px">Bill/Voucher No.</th>
                             <th class="min-w-150px">Bill/Voucher Date</th>
                             <th class="min-w-150px">Total Amount</th>
+                            <th class="min-w-120px">Status</th>
                             <th class="text-end min-w-100px">Action</th>
                         </tr>
                     </thead>
@@ -47,6 +48,14 @@
                             <td>{{ $materialInward->bill_voucher_number ?? 'N/A' }}</td>
                             <td>{{ $materialInward->bill_voucher_date ? $materialInward->bill_voucher_date->format('d-m-Y') : 'N/A' }}</td>
                             <td>₹ {{ number_format($materialInward->total_bill_voucher_amount, 2) }}</td>
+                            <td>
+                                @php
+                                    $paymentStatus = $materialInward->payment_status ?? 'Pending';
+                                @endphp
+                                <span class="badge badge-{{ $paymentStatus === 'Paid' ? 'success' : 'warning' }}">
+                                    {{ $paymentStatus }}
+                                </span>
+                            </td>
                             <td class="text-end">
                                 <a href="{{ route('material-inwards.show', $materialInward) }}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" title="View">
                                     <span class="svg-icon svg-icon-3">
@@ -79,7 +88,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="7" class="text-center">No material inwards found.</td>
+                            <td colspan="8" class="text-center">No material inwards found.</td>
                         </tr>
                         @endforelse
                     </tbody>

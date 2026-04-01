@@ -23,6 +23,7 @@ class ToolListStoreRequest extends FormRequest
     {
         return [
             'location_id' => 'required|exists:locations,id',
+            'shelf_location' => 'nullable|string|max:255',
             'name' => 'required|string|max:255',
             'quantity' => 'required|numeric|min:0',
             'person_name' => 'required|string|max:255',

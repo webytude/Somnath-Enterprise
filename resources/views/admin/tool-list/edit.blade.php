@@ -43,6 +43,16 @@
                                 @enderror
                             </div>
 
+                            <div class="fv-row mb-7">
+                                <label class="fs-6 fw-bold form-label mt-3">
+                                    <span>Shelf Location</span>
+                                </label>
+                                <input type="text" class="form-control form-control-solid" name="shelf_location" value="{{ old('shelf_location', $toolList->shelf_location) }}" placeholder="Enter Shelf / Rack Location (optional)" />
+                                @error('shelf_location')
+                                    <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                @enderror
+                            </div>
+
                             <div class="row mb-7">
                                 <div class="col-md-6">
                                     <label class="fs-6 fw-bold form-label mt-3">

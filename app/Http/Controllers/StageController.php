@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Stage;
+use App\Models\Location;
+use App\Models\Work;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StageStoreRequest;
 
@@ -14,7 +16,7 @@ class StageController extends Controller
      */
     public function index()
     {
-        $stages = Stage::latest()->get();
+        $stages = Stage::with(['location', 'work'])->latest()->get();
         return view('admin.stage.index', compact('stages'));
     }
 
@@ -23,7 +25,8 @@ class StageController extends Controller
      */
     public function create()
     {
-        return view('admin.stage.create');
+        $locations = Location::orderBy('name')->get();
+        return view('admin.stage.create', compact('locations'));
     }
 
     /**
@@ -34,6 +37,8 @@ class StageController extends Controller
         Stage::create([
             'name' => $request->name,
             'percentage' => $request->percentage,
+            'location_id' => $request->location_id,
+            'work_id' => $request->work_id,
             'created_by' => Auth::id(),
             'updated_by' => Auth::id(),
         ]);
@@ -55,7 +60,9 @@ class StageController extends Controller
      */
     public function edit(Stage $stage)
     {
-        return view('admin.stage.edit', compact('stage'));
+        $locations = Location::orderBy('name')->get();
+        $currentWork = $stage->work_id ? Work::find($stage->work_id) : null;
+        return view('admin.stage.edit', compact('stage', 'locations', 'currentWork'));
     }
 
     /**
@@ -66,6 +73,8 @@ class StageController extends Controller
         $stage->update([
             'name' => $request->name,
             'percentage' => $request->percentage,
+            'location_id' => $request->location_id,
+            'work_id' => $request->work_id,
             'updated_by' => Auth::id(),
         ]);
 

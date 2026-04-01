@@ -32,6 +32,7 @@ use App\Http\Controllers\BillInwardController;
 use App\Http\Controllers\BillOutwardController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\StageController;
+use App\Http\Controllers\WorkOrderController;
 // Route::get('/', function () {
 //     return view('admin.auth.login');
 // });
@@ -116,8 +117,13 @@ Route::middleware(['auth'])->group(function () {
     
     Route::get('payments/get-staff-payable', [PaymentController::class, 'getStaffPayable'])->name('payments.getStaffPayable');
     Route::get('payments/get-party-bills', [PaymentController::class, 'getPartyBills'])->name('payments.getPartyBills');
+    Route::get('payments/get-party-material-inwards', [PaymentController::class, 'getPartyMaterialInwards'])->name('payments.getPartyMaterialInwards');
     Route::get('payments/get-vendor-bills', [PaymentController::class, 'getVendorBills'])->name('payments.getVendorBills');
     Route::resource('payments', PaymentController::class);
+
+    Route::get('work-orders/preview-number', [WorkOrderController::class, 'previewNumber'])->name('work-orders.previewNumber');
+    Route::get('work-orders/vendor-assignments/{contractor}', [WorkOrderController::class, 'vendorAssignments'])->name('work-orders.vendorAssignments');
+    Route::resource('work-orders', WorkOrderController::class);
 
     Route::get('my-profile', [ProfileController::class, 'index'])->name('user.getProfile');
     Route::get('edit-profile', [ProfileController::class, 'edit'])->name('user.editProfile');

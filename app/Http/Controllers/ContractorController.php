@@ -26,9 +26,9 @@ class ContractorController extends Controller
      */
     public function create()
     {
-        $paymentSlabs = PaymentSlab::orderBy('name')->get();
+        // $paymentSlabs = PaymentSlab::orderBy('name')->get();
         $locations = Location::orderBy('name')->get();
-        return view('admin.contractor.create', compact('paymentSlabs', 'locations'));
+        return view('admin.contractor.create', compact('locations'));
     }
 
     /**
@@ -71,10 +71,10 @@ class ContractorController extends Controller
      */
     public function edit(Contractor $contractor)
     {
-        $paymentSlabs = PaymentSlab::orderBy('name')->get();
+        // $paymentSlabs = PaymentSlab::orderBy('name')->get();
         $locations = Location::orderBy('name')->get();
         $contractor->load('locations', 'works');
-        return view('admin.contractor.edit', compact('contractor', 'paymentSlabs', 'locations'));
+        return view('admin.contractor.edit', compact('contractor', 'locations'));
     }
 
     /**

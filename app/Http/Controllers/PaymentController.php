@@ -9,6 +9,8 @@ use App\Models\Party;
 use App\Models\Contractor;
 use App\Models\BillInward;
 use App\Models\DailyExpense;
+use App\Models\MaterialInward;
+use App\Models\WorkOrder;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\PaymentStoreRequest;
 
@@ -19,7 +21,7 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        $payments = Payment::with(['staff', 'party', 'vendor'])
+        $payments = Payment::with(['staff', 'party', 'vendor', 'workOrder'])
             ->latest()
             ->get();
         
@@ -45,6 +47,21 @@ class PaymentController extends Controller
     {
         $data = $request->validated();
         $data['created_by'] = Auth::user()->id;
+        $materialInwardIds = array_values($request->input('material_inward_ids', []));
+
+        // material_inward_ids are used only for UI/amount calculation, do not persist.
+        unset($data['material_inward_ids']);
+
+        if (($data['payment_type'] ?? null) !== 'vendor') {
+            unset($data['work_order_id']);
+        }
+
+        if (($data['payment_type'] ?? null) === 'vendor' && ! empty($data['work_order_id']) && empty($data['reason_bill_no'])) {
+            $wo = WorkOrder::query()->find($data['work_order_id']);
+            if ($wo) {
+                $data['reason_bill_no'] = $wo->work_order_number;
+            }
+        }
         
         // Calculate total deduction and paid amount for vendor
         if ($data['payment_type'] === 'vendor' && isset($data['tds_percentage'])) {
@@ -54,6 +71,10 @@ class PaymentController extends Controller
         }
         
         $payment = Payment::create($data);
+
+        if ($payment->payment_type === 'vendor' && $payment->work_order_id) {
+            $payment->workOrder?->syncVendorPaidTotalFromPayments();
+        }
         
         // Update bill status if this is a party payment with a bill number
         if ($data['payment_type'] === 'party' && !empty($data['reason_bill_no']) && !empty($data['party_id'])) {
@@ -80,6 +101,23 @@ class PaymentController extends Controller
                 ]);
             }
         }
+
+        // Update selected material inward status for party payments.
+        if (
+            $data['payment_type'] === 'party' &&
+            !empty($data['party_id']) &&
+            !empty($materialInwardIds)
+        ) {
+            MaterialInward::where('party_id', $data['party_id'])
+                ->whereIn('id', $materialInwardIds)
+                ->update([
+                    'payment_status' => 'Paid',
+                    'payment_ref_number' => $data['ref_number'] ?? null,
+                    'payment_date' => $data['payment_date'] ?? null,
+                    'payment_remarks' => $data['remarks'] ?? null,
+                    'updated_by' => Auth::user()->id,
+                ]);
+        }
         
         return redirect()->route('payments.index')->with('success', 'Payment created successfully.');
     }
@@ -89,7 +127,7 @@ class PaymentController extends Controller
      */
     public function show(Payment $payment)
     {
-        $payment->load(['staff', 'party', 'vendor', 'creator', 'updater']);
+        $payment->load(['staff', 'party', 'vendor', 'workOrder', 'creator', 'updater']);
         return view('admin.payment.show', compact('payment'));
     }
 
@@ -112,6 +150,26 @@ class PaymentController extends Controller
     {
         $data = $request->validated();
         $data['updated_by'] = Auth::user()->id;
+        $materialInwardIds = array_values($request->input('material_inward_ids', []));
+
+        // material_inward_ids are used only for UI/amount calculation, do not persist.
+        unset($data['material_inward_ids']);
+
+        if (($data['payment_type'] ?? null) !== 'vendor') {
+            unset($data['work_order_id']);
+        }
+
+        $workOrderIdsToSync = [];
+        if ($payment->payment_type === 'vendor' && $payment->work_order_id) {
+            $workOrderIdsToSync[] = (int) $payment->work_order_id;
+        }
+
+        if (($data['payment_type'] ?? null) === 'vendor' && ! empty($data['work_order_id']) && empty($data['reason_bill_no'])) {
+            $wo = WorkOrder::query()->find($data['work_order_id']);
+            if ($wo) {
+                $data['reason_bill_no'] = $wo->work_order_number;
+            }
+        }
         
         // Calculate total deduction and paid amount for vendor
         if ($data['payment_type'] === 'vendor' && isset($data['tds_percentage'])) {
@@ -121,6 +179,14 @@ class PaymentController extends Controller
         }
         
         $payment->update($data);
+
+        $fresh = $payment->fresh();
+        if ($fresh->payment_type === 'vendor' && $fresh->work_order_id) {
+            $workOrderIdsToSync[] = (int) $fresh->work_order_id;
+        }
+        foreach (array_unique(array_filter($workOrderIdsToSync)) as $woId) {
+            WorkOrder::query()->find($woId)?->syncVendorPaidTotalFromPayments();
+        }
         
         // Update bill status if this is a party payment with a bill number
         if ($data['payment_type'] === 'party' && !empty($data['reason_bill_no']) && !empty($data['party_id'])) {
@@ -147,6 +213,23 @@ class PaymentController extends Controller
                 ]);
             }
         }
+
+        // Update selected material inward status for party payments.
+        if (
+            $data['payment_type'] === 'party' &&
+            !empty($data['party_id']) &&
+            !empty($materialInwardIds)
+        ) {
+            MaterialInward::where('party_id', $data['party_id'])
+                ->whereIn('id', $materialInwardIds)
+                ->update([
+                    'payment_status' => 'Paid',
+                    'payment_ref_number' => $data['ref_number'] ?? null,
+                    'payment_date' => $data['payment_date'] ?? null,
+                    'payment_remarks' => $data['remarks'] ?? null,
+                    'updated_by' => Auth::user()->id,
+                ]);
+        }
         
         return redirect()->route('payments.index')->with('success', 'Payment updated successfully.');
     }
@@ -156,7 +239,12 @@ class PaymentController extends Controller
      */
     public function destroy(Payment $payment)
     {
+        $woId = $payment->payment_type === 'vendor' ? $payment->work_order_id : null;
         $payment->delete();
+        if ($woId) {
+            WorkOrder::query()->find($woId)?->syncVendorPaidTotalFromPayments();
+        }
+
         return redirect()->route('payments.index')->with('success', 'Payment deleted successfully.');
     }
 
@@ -270,45 +358,81 @@ class PaymentController extends Controller
     }
 
     /**
-     * Get vendor bills payable
+     * Get party-wise Material Inward bills (for party payments)
+     */
+    public function getPartyMaterialInwards(Request $request)
+    {
+        $partyId = $request->get('party_id');
+        if (!$partyId) {
+            return response()->json(['bills' => []]);
+        }
+
+        $inwardsQuery = MaterialInward::where('party_id', $partyId)
+            ->where(function ($query) {
+                $query->whereNull('payment_status')
+                    ->orWhere('payment_status', 'Pending');
+            })
+            ->orderBy('bill_voucher_date', 'desc')
+            ->select(['id', 'bill_voucher_number', 'bill_voucher_date', 'total_bill_voucher_amount']);
+
+        $inwards = $inwardsQuery->get();
+
+        return response()->json([
+            'bills' => $inwards->map(function ($inward) {
+                return [
+                    'id' => $inward->id,
+                    'bill_voucher_number' => $inward->bill_voucher_number,
+                    'bill_voucher_date' => $inward->bill_voucher_date ? $inward->bill_voucher_date->format('d-m-Y') : null,
+                    'total_bill_voucher_amount' => (float) $inward->total_bill_voucher_amount,
+                ];
+            })->values(),
+        ]);
+    }
+
+    /**
+     * Work orders for vendor payment (label: W.O. no. + subject; payable = remaining on WO).
      */
     public function getVendorBills(Request $request)
     {
         $vendorId = $request->get('vendor_id');
-        
-        if (!$vendorId) {
-            return response()->json(['bills' => []]);
+        $excludePaymentId = $request->get('payment_id');
+
+        if (! $vendorId) {
+            return response()->json(['work_orders' => [], 'total_payable' => '0.00']);
         }
-        
-        // Get all payments for this vendor to check which bills have been paid
-        $paidPayments = Payment::where('vendor_id', $vendorId)
-            ->where('payment_type', 'vendor')
-            ->whereNotNull('reason_bill_no')
-            ->pluck('reason_bill_no')
-            ->toArray();
-        
-        // For vendors, bills might come from Material Inward or other sources
-        // Since MaterialInward has party_id and vendors might not be directly linked,
-        // we'll track via payments table - exclude bills that have already been paid
-        
-        // Calculate total payable from unpaid bills
-        // If there are already payments for this vendor with bill numbers, exclude those bills
-        $totalPayable = 0;
-        
-        // Note: If you have a vendor bills table or MaterialInward linked to vendors,
-        // you can fetch bills here and filter out paid ones:
-        // $bills = MaterialInward::where('vendor_id', $vendorId) // if such field exists
-        //     ->whereNotIn('bill_voucher_number', $paidPayments)
-        //     ->get();
-        // $totalPayable = $bills->sum('total_bill_voucher_amount');
-        
-        // For now, return 0 to prevent showing already paid amounts
-        // The key is that if a payment exists for this vendor with a reason_bill_no,
-        // that bill won't be included in future calculations
-        
+
+        $orders = WorkOrder::query()
+            ->where('contractor_id', $vendorId)
+            ->orderByDesc('order_date')
+            ->orderByDesc('id')
+            ->get();
+
+        $workOrders = $orders->map(function (WorkOrder $wo) use ($excludePaymentId) {
+            $q = Payment::query()
+                ->where('payment_type', 'vendor')
+                ->where('work_order_id', $wo->id);
+            if ($excludePaymentId) {
+                $q->where('id', '!=', $excludePaymentId);
+            }
+            $paidTowards = (float) $q->sum('amount_payable');
+            $total = (float) $wo->total_order_value;
+            $remaining = round(max(0, $total - $paidTowards), 2);
+
+            return [
+                'id' => $wo->id,
+                'label' => $wo->paymentSelectLabel(),
+                'total_order_value' => $total,
+                'paid_towards_order' => round($paidTowards, 2),
+                'remaining' => $remaining,
+                'bill_payable' => $remaining,
+            ];
+        })->values();
+
+        $totalPayable = (float) $workOrders->sum('remaining');
+
         return response()->json([
-            'bills' => [],
-            'total_payable' => number_format($totalPayable, 2, '.', '')
+            'work_orders' => $workOrders,
+            'total_payable' => number_format($totalPayable, 2, '.', ''),
         ]);
     }
 }

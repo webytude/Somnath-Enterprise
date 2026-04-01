@@ -11,6 +11,7 @@ class ToolList extends Model
 
     protected $fillable = [
         'location_id',
+        'shelf_location',
         'name',
         'quantity',
         'person_name',

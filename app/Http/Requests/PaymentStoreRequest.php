@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Models\WorkOrder;
+use Closure;
 use Illuminate\Foundation\Http\FormRequest;
 
 class PaymentStoreRequest extends FormRequest
@@ -26,7 +28,30 @@ class PaymentStoreRequest extends FormRequest
         $rules = [
             'payment_type' => 'required|in:staff,party,vendor',
             'payment_date' => 'required|date',
-            'amount_payable' => 'required|numeric|min:0',
+            'amount_payable' => [
+                'required',
+                'numeric',
+                'min:0',
+                function (string $attribute, mixed $value, Closure $fail) {
+                    if ($this->input('payment_type') !== 'vendor') {
+                        return;
+                    }
+                    $woId = $this->input('work_order_id');
+                    if (! $woId) {
+                        return;
+                    }
+                    $wo = WorkOrder::query()->find($woId);
+                    if (! $wo) {
+                        return;
+                    }
+                    $exclude = $this->route('payment');
+                    $excludeId = $exclude ? (int) $exclude->getKey() : null;
+                    $max = $wo->vendorRemainingPayableExcludingPayment($excludeId);
+                    if ((float) $value > $max + 0.009) {
+                        $fail('Amount cannot exceed work order balance (₹'.number_format($max, 2).').');
+                    }
+                },
+            ],
             'paid_amount' => 'required|numeric|min:0',
             'ref_number' => 'nullable|string|max:255',
             'remarks' => 'nullable|string',
@@ -46,6 +71,8 @@ class PaymentStoreRequest extends FormRequest
         // Party payment validation
         if ($paymentType === 'party') {
             $rules['party_id'] = 'required|exists:parties,id';
+            $rules['material_inward_ids'] = 'nullable|array';
+            $rules['material_inward_ids.*'] = 'integer|exists:material_inwards,id';
             $rules['reason_bill_no'] = 'nullable|string|max:255';
             $rules['bill_payable'] = 'nullable|numeric|min:0';
         }
@@ -53,6 +80,17 @@ class PaymentStoreRequest extends FormRequest
         // Vendor payment validation
         if ($paymentType === 'vendor') {
             $rules['vendor_id'] = 'required|exists:contractors,id';
+            $rules['work_order_id'] = [
+                'required',
+                'exists:work_orders,id',
+                function (string $attribute, mixed $value, Closure $fail) {
+                    $wo = WorkOrder::query()->find($value);
+                    $vendorId = $this->input('vendor_id');
+                    if (! $wo || (int) $wo->contractor_id !== (int) $vendorId) {
+                        $fail('The work order does not belong to the selected vendor.');
+                    }
+                },
+            ];
             $rules['reason_bill_no'] = 'nullable|string|max:255';
             $rules['bill_payable'] = 'nullable|numeric|min:0';
         }

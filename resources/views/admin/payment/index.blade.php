@@ -26,6 +26,7 @@
                                         <th>Sr. No.</th>
                                         <th>Payment Type</th>
                                         <th>Recipient</th>
+                                        <th>Work Order</th>
                                         <th>Amount Payable</th>
                                         <th>Paid Amount</th>
                                         <th>Remaining Amount</th>
@@ -52,6 +53,13 @@
                                                 {{ $payment->vendor->pedhi }}
                                             @else
                                                 N/A
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($payment->payment_type === 'vendor' && $payment->workOrder)
+                                                <span class="text-gray-800">{{ \Illuminate\Support\Str::limit($payment->workOrder->paymentSelectLabel(), 48) }}</span>
+                                            @else
+                                                —
                                             @endif
                                         </td>
                                         <td>₹ {{ number_format($payment->amount_payable, 2) }}</td>
@@ -86,7 +94,7 @@
                                     </tr>
                                     @empty
                                     <tr>
-                                        <td colspan="9" class="text-center">No payments found.</td>
+                                        <td colspan="10" class="text-center">No payments found.</td>
                                     </tr>
                                     @endforelse
                                 </tbody>

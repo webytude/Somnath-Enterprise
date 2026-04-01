@@ -14,6 +14,7 @@ class Payment extends Model
         'staff_id',
         'party_id',
         'vendor_id',
+        'work_order_id',
         'salary_payable',
         'expense_payable',
         'total_payable',
@@ -56,6 +57,11 @@ class Payment extends Model
     public function vendor()
     {
         return $this->belongsTo(Contractor::class, 'vendor_id');
+    }
+
+    public function workOrder()
+    {
+        return $this->belongsTo(WorkOrder::class, 'work_order_id');
     }
 
     public function creator()
