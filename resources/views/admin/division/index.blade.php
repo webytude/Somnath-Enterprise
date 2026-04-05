@@ -39,8 +39,8 @@
                         @foreach($divisions as $division)
                         <tr>
                             <td>{{ $division->name }}</td>
-                            <td>{{ $division->department->name }}</td>
-                            <td>{{ $division->subdepartment->name }}</td>
+                            <td>{{ $division->department->name ?? '-' }}</td>
+                            <td>{{ $division->subdepartment->name ?? '-' }}</td>
                             <td class="text-end">
                                 <a href="{{ route('division.edit', $division) }}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
                                     <span class="svg-icon svg-icon-3">
