@@ -618,13 +618,12 @@
             var tdsAmount = (amountPayable * tdsPercentage) / 100;
             $('#tds_amount_display').val(tdsAmount.toFixed(2));
             
-            // Total Deduction = TDS
+            // Total Deduction = TDS (saved for records only)
             var totalDeduction = tdsAmount;
             $('#total_deduction').val(totalDeduction.toFixed(2));
             
-            // Paid Amount = Payable - Deduction
-            var paidAmount = amountPayable - totalDeduction;
-            $('#paid_amount_vendor').val(paidAmount.toFixed(2));
+            // Paid amount = full amount payable (TDS is not subtracted from paid / payable)
+            $('#paid_amount_vendor').val(amountPayable.toFixed(2));
         }
 
         // Calculate when amount payable or TDS percentage changes

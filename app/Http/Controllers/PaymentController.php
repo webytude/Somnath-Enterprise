@@ -63,11 +63,11 @@ class PaymentController extends Controller
             }
         }
         
-        // Calculate total deduction and paid amount for vendor
-        if ($data['payment_type'] === 'vendor' && isset($data['tds_percentage'])) {
-            $tdsAmount = ($data['amount_payable'] * $data['tds_percentage']) / 100;
-            $data['total_deduction'] = $tdsAmount;
-            $data['paid_amount'] = $data['amount_payable'] - $tdsAmount;
+        // Vendor: save TDS as total_deduction for records; paid_amount matches amount_payable (do not net off TDS).
+        if (($data['payment_type'] ?? null) === 'vendor') {
+            $tdsPct = isset($data['tds_percentage']) ? (float) $data['tds_percentage'] : 0;
+            $data['total_deduction'] = round(($data['amount_payable'] * $tdsPct) / 100, 2);
+            $data['paid_amount'] = $data['amount_payable'];
         }
         
         $payment = Payment::create($data);
@@ -171,11 +171,11 @@ class PaymentController extends Controller
             }
         }
         
-        // Calculate total deduction and paid amount for vendor
-        if ($data['payment_type'] === 'vendor' && isset($data['tds_percentage'])) {
-            $tdsAmount = ($data['amount_payable'] * $data['tds_percentage']) / 100;
-            $data['total_deduction'] = $tdsAmount;
-            $data['paid_amount'] = $data['amount_payable'] - $tdsAmount;
+        // Vendor: save TDS as total_deduction for records; paid_amount matches amount_payable (do not net off TDS).
+        if (($data['payment_type'] ?? null) === 'vendor') {
+            $tdsPct = isset($data['tds_percentage']) ? (float) $data['tds_percentage'] : 0;
+            $data['total_deduction'] = round(($data['amount_payable'] * $tdsPct) / 100, 2);
+            $data['paid_amount'] = $data['amount_payable'];
         }
         
         $payment->update($data);
