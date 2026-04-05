@@ -14,6 +14,15 @@ class WorkStoreRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        foreach (['subdepartment_id', 'department_id', 'division_id', 'location_id'] as $key) {
+            if ($this->has($key) && $this->input($key) === '') {
+                $this->merge([$key => null]);
+            }
+        }
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -21,13 +30,15 @@ class WorkStoreRequest extends FormRequest
      */
     public function rules(): array
     {
+        $isStore = $this->routeIs('works.store');
+
         return [
             'firm_id' => 'required|exists:firms,id',
-            'department_id' => 'required|exists:departments,id',
-            'subdepartment_id' => 'required|exists:subdepartments,id',
-            'division_id' => 'required|exists:divisions,id',
+            'department_id' => $isStore ? 'required|exists:departments,id' : 'nullable|exists:departments,id',
+            'subdepartment_id' => $isStore ? 'required|exists:subdepartments,id' : 'nullable|exists:subdepartments,id',
+            'division_id' => $isStore ? 'required|exists:divisions,id' : 'nullable|exists:divisions,id',
             'sub_division_id' => 'nullable|exists:sub_divisions,id',
-            'location_id' => 'required|exists:locations,id',
+            'location_id' => $isStore ? 'required|exists:locations,id' : 'nullable|exists:locations,id',
             'name_of_work' => 'required|string|max:255',
             'description_of_work' => 'nullable|string',
             'tender_id' => 'nullable|string|max:255',

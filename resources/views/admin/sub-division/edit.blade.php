@@ -31,8 +31,8 @@
                                         @enderror
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="fs-6 fw-bold form-label required">Division</label>
-                                        <select class="form-select form-select-solid" name="division_id" id="division_id" data-control="select2" data-placeholder="Select Division..." required>
+                                        <label class="fs-6 fw-bold form-label">Division</label>
+                                        <select class="form-select form-select-solid" name="division_id" id="division_id" data-control="select2" data-placeholder="Select Division...">
                                             <option value="">Select Division...</option>
                                             @foreach($divisions as $division)
                                                 <option value="{{ $division->id }}" {{ old('division_id', $subDivision->division_id) == $division->id ? 'selected' : '' }}>{{ $division->name }}</option>

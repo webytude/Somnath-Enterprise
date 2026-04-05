@@ -70,7 +70,9 @@ class DivisionController extends Controller
     {
         $division = Division::findOrFail($id);
         $departments = Department::orderBy('name')->get();
-        $subdepartments = Subdepartment::where('department_id', $division->department_id)->orderBy('name')->get();
+        $subdepartments = $division->department_id
+            ? Subdepartment::where('department_id', $division->department_id)->orderBy('name')->get()
+            : Subdepartment::orderBy('name')->get();
         return view('admin.division.edit', compact('division', 'departments', 'subdepartments'));
     }
 

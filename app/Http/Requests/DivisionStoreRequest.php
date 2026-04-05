@@ -14,6 +14,15 @@ class DivisionStoreRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        foreach (['subdepartment_id', 'department_id'] as $key) {
+            if ($this->has($key) && $this->input($key) === '') {
+                $this->merge([$key => null]);
+            }
+        }
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -24,10 +33,12 @@ class DivisionStoreRequest extends FormRequest
         $divisionId = $this->route('division');
         $divisionId = is_object($divisionId) ? $divisionId->id : $divisionId;
         
+        $isStore = $this->routeIs('division.store');
+
         return [
             'name' => 'required|string|max:255|unique:divisions,name,' . $divisionId,
-            'department_id' => 'required|exists:departments,id',
-            'subdepartment_id' => 'required|exists:subdepartments,id',
+            'department_id' => $isStore ? 'required|exists:departments,id' : 'nullable|exists:departments,id',
+            'subdepartment_id' => $isStore ? 'required|exists:subdepartments,id' : 'nullable|exists:subdepartments,id',
             'head_of_division_name' => 'nullable|string|max:255',
             'address' => 'nullable|string',
             'head_mobile_number' => 'nullable|string|max:20',

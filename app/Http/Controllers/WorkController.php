@@ -87,13 +87,27 @@ class WorkController extends Controller
         $work = Work::findOrFail($id);
         $firms = Firm::orderBy('name')->get();
         $departments = Department::orderBy('name')->get();
-        $subdepartments = Subdepartment::where('department_id', $work->department_id)->orderBy('name')->get();
-        $divisions = Division::where('subdepartment_id', $work->subdepartment_id)->orderBy('name')->get();
-        $subDivisions = SubDivision::where('division_id', $work->division_id)->orderBy('name')->get();
-        $locations = Location::where('firm_id', $work->firm_id)
-            ->where('department_id', $work->department_id)
-            ->where('subdepartment_id', $work->subdepartment_id)
-            ->where('division_id', $work->division_id)
+        $subdepartments = $work->department_id
+            ? Subdepartment::where('department_id', $work->department_id)->orderBy('name')->get()
+            : Subdepartment::orderBy('name')->get();
+
+        if ($work->subdepartment_id) {
+            $divisions = Division::where('subdepartment_id', $work->subdepartment_id)->orderBy('name')->get();
+        } elseif ($work->department_id) {
+            $divisions = Division::where('department_id', $work->department_id)->orderBy('name')->get();
+        } else {
+            $divisions = Division::orderBy('name')->get();
+        }
+
+        $subDivisions = $work->division_id
+            ? SubDivision::where('division_id', $work->division_id)->orderBy('name')->get()
+            : SubDivision::orderBy('name')->get();
+
+        $locations = Location::query()
+            ->when($work->firm_id, fn ($q) => $q->where('firm_id', $work->firm_id))
+            ->when($work->department_id, fn ($q) => $q->where('department_id', $work->department_id))
+            ->when($work->subdepartment_id, fn ($q) => $q->where('subdepartment_id', $work->subdepartment_id))
+            ->when($work->division_id, fn ($q) => $q->where('division_id', $work->division_id))
             ->orderBy('name')
             ->get();
         return view('admin.work.edit', compact('work', 'firms', 'departments', 'subdepartments', 'divisions', 'subDivisions', 'locations'));

@@ -74,13 +74,13 @@ class SubdepartmentController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255|unique:subdepartments,name,' . $id,
-            'department_id' => 'required|exists:departments,id',
+            'department_id' => 'nullable|exists:departments,id',
         ]);
 
         $subdepartment = Subdepartment::findOrFail($id);
         $subdepartment->update([
             'name' => $request->name,
-            'department_id' => $request->department_id,
+            'department_id' => $request->filled('department_id') ? $request->department_id : null,
             'updated_by' => Auth::id(),
         ]);
 
@@ -91,14 +91,17 @@ class SubdepartmentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Subdepartment $subdepartment)
+    public function destroy(Subdepartment $sub_department)
     {
         try {
-            $subdepartment->delete();
-            return redirect()->route('sub-departments.index')->with('success', 'Subdepartment deleted.');
+            // Route parameter is {sub_department}; name must match or implicit binding is skipped and delete() affects no row.
+            $sub_department->delete();
+
+            return redirect()->route('sub-departments.index')
+                ->with('success', 'Sub-department deleted successfully.');
         } catch (\Exception $e) {
-           dd($e->getMessage());
+            return redirect()->route('sub-departments.index')
+                ->with('error', 'Could not delete subdepartment: ' . $e->getMessage());
         }
-        
     }
 }

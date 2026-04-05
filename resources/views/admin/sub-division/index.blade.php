@@ -38,7 +38,7 @@
                         @foreach($subDivisions as $subDivision)
                         <tr>
                             <td>{{ $subDivision->name }}</td>
-                            <td>{{ $subDivision->division->name }}</td>
+                            <td>{{ $subDivision->division->name ?? '-' }}</td>
                             <td class="text-end">
                                 <a href="{{ route('sub-division.edit', $subDivision) }}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
                                     <span class="svg-icon svg-icon-3">

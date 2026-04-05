@@ -43,10 +43,10 @@
                         <tr>
                             <td>{{ $location->name }}</td>
                             <td>{{ $location->firm ? $location->firm->name : '-' }}</td>
-                            <td>{{ $location->department->name }}</td>
-                            <td>{{ $location->subdepartment->name }}</td>
-                            <td>{{ $location->division->name }}</td>
-                            <td>{{ $location->subDivision ? $location->subDivision->name : '-' }}</td>
+                            <td>{{ $location->department->name ?? '-' }}</td>
+                            <td>{{ $location->subdepartment->name ?? '-' }}</td>
+                            <td>{{ $location->division->name ?? '-' }}</td>
+                            <td>{{ $location->subDivision->name ?? '-' }}</td>
                             <td class="text-end">
                                 <a href="{{ route('locations.edit', $location) }}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
                                     <span class="svg-icon svg-icon-3">

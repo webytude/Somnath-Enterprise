@@ -14,6 +14,13 @@ class SubDivisionStoreRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('division_id') && $this->input('division_id') === '') {
+            $this->merge(['division_id' => null]);
+        }
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -26,7 +33,9 @@ class SubDivisionStoreRequest extends FormRequest
         
         return [
             'name' => 'required|string|max:255|unique:sub_divisions,name,' . $subDivisionId,
-            'division_id' => 'required|exists:divisions,id',
+            'division_id' => $this->routeIs('sub-division.store')
+                ? 'required|exists:divisions,id'
+                : 'nullable|exists:divisions,id',
             'head_of_sub_division' => 'nullable|string|max:255',
             'address' => 'nullable|string',
             'name_of_sub_div_head' => 'nullable|string|max:255',

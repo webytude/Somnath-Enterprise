@@ -28,6 +28,7 @@
                             <div class="fv-row mb-7">
                                 <label class="fs-6 fw-bold form-label mt-3">Department</label>
                                 <select class="form-select form-select-solid" name="department_id" data-control="select2" data-placeholder="Select Department...">
+                                    <option value="">{{ __('None (unlinked)') }}</option>
                                     @foreach($departments as $dept)
                                         <option value="{{ $dept->id }}" {{ $dept->id == $subdepartment->department_id ? "selected" :"" }}>{{ $dept->name }}</option>
                                     @endforeach

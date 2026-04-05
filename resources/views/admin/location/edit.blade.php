@@ -115,8 +115,8 @@
 @section('custom_scripts')
 <script>
     $(document).ready(function() {
-        var currentSubdepartmentId = {{ $location->subdepartment_id }};
-        var currentDivisionId = {{ $location->division_id }};
+        var currentSubdepartmentId = {{ $location->subdepartment_id ?? 'null' }};
+        var currentDivisionId = {{ $location->division_id ?? 'null' }};
         var currentSubDivisionId = {{ $location->sub_division_id ?? 'null' }};
         
         // When department changes, load subdepartments

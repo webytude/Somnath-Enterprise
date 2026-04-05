@@ -296,10 +296,10 @@
 @section('custom_scripts')
 <script>
     $(document).ready(function() {
-        var currentSubdepartmentId = {{ $work->subdepartment_id }};
-        var currentDivisionId = {{ $work->division_id }};
+        var currentSubdepartmentId = {{ $work->subdepartment_id ?? 'null' }};
+        var currentDivisionId = {{ $work->division_id ?? 'null' }};
         var currentSubDivisionId = {{ $work->sub_division_id ?? 'null' }};
-        var currentLocationId = {{ $work->location_id }};
+        var currentLocationId = {{ $work->location_id ?? 'null' }};
         
         // When department changes, load subdepartments
         $('#department_id').on('change', function() {

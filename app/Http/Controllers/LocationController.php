@@ -70,9 +70,21 @@ class LocationController extends Controller
         $location = Location::findOrFail($id);
         $firms = Firm::orderBy('name')->get();
         $departments = Department::orderBy('name')->get();
-        $subdepartments = Subdepartment::where('department_id', $location->department_id)->orderBy('name')->get();
-        $divisions = Division::where('subdepartment_id', $location->subdepartment_id)->orderBy('name')->get();
-        $subDivisions = SubDivision::where('division_id', $location->division_id)->orderBy('name')->get();
+        $subdepartments = $location->department_id
+            ? Subdepartment::where('department_id', $location->department_id)->orderBy('name')->get()
+            : Subdepartment::orderBy('name')->get();
+
+        if ($location->subdepartment_id) {
+            $divisions = Division::where('subdepartment_id', $location->subdepartment_id)->orderBy('name')->get();
+        } elseif ($location->department_id) {
+            $divisions = Division::where('department_id', $location->department_id)->orderBy('name')->get();
+        } else {
+            $divisions = Division::orderBy('name')->get();
+        }
+
+        $subDivisions = $location->division_id
+            ? SubDivision::where('division_id', $location->division_id)->orderBy('name')->get()
+            : SubDivision::orderBy('name')->get();
         return view('admin.location.edit', compact('location', 'firms', 'departments', 'subdepartments', 'divisions', 'subDivisions'));
     }
 
