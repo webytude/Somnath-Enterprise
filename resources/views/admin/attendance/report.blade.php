@@ -213,6 +213,8 @@
                                         <span class="badge badge-success">Present</span>
                                     @elseif($attendance->attendance_status == 'present_with_bike')
                                         <span class="badge badge-warning">Present with Bike</span>
+                                    @elseif($attendance->attendance_status == 'half_day')
+                                        <span class="badge badge-warning">Half Day</span>
                                     @else
                                         <span class="badge badge-danger">Absent</span>
                                     @endif
