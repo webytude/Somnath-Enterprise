@@ -15,6 +15,7 @@ class Attendance extends Model
         'attendance_status',
         'overtime_hours',
         'location_id',
+        'remark',
         'created_by',
         'updated_by',
     ];

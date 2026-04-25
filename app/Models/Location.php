@@ -43,4 +43,10 @@ class Location extends Model
     {
         return $this->belongsTo(SubDivision::class);
     }
+
+    public function staffs()
+    {
+        return $this->belongsToMany(Staff::class, 'staff_locations')
+            ->withTimestamps();
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StaffStoreRequest extends FormRequest
 {
@@ -21,15 +22,24 @@ class StaffStoreRequest extends FormRequest
      */
     public function rules(): array
     {
-        $staffId = $this->route('staff') ? $this->route('staff')->id : null;
+        $staff = $this->route('staff');
+        $userId = $staff?->user_id;
         
         return [
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore($userId),
+            ],
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'second_name' => 'nullable|string|max:255',
             'dob' => 'nullable|date',
             'doj' => 'nullable|date',
             'designation' => 'nullable|string|max:255',
+            'location_ids' => 'nullable|array',
+            'location_ids.*' => 'exists:locations,id',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'permanent_address' => 'nullable|string',
             'present_address' => 'nullable|string',

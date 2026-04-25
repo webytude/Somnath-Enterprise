@@ -46,7 +46,7 @@
                                         @foreach($requirement->details as $detail)
                                             <div class="mb-2 p-2 border rounded">
                                                 <strong>{{ $detail->material ? $detail->material->name : 'N/A' }}</strong><br>
-                                                <small>Unit: {{ $detail->unit }} | Qty: {{ number_format($detail->quantity, 2) }} | Date: {{ $detail->date->format('d-m-Y') }}</small>
+                                                <small> Qty: {{ number_format($detail->quantity, 2) }} | Unit: {{ $detail->unit }} | Date: {{ $detail->date->format('d-m-Y') }}</small>
                                                 @if($detail->time_within_days)
                                                     <br><small>Time Within: {{ $detail->time_within_days }} days</small>
                                                 @endif

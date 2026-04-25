@@ -83,6 +83,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('contractors', ContractorController::class);
 
     Route::get('site-progress/get-works-by-location', [SiteProgressController::class, 'getWorksByLocation'])->name('site-progress.getWorksByLocation');
+    Route::get('site-progress/get-stages-by-work', [SiteProgressController::class, 'getStagesByWork'])->name('site-progress.getStagesByWork');
     Route::resource('site-progress', SiteProgressController::class);
 
     Route::resource('tool-lists', ToolListController::class);

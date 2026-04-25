@@ -81,4 +81,10 @@ class Staff extends Model
     {
         return $this->hasMany(DailyExpense::class);
     }
+
+    public function locations()
+    {
+        return $this->belongsToMany(Location::class, 'staff_locations')
+            ->withTimestamps();
+    }
 }

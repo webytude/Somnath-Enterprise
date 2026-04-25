@@ -7,6 +7,7 @@ use App\Models\Stage;
 use App\Models\Location;
 use App\Models\Work;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StageStoreRequest;
 
 class StageController extends Controller
@@ -34,17 +35,21 @@ class StageController extends Controller
      */
     public function store(StageStoreRequest $request)
     {
-        Stage::create([
-            'name' => $request->name,
-            'percentage' => $request->percentage,
-            'location_id' => $request->location_id,
-            'work_id' => $request->work_id,
-            'created_by' => Auth::id(),
-            'updated_by' => Auth::id(),
-        ]);
+        DB::transaction(function () use ($request) {
+            foreach ($request->stages as $row) {
+                Stage::create([
+                    'name' => $row['name'],
+                    'percentage' => $row['percentage'],
+                    'location_id' => $request->location_id,
+                    'work_id' => $request->work_id,
+                    'created_by' => Auth::id(),
+                    'updated_by' => Auth::id(),
+                ]);
+            }
+        });
 
         return redirect()->route('stages.index')
-            ->with('success', 'Stage created successfully.');
+            ->with('success', 'Stage(s) created successfully.');
     }
 
     /**
@@ -70,13 +75,32 @@ class StageController extends Controller
      */
     public function update(StageStoreRequest $request, Stage $stage)
     {
-        $stage->update([
-            'name' => $request->name,
-            'percentage' => $request->percentage,
-            'location_id' => $request->location_id,
-            'work_id' => $request->work_id,
-            'updated_by' => Auth::id(),
-        ]);
+        DB::transaction(function () use ($request, $stage) {
+            $rows = $request->stages;
+
+            // First row updates the current stage.
+            $firstRow = $rows[0];
+            $stage->update([
+                'name' => $firstRow['name'],
+                'percentage' => $firstRow['percentage'],
+                'location_id' => $request->location_id,
+                'work_id' => $request->work_id,
+                'updated_by' => Auth::id(),
+            ]);
+
+            // Additional rows are created as new stages.
+            $extraRows = array_slice($rows, 1);
+            foreach ($extraRows as $row) {
+                Stage::create([
+                    'name' => $row['name'],
+                    'percentage' => $row['percentage'],
+                    'location_id' => $request->location_id,
+                    'work_id' => $request->work_id,
+                    'created_by' => Auth::id(),
+                    'updated_by' => Auth::id(),
+                ]);
+            }
+        });
 
         return redirect()->route('stages.index')
             ->with('success', 'Stage updated successfully.');

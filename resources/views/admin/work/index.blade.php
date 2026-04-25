@@ -34,10 +34,10 @@
                                 <th class="min-w-125px">Firm</th>
                                 <th class="min-w-125px">Location</th>
                                 <th class="min-w-125px">Work Order No.</th>
-                                <th class="min-w-125px">W.O. Date</th>
-                                <th class="min-w-125px">Estimate Cost</th>
-                                <th class="min-w-125px">Final Work Amt.</th>
-                                <th class="min-w-125px">Our Final Work Amt.</th>
+                                <th class="min-w-125px">Work Order Date</th>
+                                <th class="min-w-125px">Work Start Date</th>
+                                <th class="min-w-125px">Work End Date</th>
+                                <th class="min-w-150px">Final Work Amt. (without GST)</th>
                                 <th class="text-end min-w-100px">Action</th>
                             </tr>
                         </thead>
@@ -49,9 +49,9 @@
                                 <td>{{ $work->location ? $work->location->name : '-' }}</td>
                                 <td>{{ $work->work_order_no ?? '-' }}</td>
                                 <td>{{ $work->wo_date ? $work->wo_date->format('d/m/Y') : '-' }}</td>
-                                <td>₹{{ $work->estimate_cost ? number_format($work->estimate_cost, 2) : '-' }}</td>
+                                <td>{{ $work->work_start_date ? $work->work_start_date->format('d/m/Y') : '-' }}</td>
+                                <td>{{ $work->end_date_of_work ? $work->end_date_of_work->format('d/m/Y') : '-' }}</td>
                                 <td>₹{{ $work->final_amt_of_work ? number_format($work->final_amt_of_work, 2) : '-' }}</td>
-                                <td>₹{{ $work->our_final_work_amt ? number_format($work->our_final_work_amt, 2) : '-' }}</td>
                                 <td class="text-end">
                                     <a href="{{ route('works.edit', $work) }}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
                                         <span class="svg-icon svg-icon-3">

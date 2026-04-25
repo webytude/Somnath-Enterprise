@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Staff;
+use App\Models\User;
+use App\Models\Location;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\StaffStoreRequest;
 use Carbon\Carbon;
 
@@ -75,7 +79,8 @@ class StaffController extends Controller
      */
     public function create()
     {
-        return view('admin.staff.create');
+        $locations = Location::orderBy('name')->get();
+        return view('admin.staff.create', compact('locations'));
     }
 
     /**
@@ -85,6 +90,9 @@ class StaffController extends Controller
     {
         $data = $request->validated();
         $data['created_by'] = Auth::user()->id;
+        $email = $data['email'];
+        unset($data['email']);
+        $locationIds = $request->input('location_ids', []);
         
         // Generate staff code if not provided
         if (empty($data['code'])) {
@@ -99,7 +107,25 @@ class StaffController extends Controller
             $data['photo'] = asset('/images/staff/' . $name);
         }
         
-        Staff::create($data);
+        DB::transaction(function () use ($data, $email, $locationIds) {
+            $password = !empty($data['mobile_number']) && strlen((string)$data['mobile_number']) >= 6
+                ? (string)$data['mobile_number']
+                : 'password123@';
+
+            $user = User::create([
+                'name' => trim(($data['first_name'] ?? '') . ' ' . ($data['last_name'] ?? '')),
+                'email' => $email,
+                'password' => Hash::make($password),
+                'is_staff' => true,
+                'phone' => $data['mobile_number'] ?? null,
+                'dob' => $data['dob'] ?? null,
+                'address' => $data['present_address'] ?? null,
+            ]);
+
+            $data['user_id'] = $user->id;
+            $staff = Staff::create($data);
+            $staff->locations()->sync($locationIds);
+        });
         
         return redirect()->route('staff.index')->with('success', 'Staff created successfully.');
     }
@@ -117,7 +143,9 @@ class StaffController extends Controller
      */
     public function edit(Staff $staff)
     {
-        return view('admin.staff.edit', compact('staff'));
+        $staff->load('locations', 'user');
+        $locations = Location::orderBy('name')->get();
+        return view('admin.staff.edit', compact('staff', 'locations'));
     }
 
     /**
@@ -127,6 +155,9 @@ class StaffController extends Controller
     {
         $data = $request->validated();
         $data['updated_by'] = Auth::user()->id;
+        $email = $data['email'];
+        unset($data['email']);
+        $locationIds = $request->input('location_ids', []);
         
         // Handle photo upload
         if ($request->hasFile('photo')) {
@@ -145,7 +176,37 @@ class StaffController extends Controller
             $data['photo'] = asset('/images/staff/' . $name);
         }
         
-        $staff->update($data);
+        DB::transaction(function () use ($staff, $data, $email, $locationIds) {
+            if ($staff->user) {
+                $staff->user->update([
+                    'name' => trim(($data['first_name'] ?? '') . ' ' . ($data['last_name'] ?? '')),
+                    'email' => $email,
+                    'is_staff' => true,
+                    'phone' => $data['mobile_number'] ?? null,
+                    'dob' => $data['dob'] ?? null,
+                    'address' => $data['present_address'] ?? null,
+                ]);
+                $data['user_id'] = $staff->user->id;
+            } else {
+                $password = !empty($data['mobile_number']) && strlen((string)$data['mobile_number']) >= 6
+                    ? (string)$data['mobile_number']
+                    : 'staff123';
+
+                $user = User::create([
+                    'name' => trim(($data['first_name'] ?? '') . ' ' . ($data['last_name'] ?? '')),
+                    'email' => $email,
+                    'password' => Hash::make($password),
+                    'is_staff' => true,
+                    'phone' => $data['mobile_number'] ?? null,
+                    'dob' => $data['dob'] ?? null,
+                    'address' => $data['present_address'] ?? null,
+                ]);
+                $data['user_id'] = $user->id;
+            }
+
+            $staff->update($data);
+            $staff->locations()->sync($locationIds);
+        });
         
         return redirect()->route('staff.index')->with('success', 'Staff updated successfully.');
     }

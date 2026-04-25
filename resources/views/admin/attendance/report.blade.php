@@ -145,28 +145,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-xl-3">
-                        <div class="card bg-light-info">
-                            <div class="card-body">
-                                <div class="d-flex align-items-center">
-                                    <div class="flex-grow-1">
-                                        <span class="text-gray-700 fw-bold fs-6 d-block">Total OT Hours</span>
-                                        <span class="text-gray-900 fw-bolder fs-2x">{{ number_format($totalOvertimeHours, 2) }}</span>
-                                    </div>
-                                    <div class="symbol symbol-50px">
-                                        <div class="symbol-label bg-info">
-                                            <span class="svg-icon svg-icon-2x svg-icon-white">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                                    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill="currentColor" opacity="0.3"/>
-                                                    <path d="M12 6C12.5523 6 13 6.44772 13 7V11H17C17.5523 11 18 11.4477 18 12C18 12.5523 17.5523 13 17 13H13V17C13 17.5523 12.5523 18 12 18C11.4477 18 11 17.5523 11 17V13H7C6.44772 13 6 12.5523 6 12C6 11.4477 6.44772 11 7 11H11V7C11 6.44772 11.4477 6 12 6Z" fill="currentColor"/>
-                                                </svg>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- Attendance Table -->
@@ -182,7 +160,7 @@
                                 <th class="min-w-100px">Designation</th>
                                 <th class="min-w-120px text-center">Status</th>
                                 <th class="min-w-150px">Location</th>
-                                <th class="min-w-100px text-center">OT Hours</th>
+                                <th class="min-w-200px">Remark</th>
                             </tr>
                         </thead>
                         <tbody class="text-gray-600 fw-bold">
@@ -226,13 +204,7 @@
                                         <span class="text-muted">-</span>
                                     @endif
                                 </td>
-                                <td class="text-center">
-                                    @if($attendance->overtime_hours > 0)
-                                        <span class="badge badge-info">{{ number_format($attendance->overtime_hours, 2) }} hrs</span>
-                                    @else
-                                        <span class="text-muted">-</span>
-                                    @endif
-                                </td>
+                                <td>{{ $attendance->remark ?? '-' }}</td>
                             </tr>
                             @empty
                             <tr>

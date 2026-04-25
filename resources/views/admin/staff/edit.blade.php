@@ -79,6 +79,33 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-4">
+                                    <label class="fs-6 fw-bold form-label mt-3">Locations</label>
+                                    @php
+                                        $selectedLocations = old('location_ids', $staff->locations->pluck('id')->toArray());
+                                    @endphp
+                                    <div class="border rounded p-3" style="max-height: 180px; overflow-y: auto;">
+                                        @forelse($locations as $location)
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" name="location_ids[]" value="{{ $location->id }}" id="location_{{ $location->id }}" {{ in_array($location->id, $selectedLocations) ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="location_{{ $location->id }}">
+                                                    {{ $location->name }}
+                                                </label>
+                                            </div>
+                                        @empty
+                                            <span class="text-muted">No locations found.</span>
+                                        @endforelse
+                                    </div>
+                                    @error('location_ids')
+                                        <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                    @enderror
+                                    @error('location_ids.*')
+                                        <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="row mb-7">
+                                <div class="col-md-4">
                                     <label class="fs-6 fw-bold form-label mt-3">Photo</label>
                                     @if($staff->photo)
                                         <div class="mb-2">
@@ -110,6 +137,15 @@
                             </div>
 
                             <div class="row mb-7">
+                                <div class="col-md-4">
+                                    <label class="fs-6 fw-bold form-label mt-3">
+                                        <span class="required">Email</span>
+                                    </label>
+                                    <input type="email" class="form-control form-control-solid" name="email" value="{{ old('email', $staff->user->email ?? '') }}" placeholder="Enter Email Address" required />
+                                    @error('email')
+                                        <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                    @enderror
+                                </div>
                                 <div class="col-md-4">
                                     <label class="fs-6 fw-bold form-label mt-3">Mobile Number</label>
                                     <input type="text" class="form-control form-control-solid" name="mobile_number" value="{{ old('mobile_number', $staff->mobile_number) }}" placeholder="Enter Mobile Number" />

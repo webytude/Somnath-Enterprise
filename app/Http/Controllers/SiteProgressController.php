@@ -26,6 +26,19 @@ class SiteProgressController extends Controller
     }
 
     /**
+     * Get stages by work ID
+     */
+    public function getStagesByWork(Request $request)
+    {
+        $workId = $request->get('work_id');
+        $stages = Stage::where('work_id', $workId)
+            ->orderBy('name')
+            ->get(['id', 'name', 'percentage']);
+
+        return response()->json($stages);
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index()
@@ -40,8 +53,7 @@ class SiteProgressController extends Controller
     public function create()
     {
         $locations = Location::orderBy('name')->get();
-        $stages = Stage::orderBy('name')->get();
-        return view('admin.site-progress.create', compact('locations', 'stages'));
+        return view('admin.site-progress.create', compact('locations'));
     }
 
     /**
@@ -61,12 +73,17 @@ class SiteProgressController extends Controller
             }
         }
         
-        // Get stage name from stage_id if stage_id is provided
-        if (isset($data['stage_id']) && $data['stage_id']) {
-            $stage = Stage::find($data['stage_id']);
-            if ($stage) {
-                $data['work_stage'] = $stage->name;
-            }
+        // Build work stage list and total percentage from selected stages.
+        $selectedStageIds = array_values($request->input('stage_ids', []));
+        if (! empty($selectedStageIds)) {
+            $selectedStages = Stage::whereIn('id', $selectedStageIds)->orderBy('name')->get();
+            $data['work_stage'] = $selectedStages->pluck('name')->implode(', ');
+            $data['stage_percentage'] = (float) $selectedStages->sum('percentage');
+            $data['stage_id'] = $selectedStages->first()?->id; // legacy column compatibility
+        } else {
+            $data['work_stage'] = null;
+            $data['stage_percentage'] = null;
+            $data['stage_id'] = null;
         }
         
         SiteProgress::create($data);
@@ -88,12 +105,26 @@ class SiteProgressController extends Controller
     public function edit(SiteProgress $siteProgress)
     {
         $locations = Location::orderBy('name')->get();
-        $stages = Stage::orderBy('name')->get();
         
         // Get current work for the location
         $currentWork = $siteProgress->work_id ? Work::find($siteProgress->work_id) : null;
-        
-        return view('admin.site-progress.edit', compact('siteProgress', 'locations', 'stages', 'currentWork'));
+
+        // Resolve current selected stage IDs from stored names for edit preselection.
+        $selectedStageIds = [];
+        if (! empty($siteProgress->work_stage) && $siteProgress->work_id) {
+            $stageNames = collect(explode(',', $siteProgress->work_stage))
+                ->map(fn ($name) => trim($name))
+                ->filter()
+                ->values();
+            if ($stageNames->isNotEmpty()) {
+                $selectedStageIds = Stage::where('work_id', $siteProgress->work_id)
+                    ->whereIn('name', $stageNames)
+                    ->pluck('id')
+                    ->toArray();
+            }
+        }
+
+        return view('admin.site-progress.edit', compact('siteProgress', 'locations', 'currentWork', 'selectedStageIds'));
     }
 
     /**
@@ -113,12 +144,17 @@ class SiteProgressController extends Controller
             }
         }
         
-        // Get stage name from stage_id if stage_id is provided
-        if (isset($data['stage_id']) && $data['stage_id']) {
-            $stage = Stage::find($data['stage_id']);
-            if ($stage) {
-                $data['work_stage'] = $stage->name;
-            }
+        // Build work stage list and total percentage from selected stages.
+        $selectedStageIds = array_values($request->input('stage_ids', []));
+        if (! empty($selectedStageIds)) {
+            $selectedStages = Stage::whereIn('id', $selectedStageIds)->orderBy('name')->get();
+            $data['work_stage'] = $selectedStages->pluck('name')->implode(', ');
+            $data['stage_percentage'] = (float) $selectedStages->sum('percentage');
+            $data['stage_id'] = $selectedStages->first()?->id; // legacy column compatibility
+        } else {
+            $data['work_stage'] = null;
+            $data['stage_percentage'] = null;
+            $data['stage_id'] = null;
         }
         
         $siteProgress->update($data);

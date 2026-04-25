@@ -110,6 +110,14 @@
                                     <td>{{ $s->mobile_number ?? 'N/A' }}</td>
                                     <td>{{ $s->doj ? $s->doj->format('d/m/Y') : 'N/A' }}</td>
                                     <td class="text-end">
+                                        <a href="{{ route('staff.show', $s) }}" class="btn btn-icon btn-bg-light btn-active-color-info btn-sm me-1" title="View">
+                                            <span class="svg-icon svg-icon-3">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                                    <path opacity="0.3" d="M12 5C7 5 2.73 8.11 1 12C2.73 15.89 7 19 12 19C17 19 21.27 15.89 23 12C21.27 8.11 17 5 12 5Z" fill="currentColor"/>
+                                                    <circle cx="12" cy="12" r="3" fill="currentColor"/>
+                                                </svg>
+                                            </span>
+                                        </a>
                                         <a href="{{ route('staff.edit', $s) }}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" title="Edit">
                                             <span class="svg-icon svg-icon-3">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -190,7 +198,7 @@
                                                 <th class="min-w-100px">Designation</th>
                                                 <th class="min-w-150px text-center">Attendance<br><small>(Today: {{ $today->format('d/m/Y') }})</small></th>
                                                 <th class="min-w-150px text-center">Location</th>
-                                                <th class="min-w-100px text-center">OT Hours</th>
+                                                <th class="min-w-200px text-center">Remark</th>
                                             </tr>
                                         </thead>
                                         <tbody class="text-gray-600 fw-bold">
@@ -255,7 +263,7 @@
                                                         @if($currentStatus == 'absent') disabled @endif
                                                     >
                                                         <option value="">Select Location</option>
-                                                        @foreach($locations as $location)
+                                                        @foreach($s->locations as $location)
                                                             <option value="{{ $location->id }}" {{ $attendance && $attendance->location_id == $location->id ? 'selected' : '' }}>
                                                                 {{ $location->name }}
                                                             </option>
@@ -268,26 +276,16 @@
                                                     @endif
                                                 </td>
                                                 <td class="text-center">
-                                                    <input 
-                                                        type="number" 
-                                                        step="0.5" 
-                                                        min="0" 
-                                                        max="24"
-                                                        class="form-control form-control-sm overtime-hours-input" 
+                                                    <input
+                                                        type="text"
+                                                        class="form-control form-control-sm attendance-remark-input"
                                                         data-staff-id="{{ $s->id }}"
                                                         data-date="{{ $today->format('Y-m-d') }}"
-                                                        id="overtime_{{ $s->id }}"
-                                                        value="{{ $attendance && $attendance->overtime_hours ? number_format($attendance->overtime_hours, 2) : '0' }}"
-                                                        placeholder="0.00"
-                                                        style="width: 80px; display: inline-block;"
-                                                        @if(!$isToday || $currentStatus == 'absent') disabled @endif
+                                                        id="remark_{{ $s->id }}"
+                                                        value="{{ $attendance->remark ?? '' }}"
+                                                        placeholder="Enter remark"
+                                                        style="min-width: 180px;"
                                                     />
-                                                    <span class="ms-1">hrs</span>
-                                                    @if($attendance && ($currentStatus == 'present' || $currentStatus == 'present_with_bike') && $attendance->overtime_hours > 0)
-                                                        <div class="mt-1">
-                                                            <span class="badge badge-info">OT: {{ number_format($attendance->overtime_hours, 2) }} hrs</span>
-                                                        </div>
-                                                    @endif
                                                 </td>
                                             </tr>
                                             @empty
@@ -397,28 +395,7 @@
 @section('custom_scripts')
 <script>
     $(document).ready(function() {
-        // Handle attendance status change
-        $('.attendance-status-select').on('change', function() {
-            const select = $(this);
-            const staffId = select.data('staff-id');
-            const date = select.data('date');
-            const attendanceStatus = select.val();
-            const today = new Date().toISOString().split('T')[0];
-            
-            // Allow changes for any date (past or future)
-            
-            // Get overtime hours - set to 0 if absent
-            let overtimeHours = 0;
-            if (attendanceStatus !== 'absent') {
-                overtimeHours = parseFloat($('#overtime_' + staffId).val()) || 0;
-            }
-            
-            // Get location ID
-            const locationId = $('#location_' + staffId).val() || null;
-            
-            // Disable select during request
-            select.prop('disabled', true);
-            
+        function sendAttendanceUpdate(staffId, date, attendanceStatus, locationId, remark, onSuccess, onError, onComplete) {
             $.ajax({
                 url: '{{ route("attendance.update") }}',
                 type: 'POST',
@@ -427,82 +404,14 @@
                     staff_id: staffId,
                     date: date,
                     attendance_status: attendanceStatus,
-                    overtime_hours: overtimeHours,
-                    location_id: locationId
+                    location_id: locationId,
+                    remark: remark
                 },
                 success: function(response) {
                     if (response.success) {
-                        // Update badge
-                        const badge = $('#badge_' + staffId);
-                        const overtimeInput = $('#overtime_' + staffId);
-                        const overtimeDisplay = overtimeInput.closest('td').find('.badge-info');
-                        
-                        if (attendanceStatus === 'present') {
-                            badge.removeClass('badge-danger badge-warning').addClass('badge-success').text('Present');
-                            overtimeInput.prop('disabled', false);
-                        } else if (attendanceStatus === 'present_with_bike') {
-                            badge.removeClass('badge-danger badge-success').addClass('badge-warning').text('Present with Bike');
-                            overtimeInput.prop('disabled', false);
-                        }else if (attendanceStatus === 'half_day') {
-                            badge.removeClass('badge-danger badge-success').addClass('badge-warning').text('Half Day');
-                            overtimeInput.prop('disabled', false);
-                        } else {
-                            badge.removeClass('badge-success badge-warning').addClass('badge-danger').text('Absent');
-                            overtimeInput.prop('disabled', true).val(0);
-                            overtimeDisplay.remove();
-                            
-                            // Disable location select when absent
-                            $('#location_' + staffId).prop('disabled', true);
-                        }
-                        
-                        // Enable/disable location select based on attendance status
-                        if (attendanceStatus === 'present' || attendanceStatus === 'present_with_bike') {
-                            $('#location_' + staffId).prop('disabled', false);
-                        }
-                        
-                        // Update location badge if location exists in response
-                        const locationSelect = $('#location_' + staffId);
-                        const locationBadge = locationSelect.closest('td').find('.badge-primary');
-                        if (response.attendance && response.attendance.location) {
-                            if (locationBadge.length === 0) {
-                                locationSelect.after('<div class="mt-1"><span class="badge badge-primary">' + response.attendance.location.name + '</span></div>');
-                            } else {
-                                locationBadge.text(response.attendance.location.name);
-                            }
-                        } else if (attendanceStatus === 'absent') {
-                            locationBadge.remove();
-                        }
-                        
-                        // Update OT display if present and has overtime
-                        if ((attendanceStatus === 'present' || attendanceStatus === 'present_with_bike') && overtimeHours > 0) {
-                            if (overtimeDisplay.length === 0) {
-                                overtimeInput.after('<div class="mt-1"><span class="badge badge-info">OT: ' + parseFloat(overtimeHours).toFixed(2) + ' hrs</span></div>');
-                            } else {
-                                overtimeDisplay.find('span').text('OT: ' + parseFloat(overtimeHours).toFixed(2) + ' hrs');
-                            }
-                        } else {
-                            overtimeDisplay.remove();
-                        }
-                        
-                        // Update present count
-                        updatePresentCount();
-                        
-                        // Show success message
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success',
-                            text: response.message,
-                            timer: 2000,
-                            showConfirmButton: false
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: response.message || 'Failed to update attendance.',
-                            confirmButtonText: 'OK'
-                        });
-                        location.reload(); // Reload to revert
+                        if (typeof onSuccess === 'function') onSuccess(response);
+                    } else if (typeof onError === 'function') {
+                        onError(response.message || 'Failed to update attendance.');
                     }
                 },
                 error: function(xhr) {
@@ -510,20 +419,77 @@
                     if (xhr.responseJSON && xhr.responseJSON.message) {
                         errorMessage = xhr.responseJSON.message;
                     }
-                    
+                    if (typeof onError === 'function') onError(errorMessage);
+                },
+                complete: function() {
+                    if (typeof onComplete === 'function') onComplete();
+                }
+            });
+        }
+
+        // Handle attendance status change
+        $('.attendance-status-select').on('change', function() {
+            const select = $(this);
+            const staffId = select.data('staff-id');
+            const date = select.data('date');
+            const attendanceStatus = select.val();
+            // Get location ID
+            const locationId = $('#location_' + staffId).val() || null;
+            const remark = $('#remark_' + staffId).val() || null;
+            
+            // Disable select during request
+            select.prop('disabled', true);
+
+            sendAttendanceUpdate(
+                staffId,
+                date,
+                attendanceStatus,
+                locationId,
+                remark,
+                function(response) {
+                    const badge = $('#badge_' + staffId);
+
+                    if (attendanceStatus === 'present') {
+                        badge.removeClass('badge-danger badge-warning').addClass('badge-success').text('Present');
+                    } else if (attendanceStatus === 'present_with_bike') {
+                        badge.removeClass('badge-danger badge-success').addClass('badge-warning').text('Present with Bike');
+                    } else if (attendanceStatus === 'half_day') {
+                        badge.removeClass('badge-danger badge-success').addClass('badge-warning').text('Half Day');
+                    } else {
+                        badge.removeClass('badge-success badge-warning').addClass('badge-danger').text('Absent');
+                        $('#location_' + staffId).prop('disabled', true);
+                    }
+
+                    if (attendanceStatus === 'present' || attendanceStatus === 'present_with_bike' || attendanceStatus === 'half_day') {
+                        $('#location_' + staffId).prop('disabled', false);
+                    }
+
+                    const locationSelect = $('#location_' + staffId);
+                    const locationBadge = locationSelect.closest('td').find('.badge-primary');
+                    if (response.attendance && response.attendance.location) {
+                        if (locationBadge.length === 0) {
+                            locationSelect.after('<div class="mt-1"><span class="badge badge-primary">' + response.attendance.location.name + '</span></div>');
+                        } else {
+                            locationBadge.text(response.attendance.location.name);
+                        }
+                    } else if (attendanceStatus === 'absent') {
+                        locationBadge.remove();
+                    }
+
+                    updatePresentCount();
+                },
+                function(message) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: errorMessage,
+                        text: message,
                         confirmButtonText: 'OK'
                     });
-                    location.reload(); // Reload to revert
                 },
-                complete: function() {
-                    // Re-enable select
+                function() {
                     select.prop('disabled', false);
                 }
-            });
+            );
         });
 
         // Handle location change
@@ -533,139 +499,83 @@
             const date = select.data('date');
             const attendanceStatus = $('#attendance_' + staffId).val();
             const locationId = select.val() || null;
+            const remark = $('#remark_' + staffId).val() || null;
             const today = new Date().toISOString().split('T')[0];
-            
-            // Only allow changes for today's date and if present
-            if (date !== today || attendanceStatus === 'absent') {
+
+            // Only allow changes for today's date
+            if (date !== today) {
                 return;
             }
-            
-            // Get overtime hours
-            const overtimeHours = parseFloat($('#overtime_' + staffId).val()) || 0;
-            
+
             // Disable select during request
             select.prop('disabled', true);
-            
-            $.ajax({
-                url: '{{ route("attendance.update") }}',
-                type: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    staff_id: staffId,
-                    date: date,
-                    attendance_status: attendanceStatus,
-                    overtime_hours: overtimeHours,
-                    location_id: locationId
-                },
-                success: function(response) {
-                    if (response.success) {
-                        // Update location badge
-                        const locationBadge = select.closest('td').find('.badge-primary');
-                        if (locationId && response.attendance && response.attendance.location) {
-                            if (locationBadge.length === 0) {
-                                select.after('<div class="mt-1"><span class="badge badge-primary">' + response.attendance.location.name + '</span></div>');
-                            } else {
-                                locationBadge.text(response.attendance.location.name);
-                            }
+
+            sendAttendanceUpdate(
+                staffId,
+                date,
+                attendanceStatus,
+                locationId,
+                remark,
+                function(response) {
+                    const locationBadge = select.closest('td').find('.badge-primary');
+                    if (locationId && response.attendance && response.attendance.location) {
+                        if (locationBadge.length === 0) {
+                            select.after('<div class="mt-1"><span class="badge badge-primary">' + response.attendance.location.name + '</span></div>');
                         } else {
-                            locationBadge.remove();
+                            locationBadge.text(response.attendance.location.name);
                         }
+                    } else {
+                        locationBadge.remove();
                     }
                 },
-                error: function(xhr) {
-                    let errorMessage = 'Failed to update location.';
-                    if (xhr.responseJSON && xhr.responseJSON.message) {
-                        errorMessage = xhr.responseJSON.message;
-                    }
-                    
+                function(message) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: errorMessage,
+                        text: message,
                         confirmButtonText: 'OK'
                     });
                 },
-                complete: function() {
-                    // Re-enable select
+                function() {
                     select.prop('disabled', false);
                 }
-            });
+            );
         });
 
-        // Handle overtime hours change
-        $('.overtime-hours-input').on('blur', function() {
+        // Handle remark change
+        $('.attendance-remark-input').on('blur', function() {
             const input = $(this);
             const staffId = input.data('staff-id');
             const date = input.data('date');
             const attendanceStatus = $('#attendance_' + staffId).val();
-            const overtimeHours = parseFloat(input.val()) || 0;
             const locationId = $('#location_' + staffId).val() || null;
+            const remark = input.val() || null;
             const today = new Date().toISOString().split('T')[0];
-            
-            // Only allow changes for today's date and if present
-            if (date !== today || attendanceStatus === 'absent') {
+
+            if (date !== today) {
                 return;
             }
-            
-            // Validate overtime hours
-            if (overtimeHours < 0 || overtimeHours > 24) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Invalid Input',
-                    text: 'Overtime hours must be between 0 and 24.',
-                    confirmButtonText: 'OK'
-                });
-                input.val(0);
-                return;
-            }
-            
-            // Disable input during request
+
             input.prop('disabled', true);
-            
-            $.ajax({
-                url: '{{ route("attendance.update") }}',
-                type: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    staff_id: staffId,
-                    date: date,
-                    attendance_status: attendanceStatus,
-                    overtime_hours: overtimeHours,
-                    location_id: locationId
-                },
-                success: function(response) {
-                    if (response.success) {
-                        // Update OT display
-                        const overtimeDisplay = input.closest('td').find('.badge-info');
-                        if (overtimeHours > 0) {
-                            if (overtimeDisplay.length === 0) {
-                                input.after('<div class="mt-1"><span class="badge badge-info">OT: ' + parseFloat(overtimeHours).toFixed(2) + ' hrs</span></div>');
-                            } else {
-                                overtimeDisplay.find('span').text('OT: ' + parseFloat(overtimeHours).toFixed(2) + ' hrs');
-                            }
-                        } else {
-                            overtimeDisplay.remove();
-                        }
-                    }
-                },
-                error: function(xhr) {
-                    let errorMessage = 'Failed to update overtime hours.';
-                    if (xhr.responseJSON && xhr.responseJSON.message) {
-                        errorMessage = xhr.responseJSON.message;
-                    }
-                    
+            sendAttendanceUpdate(
+                staffId,
+                date,
+                attendanceStatus,
+                locationId,
+                remark,
+                null,
+                function(message) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: errorMessage,
+                        text: message,
                         confirmButtonText: 'OK'
                     });
                 },
-                complete: function() {
-                    // Re-enable input
+                function() {
                     input.prop('disabled', false);
                 }
-            });
+            );
         });
 
         // Function to update present count

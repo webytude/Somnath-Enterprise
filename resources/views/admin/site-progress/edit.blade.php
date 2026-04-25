@@ -59,13 +59,13 @@
                                 <div class="row mb-7">
                                     <div class="col-md-4">
                                         <label class="fs-6 fw-bold form-label mt-3">Work Stage</label>
-                                        <select class="form-select form-select-solid" name="stage_id" id="stage_id" data-control="select2" data-placeholder="Select Work Stage...">
+                                        <select class="form-select form-select-solid" name="stage_ids[]" id="stage_id" data-control="select2" data-placeholder="Select Work Stage..." multiple>
                                             <option value="">Select Work Stage...</option>
-                                            @foreach($stages as $stage)
-                                                <option value="{{ $stage->id }}" data-percentage="{{ $stage->percentage }}" {{ old('stage_id', $siteProgress->stage_id) == $stage->id ? 'selected' : '' }}>{{ $stage->name }}</option>
-                                            @endforeach
                                         </select>
-                                        @error('stage_id')
+                                        @error('stage_ids')
+                                            <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                        @enderror
+                                        @error('stage_ids.*')
                                             <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                         @enderror
                                     </div>
@@ -145,15 +145,32 @@
     $(document).ready(function() {
         var currentWorkId = {{ $siteProgress->work_id ?? 'null' }};
         var currentLocationId = {{ $siteProgress->location_id ?? 'null' }};
-        var currentStageId = {{ $siteProgress->stage_id ?? 'null' }};
+        var selectedStageIds = @json(old('stage_ids', $selectedStageIds ?? []));
+        selectedStageIds = (selectedStageIds || []).map(function(id) { return String(id); });
+
+        function updateStageSummary() {
+            let total = 0;
+            let names = [];
+            $('#stage_id option:selected').each(function() {
+                total += parseFloat($(this).data('percentage')) || 0;
+                names.push($(this).text().replace(/\s*\([^)]+\)\s*$/, ''));
+            });
+            $('#stage_percentage').val(total ? total.toFixed(2) : '');
+            $('#work_stage').val(names.join(', '));
+        }
 
         // Function to load works for a location
         function loadWorksByLocation(locationId, selectedWorkId = null) {
             var workSelect = $('#work_id');
+            var stageSelect = $('#stage_id');
             
             // Clear work options
             workSelect.empty();
             workSelect.append('<option value="">Select Work...</option>');
+            stageSelect.empty();
+            stageSelect.append('<option value="">Select Work Stage...</option>');
+            $('#stage_percentage').val('');
+            $('#work_stage').val('');
             
             if (locationId) {
                 $.ajax({
@@ -194,30 +211,49 @@
             loadWorksByLocation(locationId);
         });
 
-        // Handle work selection - update hidden work_name field
+        // Handle work selection - update hidden work_name field and load stages
         $('#work_id').on('change', function() {
+            var workId = $(this).val();
             var selectedText = $(this).find('option:selected').text();
             $('#work_name').val(selectedText);
             $('#work_site').val(selectedText); // Set work_site same as work_name for backward compatibility
-        });
 
-        // Handle stage selection - auto-fill stage percentage
-        $('#stage_id').on('change', function() {
-            var selectedOption = $(this).find('option:selected');
-            var percentage = selectedOption.data('percentage') || '';
-            var stageName = selectedOption.text();
-            
-            $('#stage_percentage').val(percentage);
-            $('#work_stage').val(stageName); // Set work_stage for backward compatibility
-        });
+            var stageSelect = $('#stage_id');
+            stageSelect.empty();
+            stageSelect.append('<option value="">Select Work Stage...</option>');
+            $('#stage_percentage').val('');
+            $('#work_stage').val('');
 
-        // Initialize stage percentage if stage is already selected
-        if (currentStageId) {
-            var selectedStage = $('#stage_id').find('option:selected');
-            if (selectedStage.length) {
-                var percentage = selectedStage.data('percentage') || '';
-                $('#stage_percentage').val(percentage);
+            if (workId) {
+                $.ajax({
+                    url: '{{ route("site-progress.getStagesByWork") }}',
+                    type: 'GET',
+                    data: { work_id: workId },
+                    success: function(data) {
+                        if (data && data.length > 0) {
+                            $.each(data, function(key, stage) {
+                                var selected = selectedStageIds.includes(String(stage.id)) ? ' selected' : '';
+                                stageSelect.append('<option value="' + stage.id + '" data-percentage="' + stage.percentage + '"' + selected + '>' + stage.name + ' (' + stage.percentage + '%)</option>');
+                            });
+                            stageSelect.trigger('change');
+                            updateStageSummary();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching stages:', error);
+                    }
+                });
             }
+        });
+
+        // Handle multi-stage selection - auto-calc total percentage
+        $('#stage_id').on('change', function() {
+            updateStageSummary();
+        });
+
+        // Initialize stage options on first load
+        if (currentWorkId) {
+            $('#work_id').trigger('change');
         }
     });
 </script>

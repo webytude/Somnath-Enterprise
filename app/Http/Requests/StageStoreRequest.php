@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\ValidationException;
 
 class StageStoreRequest extends FormRequest
 {
@@ -21,12 +22,26 @@ class StageStoreRequest extends FormRequest
      */
     public function rules(): array
     {
-        $stageId = $this->route('stage');
-        $stageId = is_object($stageId) ? $stageId->id : $stageId;
-        
         return [
-            'name' => 'required|string|max:255|unique:stages,name,' . $stageId,
-            'percentage' => 'required|numeric|min:0|max:100',
+            'location_id' => 'required|exists:locations,id',
+            'work_id' => 'required|exists:works,id',
+            'stages' => 'required|array|min:1',
+            'stages.*.name' => 'required|string|max:255',
+            'stages.*.percentage' => 'required|numeric|min:0|max:100',
         ];
+    }
+
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator) {
+            $stages = $this->input('stages', []);
+            $total = collect($stages)->sum(function ($row) {
+                return is_array($row) ? (float) ($row['percentage'] ?? 0) : 0;
+            });
+
+            if ($total > 100) {
+                $validator->errors()->add('stages', 'Total site percentage cannot be greater than 100.');
+            }
+        });
     }
 }

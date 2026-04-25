@@ -32,10 +32,8 @@
                             <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
                                 <th class="min-w-150px">Location</th>
                                 <th class="min-w-150px">Work Name</th>
-                                <th class="min-w-150px">Work Site</th>
                                 <th class="min-w-200px">Work Stage</th>
                                 <th class="min-w-100px">Date</th>
-                                <th class="min-w-150px">Photo</th>
                                 <th class="min-w-200px">Remark</th>
                                 <th class="text-end min-w-100px">Action</th>
                             </tr>
@@ -45,18 +43,8 @@
                             <tr>
                                 <td>{{ $progress->location->name ?? 'N/A' }}</td>
                                 <td>{{ $progress->work_name }}</td>
-                                <td>{{ $progress->work_site }}</td>
                                 <td>{{ Str::limit($progress->work_stage, 50) ?? 'N/A' }}</td>
                                 <td>{{ $progress->date ? $progress->date->format('d/m/Y') : 'N/A' }}</td>
-                                <td>
-                                    @if($progress->photo_url)
-                                        <a href="{{ $progress->photo_url }}" target="_blank" class="btn btn-sm btn-light-primary">
-                                            <i class="fas fa-image"></i> View Photo
-                                        </a>
-                                    @else
-                                        <span class="text-muted">No Photo</span>
-                                    @endif
-                                </td>
                                 <td>{{ Str::limit($progress->remark, 50) ?? 'N/A' }}</td>
                                 <td class="text-end">
                                     <a href="{{ route('site-progress.edit', $progress) }}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">

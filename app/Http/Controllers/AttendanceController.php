@@ -20,7 +20,7 @@ class AttendanceController extends Controller
         $selectedDate = Carbon::parse($date);
         
         // Get all staff
-        $staff = Staff::orderBy('first_name')->get();
+        $staff = Staff::with('locations')->orderBy('first_name')->get();
         
         // Get attendance for the selected date
         $attendances = Attendance::whereDate('attendance_date', $selectedDate)
@@ -42,8 +42,25 @@ class AttendanceController extends Controller
             'staff_id' => 'required|exists:staff,id',
             'date' => 'required|date',
             'attendance_status' => 'required|in:absent,present,present_with_bike,half_day',
-            'overtime_hours' => 'nullable|numeric|min:0|max:24',
-            'location_id' => 'nullable|exists:locations,id',
+            'location_id' => [
+                'nullable',
+                'exists:locations,id',
+                function ($attribute, $value, $fail) use ($request) {
+                    if (empty($value)) {
+                        return;
+                    }
+
+                    $isMapped = \DB::table('staff_locations')
+                        ->where('staff_id', $request->staff_id)
+                        ->where('location_id', $value)
+                        ->exists();
+
+                    if (! $isMapped) {
+                        $fail('Selected location is not assigned to this staff.');
+                    }
+                },
+            ],
+            'remark' => 'nullable|string|max:1000',
         ]);
 
         $date = Carbon::parse($request->date);
@@ -56,8 +73,10 @@ class AttendanceController extends Controller
         // Prepare data for update or create
         $attendanceData = [
             'attendance_status' => $request->attendance_status,
-            'overtime_hours' => $request->overtime_hours ?? 0,
+            // Keep previous overtime value unchanged; OT is no longer captured from UI.
+            'overtime_hours' => $existingAttendance?->overtime_hours ?? 0,
             'location_id' => $request->location_id,
+            'remark' => $request->remark,
             'updated_by' => Auth::id(),
         ];
         

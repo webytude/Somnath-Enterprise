@@ -20,27 +20,6 @@
                             <div class="row mb-7">
                                 <div class="col-md-6">
                                     <label class="fs-6 fw-bold form-label mt-3">
-                                        <span class="required">Stage Name</span>
-                                    </label>
-                                    <input type="text" class="form-control form-control-solid" name="name" value="{{ old('name', $stage->name) }}" placeholder="Enter Stage Name" />
-                                    @error('name')
-                                        <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="fs-6 fw-bold form-label mt-3">
-                                        <span class="required">Percentage of Stage</span>
-                                    </label>
-                                    <input type="number" class="form-control form-control-solid" name="percentage" value="{{ old('percentage', $stage->percentage) }}" step="0.01" min="0" max="100" placeholder="Enter Percentage (0-100)" />
-                                    @error('percentage')
-                                        <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="row mb-7">
-                                <div class="col-md-6">
-                                    <label class="fs-6 fw-bold form-label mt-3">
                                         <span class="required">Location</span>
                                     </label>
                                     <select class="form-select form-select-solid" name="location_id" id="location_id" data-control="select2" data-placeholder="Select Location...">
@@ -68,6 +47,53 @@
                                     @enderror
                                 </div>
                             </div>
+
+                            <div class="mb-4">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <h4 class="mb-0">Stages</h4>
+                                    <button type="button" class="btn btn-sm btn-light-primary" id="add-stage-row">Add More Stage</button>
+                                </div>
+                                <div class="text-muted mt-2">First row updates this stage. Additional rows create new stages.</div>
+                            </div>
+
+                            <div id="stage-rows">
+                                @php
+                                    $oldStages = old('stages', [['name' => $stage->name, 'percentage' => $stage->percentage]]);
+                                @endphp
+                                @foreach($oldStages as $idx => $row)
+                                    <div class="row mb-4 stage-row">
+                                        <div class="col-md-6">
+                                            <label class="fs-6 fw-bold form-label mt-3">
+                                                <span class="required">Stage Name</span>
+                                            </label>
+                                            <input type="text" class="form-control form-control-solid stage-name" name="stages[{{ $idx }}][name]" value="{{ $row['name'] ?? '' }}" placeholder="Enter Stage Name" />
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label class="fs-6 fw-bold form-label mt-3">
+                                                <span class="required">Site Percentage</span>
+                                            </label>
+                                            <input type="number" class="form-control form-control-solid stage-percentage" name="stages[{{ $idx }}][percentage]" value="{{ $row['percentage'] ?? '' }}" step="0.01" min="0" max="100" placeholder="Enter Percentage (0-100)" />
+                                        </div>
+                                        <div class="col-md-1 d-flex align-items-end">
+                                            <button type="button" class="btn btn-sm btn-light-danger remove-stage-row" {{ $idx === 0 ? 'style=display:none;' : '' }}>&times;</button>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            <div class="mb-4">
+                                <span class="badge badge-light-info">Total: <span id="total-percentage">0.00</span>%</span>
+                                <span class="text-danger ms-2 d-none" id="percentage-error">Total percentage cannot exceed 100.</span>
+                            </div>
+                            @error('stages')
+                                <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                            @enderror
+                            @error('stages.*.name')
+                                <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                            @enderror
+                            @error('stages.*.percentage')
+                                <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                            @enderror
                             <div class="separator mb-6"></div>
                             <div class="d-flex justify-content-end">
                                 <a href="{{route('stages.index')}}" data-kt-stage-form="cancel" class="btn btn-light me-3">Cancel</a>
@@ -92,6 +118,39 @@
     $(document).ready(function() {
         var currentWorkId = {{ $stage->work_id ?? 'null' }};
         var currentLocationId = {{ $stage->location_id ?? 'null' }};
+        let stageIndex = {{ count(old('stages', [['name' => $stage->name, 'percentage' => $stage->percentage]])) }};
+
+        function recalculateTotal() {
+            let total = 0;
+            $('.stage-percentage').each(function() {
+                total += parseFloat($(this).val()) || 0;
+            });
+            $('#total-percentage').text(total.toFixed(2));
+            if (total > 100) {
+                $('#percentage-error').removeClass('d-none');
+            } else {
+                $('#percentage-error').addClass('d-none');
+            }
+            return total;
+        }
+
+        function stageRowTemplate(idx) {
+            return `
+                <div class="row mb-4 stage-row">
+                    <div class="col-md-6">
+                        <label class="fs-6 fw-bold form-label mt-3"><span class="required">Stage Name</span></label>
+                        <input type="text" class="form-control form-control-solid stage-name" name="stages[${idx}][name]" placeholder="Enter Stage Name" />
+                    </div>
+                    <div class="col-md-5">
+                        <label class="fs-6 fw-bold form-label mt-3"><span class="required">Site Percentage</span></label>
+                        <input type="number" class="form-control form-control-solid stage-percentage" name="stages[${idx}][percentage]" step="0.01" min="0" max="100" placeholder="Enter Percentage (0-100)" />
+                    </div>
+                    <div class="col-md-1 d-flex align-items-end">
+                        <button type="button" class="btn btn-sm btn-light-danger remove-stage-row">&times;</button>
+                    </div>
+                </div>
+            `;
+        }
 
         // Function to load works for a location
         function loadWorksByLocation(locationId, selectedWorkId = null) {
@@ -139,6 +198,41 @@
             var locationId = $(this).val();
             loadWorksByLocation(locationId);
         });
+
+        $(document).on('input', '.stage-percentage', function() {
+            recalculateTotal();
+        });
+
+        $('#add-stage-row').on('click', function() {
+            $('#stage-rows').append(stageRowTemplate(stageIndex++));
+        });
+
+        $(document).on('click', '.remove-stage-row', function() {
+            $(this).closest('.stage-row').remove();
+            recalculateTotal();
+            if ($('.stage-row').length === 1) {
+                $('.remove-stage-row').hide();
+            } else {
+                $('.remove-stage-row').show();
+            }
+        });
+
+        $('#kt_stage_form').on('submit', function(e) {
+            const total = recalculateTotal();
+            if (total > 100) {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    text: 'Total site percentage cannot exceed 100.',
+                });
+            }
+        });
+
+        recalculateTotal();
+        if ($('.stage-row').length === 1) {
+            $('.remove-stage-row').hide();
+        }
     });
 </script>
 @endsection
