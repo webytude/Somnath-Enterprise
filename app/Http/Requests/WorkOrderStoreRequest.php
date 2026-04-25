@@ -80,7 +80,7 @@ class WorkOrderStoreRequest extends FormRequest
         ];
 
         if ($this->routeIs('work-orders.store')) {
-            $rules['number_prefix'] = ['required', 'string', 'max:20', 'regex:/^[A-Za-z0-9]+$/'];
+            $rules['number_prefix'] = ['required', 'string', 'max:20'];
             $rules['fiscal_year_label'] = ['required', 'string', 'regex:/^\d{4}-\d{2}$/'];
         }
 
