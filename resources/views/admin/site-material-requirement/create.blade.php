@@ -13,12 +13,17 @@
         <div class="row g-7">
             <div class="col-xl-12">
                 <div class="card card-flush h-lg-100" id="kt_site_material_requirement_form_main">
-                    <div class="card-body pt-5">
+                    <div class="card-header border-0 pt-6">
+                        <div class="card-title">
+                            <h2 class="fw-bolder mb-0">Site Material Requirement Details</h2>
+                        </div>
+                    </div>
+                    <div class="card-body pt-3">
                         <form method="POST" id="kt_site_material_requirement_form" class="form fv-plugins-bootstrap5 fv-plugins-framework" action="{{ route('site-material-requirements.store') }}">
                             @csrf
-                            
-                            <div class="row mb-7">
-                                <div class="col-md-6">
+
+                            <div class="row g-5 mb-8">
+                                <div class="col-12 col-lg-6">
                                     <label class="fs-6 fw-bold form-label mt-3">
                                         <span class="required">Location</span>
                                     </label>
@@ -32,7 +37,7 @@
                                         <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-12 col-lg-6">
                                     <label class="fs-6 fw-bold form-label mt-3">
                                         Work
                                     </label>
@@ -45,14 +50,19 @@
                                 </div>
                             </div>
 
-                            <div class="fv-row mb-7">
-                                <label class="fs-6 fw-bold form-label mt-3">
-                                    <span class="required">Material Details</span>
-                                </label>
+                            <div class="fv-row mb-8">
+                                <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-4 mb-4">
+                                    <label class="fs-6 fw-bold form-label mb-0">
+                                        <span class="required">Material Details</span>
+                                    </label>
+                                    <button type="button" class="btn btn-primary btn-sm" id="add-detail-row">
+                                        <i class="fas fa-plus"></i> Add More Material
+                                    </button>
+                                </div>
                                 <div id="material-details-container">
-                                    <div class="material-detail-row mb-3 p-4 border rounded">
+                                    <div class="material-detail-row mb-5 p-5 border border-gray-300 rounded">
                                         <div class="row g-3">
-                                            <div class="col-md-2">
+                                            <div class="col-12 col-md-6 col-xl-2">
                                                 <label class="form-label">Material Category <span class="text-danger">*</span></label>
                                                 <select class="form-select form-select-solid material-category" name="details[0][material_category_id]" data-row-index="0" required>
                                                     <option value="">Select Category</option>
@@ -61,31 +71,31 @@
                                                     @endforeach
                                                 </select>
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-12 col-md-6 col-xl-2">
                                                 <label class="form-label">Material <span class="text-danger">*</span></label>
                                                 <select class="form-select form-select-solid material-select" name="details[0][material_id]" data-row-index="0" required>
                                                     <option value="">Select Material</option>
                                                 </select>
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-12 col-md-6 col-xl-2">
                                                 <label class="form-label">Unit <span class="text-danger">*</span></label>
                                                 <select class="form-select form-select-solid material-unit" name="details[0][unit]" required>
                                                     <option value="">Select Unit</option>
                                                 </select>
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-12 col-md-6 col-xl-2">
                                                 <label class="form-label">Quantity <span class="text-danger">*</span></label>
                                                 <input type="number" class="form-control form-control-solid material-quantity" name="details[0][quantity]" step="0.01" min="0" placeholder="Quantity" required />
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-12 col-md-6 col-xl-2">
                                                 <label class="form-label">Date <span class="text-danger">*</span></label>
                                                 <input type="date" class="form-control form-control-solid material-date" name="details[0][date]" required />
                                             </div>
-                                            <div class="col-md-1">
+                                            <div class="col-12 col-md-4 col-xl-1">
                                                 <label class="form-label">Time Within</label>
                                                 <input type="number" class="form-control form-control-solid material-time-within" name="details[0][time_within_days]" min="0" placeholder="Days" />
                                             </div>
-                                            <div class="col-md-1 d-flex align-items-end">
+                                            <div class="col-12 col-md-2 col-xl-1 d-flex align-items-end justify-content-md-start justify-content-xl-end mb-1">
                                                 <button type="button" class="btn btn-sm btn-danger remove-detail-row" style="display: none;">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
@@ -97,17 +107,14 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button type="button" class="btn btn-sm btn-primary" id="add-detail-row">
-                                    <i class="fas fa-plus"></i> Add More Material
-                                </button>
                                 @error('details')
                                     <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                 @enderror
                             </div>
 
                             <div class="separator mb-6"></div>
-                            <div class="d-flex justify-content-end">
-                                <a href="{{route('site-material-requirements.index')}}" data-kt-site-material-requirement-form="cancel" class="btn btn-light me-3">Cancel</a>
+                            <div class="d-flex flex-column flex-sm-row justify-content-end gap-3">
+                                <a href="{{route('site-material-requirements.index')}}" data-kt-site-material-requirement-form="cancel" class="btn btn-light">Cancel</a>
                                 <button type="submit" data-kt-site-material-requirement-form="submit" class="btn btn-primary">
                                     <span class="indicator-label">Save</span>
                                     <span class="indicator-progress">Please wait...
@@ -232,9 +239,9 @@
         $('#add-detail-row').on('click', function() {
             const container = $('#material-details-container');
             const newRow = $(`
-                <div class="material-detail-row mb-3 p-4 border rounded">
+                <div class="material-detail-row mb-5 p-5 border border-gray-300 rounded">
                     <div class="row g-3">
-                        <div class="col-md-2">
+                        <div class="col-12 col-md-6 col-xl-2">
                             <label class="form-label">Material Category <span class="text-danger">*</span></label>
                             <select class="form-select form-select-solid material-category" name="details[${detailRowIndex}][material_category_id]" data-row-index="${detailRowIndex}" required>
                                 <option value="">Select Category</option>
@@ -243,31 +250,31 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-12 col-md-6 col-xl-2">
                             <label class="form-label">Material <span class="text-danger">*</span></label>
                             <select class="form-select form-select-solid material-select" name="details[${detailRowIndex}][material_id]" data-row-index="${detailRowIndex}" required>
                                 <option value="">Select Material</option>
                             </select>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-12 col-md-6 col-xl-2">
                             <label class="form-label">Unit <span class="text-danger">*</span></label>
                             <select class="form-select form-select-solid material-unit" name="details[${detailRowIndex}][unit]" required>
                                 <option value="">Select Unit</option>
                             </select>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-12 col-md-6 col-xl-2">
                             <label class="form-label">Quantity <span class="text-danger">*</span></label>
                             <input type="number" class="form-control form-control-solid material-quantity" name="details[${detailRowIndex}][quantity]" step="0.01" min="0" placeholder="Quantity" required />
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-12 col-md-6 col-xl-2">
                             <label class="form-label">Date <span class="text-danger">*</span></label>
                             <input type="date" class="form-control form-control-solid material-date" name="details[${detailRowIndex}][date]" required />
                         </div>
-                        <div class="col-md-1">
+                        <div class="col-12 col-md-4 col-xl-1">
                             <label class="form-label">Time Within</label>
                             <input type="number" class="form-control form-control-solid material-time-within" name="details[${detailRowIndex}][time_within_days]" min="0" placeholder="Days" />
                         </div>
-                        <div class="col-md-1 d-flex align-items-end">
+                        <div class="col-12 col-md-2 col-xl-1 d-flex align-items-end justify-content-md-start justify-content-xl-end mb-1">
                             <button type="button" class="btn btn-sm btn-danger remove-detail-row">
                                 <i class="fas fa-trash"></i>
                             </button>

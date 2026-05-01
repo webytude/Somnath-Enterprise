@@ -26,18 +26,19 @@
             </div>
             <div class="card-body py-4">
                 @include('global.show_session')
-                <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_work_orders">
+                <div class="table-responsive">
+                <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_work_orders" style="min-width: 1300px;">
                     <thead>
                         <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
                             <th class="min-w-180px">W.O. Number</th>
-                            <th class="min-w-120px">Date</th>
-                            <th class="min-w-150px">Vendor</th>
+                            <th class="min-w-150px">Date</th>
+                            <th class="min-w-200px">Vendor</th>
                             <th class="min-w-150px">Location</th>
                             <th class="min-w-150px">Work</th>
-                            <th class="min-w-120px">Total Order Value</th>
-                            <th class="min-w-110px">Paid (vendor)</th>
-                            <th class="min-w-110px">Remaining</th>
-                            <th class="text-end min-w-100px">Action</th>
+                            <th class="min-w-150px text-end">Total Order Value</th>
+                            <th class="min-w-150px text-end">Paid (vendor)</th>
+                            <th class="min-w-150px text-end">Remaining</th>
+                            <th class="text-end min-w-150px">Action</th>
                         </tr>
                     </thead>
                     <tbody class="text-gray-600 fw-bold">
@@ -48,13 +49,13 @@
                             <td>{{ $wo->contractor->pedhi ?? 'N/A' }}</td>
                             <td>{{ $wo->location->name ?? 'N/A' }}</td>
                             <td>{{ $wo->work->name_of_work ?? 'N/A' }}</td>
-                            <td>₹ {{ number_format($wo->total_order_value, 2) }}</td>
+                            <td class="text-end">₹ {{ number_format($wo->total_order_value, 2) }}</td>
                             @php
                                 $vpt = (float) ($wo->vendor_paid_total ?? 0);
                                 $vrem = max(0, round((float) $wo->total_order_value - $vpt, 2));
                             @endphp
-                            <td>₹ {{ number_format($vpt, 2) }}</td>
-                            <td>₹ {{ number_format($vrem, 2) }}</td>
+                            <td class="text-end">₹ {{ number_format($vpt, 2) }}</td>
+                            <td class="text-end">₹ {{ number_format($vrem, 2) }}</td>
                             <td class="text-end">
                                 <a href="{{ route('work-orders.show', $wo) }}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" title="View">
                                     <span class="svg-icon svg-icon-3">
@@ -92,6 +93,7 @@
                         @endforelse
                     </tbody>
                 </table>
+                </div>
             </div>
         </div>
     </div>

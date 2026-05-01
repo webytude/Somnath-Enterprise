@@ -6,7 +6,7 @@
         <div data-kt-swapper="true" data-kt-swapper-mode="prepend" data-kt-swapper-parent="{default: '#kt_content_container', 'lg': '#kt_toolbar_container'}" class="page-title d-flex flex-column align-items-start me-3 mb-5 mb-lg-0">
             <h1 class="d-flex text-dark fw-bolder fs-3 flex-column mb-0">View Material Inward</h1>
         </div>
-        <div class="d-flex align-items-center gap-2 gap-lg-3">
+        <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 gap-lg-3">
             <a href="{{ route('material-inwards.edit', $materialInward) }}" class="btn btn-sm btn-primary">
                 <i class="fas fa-edit"></i> Edit
             </a>
@@ -21,30 +21,38 @@
         <div class="row g-7">
             <div class="col-xl-12">
                 <div class="card card-flush h-lg-100">
-                    <div class="card-body pt-5">
+                    <div class="card-header border-0 pt-6">
+                        <div class="card-title">
+                            <h2 class="fw-bolder mb-0">Material Inward Details</h2>
+                        </div>
+                    </div>
+                    <div class="card-body pt-3">
                         <!-- Section 1: INWARD MATERIAL -->
-                        <div class="mb-7">
-                            <h3 class="text-success mb-4">INWARD MATERIAL</h3>
-                            <div class="row mb-7">
-                                <div class="col-md-4">
+                        <div class="mb-10">
+                            <div class="d-flex align-items-center mb-5">
+                                <span class="bullet bullet-vertical h-40px bg-primary me-4"></span>
+                                <h3 class="text-gray-800 fw-bolder mb-0">INWARD MATERIAL</h3>
+                            </div>
+                            <div class="row g-5 mb-7">
+                                <div class="col-12 col-lg-4 mb-5 mb-lg-0">
                                     <label class="fs-6 fw-bold form-label">Location</label>
                                     <p class="form-control-plaintext">{{ $materialInward->location->name ?? 'N/A' }}</p>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-12 col-lg-4 mb-5 mb-lg-0">
                                     <label class="fs-6 fw-bold form-label">Name of Work</label>
                                     <p class="form-control-plaintext">{{ $materialInward->work->name_of_work ?? 'N/A' }}</p>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-12 col-lg-4">
                                     <label class="fs-6 fw-bold form-label">Party</label>
                                     <p class="form-control-plaintext">{{ $materialInward->party->name ?? 'N/A' }}</p>
                                 </div>
                             </div>
-                            <div class="row mb-7">
-                                <div class="col-md-6">
+                            <div class="row g-5 mb-7">
+                                <div class="col-12 col-lg-6">
                                     <label class="fs-6 fw-bold form-label">Party GST</label>
                                     <p class="form-control-plaintext">{{ $materialInward->party_gst ?? 'N/A' }}</p>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-12 col-lg-6">
                                     <label class="fs-6 fw-bold form-label">Party PAN</label>
                                     <p class="form-control-plaintext">{{ $materialInward->party_pan ?? 'N/A' }}</p>
                                 </div>
@@ -52,28 +60,31 @@
                         </div>
 
                         <!-- Section 2: BILL/VOUCHER DETAILS -->
-                        <div class="mb-7">
-                            <h3 class="text-success mb-4">BILL/VOUCHER DETAILS</h3>
-                            <div class="row mb-7">
-                                <div class="col-md-4">
+                        <div class="mb-10">
+                            <div class="d-flex align-items-center mb-5">
+                                <span class="bullet bullet-vertical h-40px bg-primary me-4"></span>
+                                <h3 class="text-gray-800 fw-bolder mb-0">BILL/VOUCHER DETAILS</h3>
+                            </div>
+                            <div class="row g-5 mb-7">
+                                <div class="col-12 col-lg-4 mb-5 mb-lg-0">
                                     <label class="fs-6 fw-bold form-label">Bill/Voucher Type</label>
                                     <p class="form-control-plaintext">{{ $materialInward->bill_voucher_type ?? 'N/A' }}</p>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-12 col-lg-4 mb-5 mb-lg-0">
                                     <label class="fs-6 fw-bold form-label">Bill/Voucher Number</label>
                                     <p class="form-control-plaintext">{{ $materialInward->bill_voucher_number ?? 'N/A' }}</p>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-12 col-lg-4">
                                     <label class="fs-6 fw-bold form-label">Bill/Voucher Date</label>
                                     <p class="form-control-plaintext">{{ $materialInward->bill_voucher_date ? $materialInward->bill_voucher_date->format('d-m-Y') : 'N/A' }}</p>
                                 </div>
                             </div>
-                            <div class="row mb-7">
-                                <div class="col-md-6">
+                            <div class="row g-5 mb-7">
+                                <div class="col-12 col-lg-6 mb-5 mb-lg-0">
                                     <label class="fs-6 fw-bold form-label">Material Inward At Site Date</label>
                                     <p class="form-control-plaintext">{{ $materialInward->material_inward_at_site_date ? $materialInward->material_inward_at_site_date->format('d-m-Y') : 'N/A' }}</p>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-12 col-lg-6">
                                     <label class="fs-6 fw-bold form-label">Bill/Voucher Attachment</label>
                                     @if($materialInward->bill_voucher_attachment)
                                         <p class="form-control-plaintext">
@@ -86,8 +97,8 @@
                                     @endif
                                 </div>
                             </div>
-                            <div class="row mb-7">
-                                <div class="col-md-6">
+                            <div class="row g-5 mb-7">
+                                <div class="col-12 col-lg-6 mb-5 mb-lg-0">
                                     <label class="fs-6 fw-bold form-label">Payment Status</label>
                                     @php
                                         $paymentStatus = $materialInward->payment_status ?? 'Pending';
@@ -98,17 +109,17 @@
                                         </span>
                                     </p>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-12 col-lg-6">
                                     <label class="fs-6 fw-bold form-label">Payment Ref. No.</label>
                                     <p class="form-control-plaintext">{{ $materialInward->payment_ref_number ?? 'N/A' }}</p>
                                 </div>
                             </div>
-                            <div class="row mb-7">
-                                <div class="col-md-6">
+                            <div class="row g-5 mb-7">
+                                <div class="col-12 col-lg-6 mb-5 mb-lg-0">
                                     <label class="fs-6 fw-bold form-label">Payment Date</label>
                                     <p class="form-control-plaintext">{{ $materialInward->payment_date ? $materialInward->payment_date->format('d-m-Y') : 'N/A' }}</p>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-12 col-lg-6">
                                     <label class="fs-6 fw-bold form-label">Payment Remarks</label>
                                     <p class="form-control-plaintext">{{ $materialInward->payment_remarks ?? 'N/A' }}</p>
                                 </div>
@@ -116,11 +127,14 @@
                         </div>
 
                         <!-- Section 3: MATERIAL DETAILS -->
-                        <div class="mb-7">
-                            <h3 class="text-success mb-4">MATERIAL DETAILS</h3>
+                        <div class="mb-10">
+                            <div class="d-flex align-items-center mb-5">
+                                <span class="bullet bullet-vertical h-40px bg-primary me-4"></span>
+                                <h3 class="text-gray-800 fw-bolder mb-0">MATERIAL DETAILS</h3>
+                            </div>
                             <div class="table-responsive">
-                                <table class="table table-bordered">
-                                    <thead class="table-light">
+                                <table class="table align-middle table-row-dashed fs-6 gy-5" style="min-width: 1100px;">
+                                    <thead>
                                         <tr>
                                             <th>Sr. No.</th>
                                             <th>Material Name</th>
@@ -153,19 +167,16 @@
                         </div>
 
                         <!-- Summary -->
-                        <div class="row mb-7">
-                            <div class="col-md-6"></div>
-                            <div class="col-md-6">
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
+                        <div class="row justify-content-end mb-8">
+                            <div class="col-12 col-md-8 col-lg-5">
+                                <div class="bg-light-primary rounded p-5">
+                                    <div class="mb-4">
                                         <label class="fs-6 fw-bold form-label">Add Bhadu (B)</label>
-                                        <p class="form-control-plaintext">₹ {{ number_format($materialInward->add_bhadu, 2) }}</p>
+                                        <p class="form-control-plaintext mb-0">₹ {{ number_format($materialInward->add_bhadu, 2) }}</p>
                                     </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
+                                    <div>
                                         <label class="fs-6 fw-bold form-label">Total Bill/Voucher Amount (A+B)</label>
-                                        <p class="form-control-plaintext fs-4 fw-bold text-primary">₹ {{ number_format($materialInward->total_bill_voucher_amount, 2) }}</p>
+                                        <p class="form-control-plaintext fs-4 fw-bold text-primary mb-0">₹ {{ number_format($materialInward->total_bill_voucher_amount, 2) }}</p>
                                     </div>
                                 </div>
                             </div>

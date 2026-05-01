@@ -30,17 +30,25 @@
         <div class="row g-7">
             <div class="col-xl-12">
                 <div class="card card-flush h-lg-100">
-                    <div class="card-body pt-5">
+                    <div class="card-header border-0 pt-6">
+                        <div class="card-title">
+                            <h2 class="fw-bolder mb-0">{{ $isEdit ? 'Edit Work Order Details' : 'New Work Order Details' }}</h2>
+                        </div>
+                    </div>
+                    <div class="card-body pt-3">
                         <form method="POST" id="kt_work_order_form" action="{{ $isEdit ? route('work-orders.update', $workOrder) : route('work-orders.store') }}" class="form fv-plugins-bootstrap5 fv-plugins-framework">
                             @csrf
                             @if($isEdit)
                                 @method('PUT')
                             @endif
 
-                            <div class="mb-7">
-                                <h3 class="text-success mb-4">WORK ORDER</h3>
-                                <div class="row mb-7">
-                                    <div class="col-md-6">
+                            <div class="mb-10">
+                                <div class="d-flex align-items-center mb-5">
+                                    <span class="bullet bullet-vertical h-40px bg-primary me-4"></span>
+                                    <h3 class="text-gray-800 fw-bolder mb-0">WORK ORDER</h3>
+                                </div>
+                                <div class="row g-5 mb-7">
+                                    <div class="col-12 col-lg-6">
                                         <label class="fs-6 fw-bold form-label mt-3">W.O. Number</label>
                                         @if($isEdit)
                                             <input type="text" class="form-control form-control-solid" id="wo_number_display" value="{{ $previewWorkOrderNumber }}" readonly />
@@ -69,7 +77,7 @@
                                             <div class="form-text">Format: PREFIX/###/YYYY-YY — middle number is the next global serial (changing prefix or year only updates the text around it).</div>
                                         @endif
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-12 col-lg-6">
                                         <label class="fs-6 fw-bold form-label mt-3"><span class="required">Date</span></label>
                                         <input type="date" class="form-control form-control-solid" name="order_date" id="order_date" value="{{ old('order_date', $isEdit && $workOrder->order_date ? $workOrder->order_date->format('Y-m-d') : date('Y-m-d')) }}" required />
                                         @error('order_date')
@@ -79,10 +87,13 @@
                                 </div>
                             </div>
 
-                            <div class="mb-7">
-                                <h3 class="text-success mb-4">SELECT VENDOR</h3>
-                                <div class="row mb-7">
-                                    <div class="col-md-12">
+                            <div class="mb-10">
+                                <div class="d-flex align-items-center mb-5">
+                                    <span class="bullet bullet-vertical h-40px bg-primary me-4"></span>
+                                    <h3 class="text-gray-800 fw-bolder mb-0">SELECT VENDOR</h3>
+                                </div>
+                                <div class="row g-5 mb-7">
+                                    <div class="col-12">
                                         <label class="fs-6 fw-bold form-label mt-3"><span class="required">Vendor From List</span></label>
                                         <select class="form-select form-select-solid" name="contractor_id" id="contractor_id" data-control="select2" data-placeholder="Select Vendor..." required>
                                             <option value="">Select Vendor...</option>
@@ -104,40 +115,40 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="row mb-7">
-                                    <div class="col-md-6">
+                                <div class="row g-5 mb-7">
+                                    <div class="col-12 col-lg-6">
                                         <label class="fs-6 fw-bold form-label mt-3">Vendor Name</label>
                                         <input type="text" class="form-control form-control-solid" id="vendor_name_display" readonly />
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-12 col-lg-6">
                                         <label class="fs-6 fw-bold form-label mt-3">Vendor Address</label>
                                         <textarea class="form-control form-control-solid" id="vendor_address_display" rows="2" readonly></textarea>
                                     </div>
                                 </div>
-                                <div class="row mb-7">
-                                    <div class="col-md-4">
+                                <div class="row g-5 mb-7">
+                                    <div class="col-12 col-lg-4">
                                         <label class="fs-6 fw-bold form-label mt-3">Pancard</label>
                                         <input type="text" class="form-control form-control-solid" id="vendor_pan_display" readonly />
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-12 col-lg-4">
                                         <label class="fs-6 fw-bold form-label mt-3">GST</label>
                                         <input type="text" class="form-control form-control-solid" id="vendor_gst_display" readonly />
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-12 col-lg-4">
                                         <label class="fs-6 fw-bold form-label mt-3">Cont. Pers. Name</label>
                                         <input type="text" class="form-control form-control-solid" id="vendor_contact_name_display" readonly />
                                     </div>
                                 </div>
-                                <div class="row mb-7">
-                                    <div class="col-md-6">
+                                <div class="row g-5 mb-7">
+                                    <div class="col-12 col-lg-6">
                                         <label class="fs-6 fw-bold form-label mt-3">Cont. Pers. No.</label>
                                         <input type="text" class="form-control form-control-solid" id="vendor_contact_mobile_display" readonly />
                                     </div>
                                 </div>
                                 <div class="separator separator-dashed my-4"></div>
                                 <h4 class="fs-6 fw-bold text-gray-700 mb-4">Location &amp; work</h4>
-                                <div class="row mb-7">
-                                    <div class="col-md-6">
+                                <div class="row g-5 mb-7">
+                                    <div class="col-12 col-lg-6">
                                         <label class="fs-6 fw-bold form-label mt-3"><span class="required">Select Location</span></label>
                                         <select class="form-select form-select-solid" name="location_id" id="location_id" data-control="select2" data-placeholder="Select Location..." required>
                                             <option value="">Select Location...</option>
@@ -159,27 +170,36 @@
                                 </div>
                             </div>
 
-                            <div class="mb-7">
-                                <h3 class="text-success mb-4">SUBJECT</h3>
+                            <div class="mb-10">
+                                <div class="d-flex align-items-center mb-5">
+                                    <span class="bullet bullet-vertical h-40px bg-primary me-4"></span>
+                                    <h3 class="text-gray-800 fw-bolder mb-0">SUBJECT</h3>
+                                </div>
                                 <textarea class="form-control form-control-solid" name="subject" rows="3" placeholder="Subject">{{ old('subject', $isEdit ? $workOrder->subject : '') }}</textarea>
                                 @error('subject')
                                     <span class="error invalid-feedback d-block">{{ $message }}</span>
                                 @enderror
                             </div>
 
-                            <div class="mb-7">
-                                <h3 class="text-success mb-4">CONDITION</h3>
+                            <div class="mb-10">
+                                <div class="d-flex align-items-center mb-5">
+                                    <span class="bullet bullet-vertical h-40px bg-primary me-4"></span>
+                                    <h3 class="text-gray-800 fw-bolder mb-0">CONDITION</h3>
+                                </div>
                                 <textarea class="form-control form-control-solid" name="condition_text" rows="3" placeholder="Condition">{{ old('condition_text', $isEdit ? $workOrder->condition_text : '') }}</textarea>
                                 @error('condition_text')
                                     <span class="error invalid-feedback d-block">{{ $message }}</span>
                                 @enderror
                             </div>
 
-                            <div class="mb-7">
-                                <h3 class="text-success mb-4">RATE DETAILS</h3>
+                            <div class="mb-10">
+                                <div class="d-flex align-items-center mb-5">
+                                    <span class="bullet bullet-vertical h-40px bg-primary me-4"></span>
+                                    <h3 class="text-gray-800 fw-bolder mb-0">RATE DETAILS</h3>
+                                </div>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered" id="wo-details-table">
-                                        <thead class="table-light">
+                                    <table class="table align-middle table-row-dashed fs-6 gy-5" id="wo-details-table" style="min-width: 1000px;">
+                                        <thead>
                                             <tr>
                                                 <th style="width:50px;">Sr.</th>
                                                 <th>Work Details</th>
@@ -217,31 +237,37 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <button type="button" class="btn btn-primary mt-3" id="wo-add-row"><i class="fas fa-plus"></i> Add More Work Details</button>
+                                <button type="button" class="btn btn-sm btn-primary mt-3" id="wo-add-row"><i class="fas fa-plus"></i> Add More Work Details</button>
                                 @error('details')
                                     <span class="error invalid-feedback d-block">{{ $message }}</span>
                                 @enderror
-                                <div class="row mt-5">
-                                    <div class="col-md-6 ms-md-auto">
+                                <div class="row justify-content-end mt-5">
+                                    <div class="col-12 col-md-8 col-lg-4">
                                         <label class="fs-6 fw-bold form-label">Total Order Value</label>
                                         <input type="text" class="form-control form-control-solid fw-bold" id="total_order_value_display" readonly value="0.00" />
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="mb-7">
-                                <h3 class="text-success mb-4">TIME LIMIT FOR THIS WORK</h3>
+                            <div class="mb-10">
+                                <div class="d-flex align-items-center mb-5">
+                                    <span class="bullet bullet-vertical h-40px bg-primary me-4"></span>
+                                    <h3 class="text-gray-800 fw-bolder mb-0">TIME LIMIT FOR THIS WORK</h3>
+                                </div>
                                 <textarea class="form-control form-control-solid" name="time_limit_for_work" rows="2" placeholder="Time limit">{{ old('time_limit_for_work', $isEdit ? $workOrder->time_limit_for_work : '') }}</textarea>
                             </div>
 
-                            <div class="mb-7">
-                                <h3 class="text-success mb-4">PAYMENT CONDITION</h3>
+                            <div class="mb-10">
+                                <div class="d-flex align-items-center mb-5">
+                                    <span class="bullet bullet-vertical h-40px bg-primary me-4"></span>
+                                    <h3 class="text-gray-800 fw-bolder mb-0">PAYMENT CONDITION</h3>
+                                </div>
                                 <textarea class="form-control form-control-solid" name="payment_condition" rows="2" placeholder="Payment condition">{{ old('payment_condition', $isEdit ? $workOrder->payment_condition : '') }}</textarea>
                             </div>
 
                             <div class="separator mb-6"></div>
-                            <div class="d-flex justify-content-end">
-                                <a href="{{ route('work-orders.index') }}" class="btn btn-light me-3">Cancel</a>
+                            <div class="d-flex flex-column flex-sm-row justify-content-end gap-3">
+                                <a href="{{ route('work-orders.index') }}" class="btn btn-light">Cancel</a>
                                 <button type="submit" class="btn btn-primary">{{ $isEdit ? 'Update' : 'Save' }}</button>
                             </div>
                         </form>

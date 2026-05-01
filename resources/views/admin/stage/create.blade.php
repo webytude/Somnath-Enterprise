@@ -70,7 +70,7 @@
                                             </label>
                                             <input type="number" class="form-control form-control-solid stage-percentage" name="stages[{{ $idx }}][percentage]" value="{{ $row['percentage'] ?? '' }}" step="0.01" min="0" max="100" placeholder="Enter Percentage (0-100)" />
                                         </div>
-                                        <div class="col-md-1 d-flex align-items-end">
+                                        <div class="col-12 col-md-1 d-grid d-md-flex align-items-md-end mt-2 mt-md-0">
                                             <button type="button" class="btn btn-sm btn-light-danger remove-stage-row" {{ $idx === 0 ? 'style=display:none;' : '' }}>&times;</button>
                                         </div>
                                     </div>
@@ -139,7 +139,7 @@
                         <label class="fs-6 fw-bold form-label mt-3"><span class="required">Site Percentage</span></label>
                         <input type="number" class="form-control form-control-solid stage-percentage" name="stages[${idx}][percentage]" step="0.01" min="0" max="100" placeholder="Enter Percentage (0-100)" />
                     </div>
-                    <div class="col-md-1 d-flex align-items-end">
+                    <div class="col-12 col-md-1 d-grid d-md-flex align-items-md-end mt-2 mt-md-0">
                         <button type="button" class="btn btn-sm btn-light-danger remove-stage-row">&times;</button>
                     </div>
                 </div>

@@ -13,15 +13,23 @@
         <div class="row g-7">
             <div class="col-xl-12">
                 <div class="card card-flush h-lg-100" id="kt_material_inward_form_main">
-                    <div class="card-body pt-5">
+                    <div class="card-header border-0 pt-6">
+                        <div class="card-title">
+                            <h2 class="fw-bolder mb-0">Material Inward Details</h2>
+                        </div>
+                    </div>
+                    <div class="card-body pt-3">
                         <form method="POST" id="kt_material_inward_form" class="form fv-plugins-bootstrap5 fv-plugins-framework" action="{{ route('material-inwards.store') }}" enctype="multipart/form-data">
                             @csrf
                             
                             <!-- Section 1: ADD INWARD MATERIAL -->
-                            <div class="mb-7">
-                                <h3 class="text-success mb-4">ADD INWARD MATERIAL</h3>
-                                <div class="row mb-7">
-                                    <div class="col-md-4">
+                            <div class="mb-10">
+                                <div class="d-flex align-items-center mb-5">
+                                    <span class="bullet bullet-vertical h-40px bg-primary me-4"></span>
+                                    <h3 class="text-gray-800 fw-bolder mb-0">ADD INWARD MATERIAL</h3>
+                                </div>
+                                <div class="row g-5 mb-7">
+                                    <div class="col-12 col-lg-4">
                                         <label class="fs-6 fw-bold form-label mt-3">
                                             <span class="required">Location</span>
                                         </label>
@@ -35,7 +43,7 @@
                                             <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-12 col-lg-4">
                                         <label class="fs-6 fw-bold form-label mt-3">
                                             Name of Work <span class="text-muted">(OPTIONAL)</span>
                                         </label>
@@ -46,7 +54,7 @@
                                             <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-12 col-lg-4">
                                         <label class="fs-6 fw-bold form-label mt-3">
                                             <span class="required">Party</span>
                                         </label>
@@ -58,12 +66,12 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="row mb-7">
-                                    <div class="col-md-6">
+                                <div class="row g-5 mb-7">
+                                    <div class="col-12 col-lg-6">
                                         <label class="fs-6 fw-bold form-label mt-3">Party GST (Auto)</label>
                                         <input type="text" class="form-control form-control-solid" id="party_gst" name="party_gst" value="{{ old('party_gst') }}" placeholder="Auto-filled from Party" readonly />
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-12 col-lg-6">
                                         <label class="fs-6 fw-bold form-label mt-3">Party Pan (Auto)</label>
                                         <input type="text" class="form-control form-control-solid" id="party_pan" name="party_pan" value="{{ old('party_pan') }}" placeholder="Auto-filled from Party" readonly />
                                     </div>
@@ -71,10 +79,13 @@
                             </div>
 
                             <!-- Section 2: ADD BILL/VOUCHER DETAILS -->
-                            <div class="mb-7">
-                                <h3 class="text-success mb-4">ADD BILL/VOUCHER DETAILS</h3>
-                                <div class="row mb-7">
-                                    <div class="col-md-4">
+                            <div class="mb-10">
+                                <div class="d-flex align-items-center mb-5">
+                                    <span class="bullet bullet-vertical h-40px bg-primary me-4"></span>
+                                    <h3 class="text-gray-800 fw-bolder mb-0">ADD BILL/VOUCHER DETAILS</h3>
+                                </div>
+                                <div class="row g-5 mb-7">
+                                    <div class="col-12 col-lg-4">
                                         <label class="fs-6 fw-bold form-label mt-3">Bill/Voucher Type</label>
                                         <select class="form-select form-select-solid" name="bill_voucher_type" id="bill_voucher_type">
                                             <option value="">Select Type...</option>
@@ -85,14 +96,14 @@
                                             <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-12 col-lg-4">
                                         <label class="fs-6 fw-bold form-label mt-3">Bill/Vhcr No.</label>
                                         <input type="text" class="form-control form-control-solid" name="bill_voucher_number" value="{{ old('bill_voucher_number') }}" placeholder="Enter Bill/Voucher Number" />
                                         @error('bill_voucher_number')
                                             <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-12 col-lg-4">
                                         <label class="fs-6 fw-bold form-label mt-3">Bill/Voucher Date</label>
                                         <input type="date" class="form-control form-control-solid" name="bill_voucher_date" value="{{ old('bill_voucher_date') }}" />
                                         @error('bill_voucher_date')
@@ -100,15 +111,15 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="row mb-7">
-                                    <div class="col-md-6">
+                                <div class="row g-5 mb-7">
+                                    <div class="col-12 col-lg-6">
                                         <label class="fs-6 fw-bold form-label mt-3">Material Inward At Site Date</label>
                                         <input type="date" class="form-control form-control-solid" name="material_inward_at_site_date" value="{{ old('material_inward_at_site_date') }}" />
                                         @error('material_inward_at_site_date')
                                             <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-12 col-lg-6">
                                         <label class="fs-6 fw-bold form-label mt-3">Attach Bill/Voucher</label>
                                         <input type="file" class="form-control form-control-solid" name="bill_voucher_attachment" accept=".pdf,.jpg,.jpeg,.png" />
                                         @error('bill_voucher_attachment')
@@ -119,11 +130,14 @@
                             </div>
 
                             <!-- Section 3: MATERIAL DETAILS -->
-                            <div class="mb-7">
-                                <h3 class="text-success mb-4">MATERIAL DETAILS</h3>
+                            <div class="mb-10">
+                                <div class="d-flex align-items-center mb-5">
+                                    <span class="bullet bullet-vertical h-40px bg-primary me-4"></span>
+                                    <h3 class="text-gray-800 fw-bolder mb-0">MATERIAL DETAILS</h3>
+                                </div>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered" id="material-details-table">
-                                        <thead class="table-light">
+                                    <table class="table align-middle table-row-dashed fs-6 gy-5" id="material-details-table" style="min-width: 1300px;">
+                                        <thead>
                                             <tr>
                                                 <th>Sr. No.</th>
                                                 <th>Material Name</th>
@@ -179,7 +193,7 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <button type="button" class="btn btn-primary mt-3" id="add-detail-row">
+                                <button type="button" class="btn btn-sm btn-primary mt-3" id="add-detail-row">
                                     <i class="fas fa-plus"></i> Add More Materials
                                 </button>
                                 @error('details')
@@ -188,25 +202,16 @@
                             </div>
 
                             <!-- Summary Calculations -->
-                            <div class="row mb-7">
-                                <div class="col-md-6"></div>
-                                <div class="col-md-6">
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
+                            <div class="row justify-content-end mb-8">
+                                <div class="col-12 col-md-8 col-lg-5">
+                                    <div class="bg-light-primary rounded p-5">
+                                        <div class="mb-5">
                                             <label class="fs-6 fw-bold form-label">Add Bhadu</label>
                                             <input type="number" class="form-control form-control-solid" name="add_bhadu" id="add_bhadu" step="0.01" min="0" value="{{ old('add_bhadu', 0) }}" placeholder="0.00" />
                                         </div>
-                                        <div class="col-md-6">
-                                            <label class="fs-6 fw-bold form-label">(B)</label>
-                                        </div>
-                                    </div>
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
+                                        <div>
                                             <label class="fs-6 fw-bold form-label">Total Bill/Voucher Amt.</label>
                                             <input type="number" class="form-control form-control-solid" name="total_bill_voucher_amount" id="total_bill_voucher_amount" step="0.01" min="0" value="{{ old('total_bill_voucher_amount', 0) }}" placeholder="A+B" readonly />
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="fs-6 fw-bold form-label">A+B</label>
                                         </div>
                                     </div>
                                 </div>
@@ -222,8 +227,8 @@
                             </div>
 
                             <div class="separator mb-6"></div>
-                            <div class="d-flex justify-content-end">
-                                <a href="{{route('material-inwards.index')}}" data-kt-material-inward-form="cancel" class="btn btn-light me-3">Cancel</a>
+                            <div class="d-flex flex-column flex-sm-row justify-content-end gap-3">
+                                <a href="{{route('material-inwards.index')}}" data-kt-material-inward-form="cancel" class="btn btn-light">Cancel</a>
                                 <button type="submit" data-kt-material-inward-form="submit" class="btn btn-primary">
                                     <span class="indicator-label">Save</span>
                                     <span class="indicator-progress">Please wait...

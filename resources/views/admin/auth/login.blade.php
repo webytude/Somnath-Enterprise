@@ -8,7 +8,7 @@
             @csrf
             
             <div class="text-center mb-10">
-                 <img alt="Logo" src="{{ asset('assets/media/logos/somnathenterprice-logo.svg') }}" class="h-40px" />
+                 <img alt="Logo" src="{{ asset('assets/media/logos/somnathenterprise-logo.svg') }}" class="h-40px" />
             </div>
 
             <div class="fv-row mb-10">

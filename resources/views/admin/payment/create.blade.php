@@ -13,7 +13,12 @@
         <div class="row g-7">
             <div class="col-xl-12">
                 <div class="card card-flush h-lg-100" id="kt_payment_form_main">
-                    <div class="card-body pt-5">
+                    <div class="card-header border-0 pt-6">
+                        <div class="card-title">
+                            <h2 class="fw-bolder mb-0">{{ isset($payment) ? 'Edit Payment Details' : 'Add Payment Details' }}</h2>
+                        </div>
+                    </div>
+                    <div class="card-body pt-3">
                         <form method="POST" id="kt_payment_form" class="form fv-plugins-bootstrap5 fv-plugins-framework" action="{{ isset($payment) ? route('payments.update', $payment->id) : route('payments.store') }}">
                             @csrf
                             @if(isset($payment))
@@ -21,10 +26,13 @@
                             @endif
                             
                             <!-- Payment Type Selection -->
-                            <div class="mb-7">
-                                <h3 class="text-primary mb-4">SELECT PAYMENT TYPE</h3>
-                                <div class="row mb-7">
-                                    <div class="col-md-12">
+                            <div class="mb-10">
+                                <div class="d-flex align-items-center mb-5">
+                                    <span class="bullet bullet-vertical h-40px bg-primary me-4"></span>
+                                    <h3 class="text-gray-800 fw-bolder mb-0">SELECT PAYMENT TYPE</h3>
+                                </div>
+                                <div class="row g-5 mb-7">
+                                    <div class="col-12">
                                         <label class="fs-6 fw-bold form-label mt-3">
                                             <span class="required">Payment Type</span>
                                         </label>
@@ -42,12 +50,15 @@
                             </div>
 
                             <!-- Payment of Staff Section -->
-                            <div class="mb-7" id="staff-payment-section" style="display: none;">
-                                <h3 class="text-success mb-4">PAYMENT OF STAFF</h3>
+                            <div class="mb-10" id="staff-payment-section" style="display: none;">
+                                <div class="d-flex align-items-center mb-5">
+                                    <span class="bullet bullet-vertical h-40px bg-primary me-4"></span>
+                                    <h3 class="text-gray-800 fw-bolder mb-0">PAYMENT OF STAFF</h3>
+                                </div>
                                 
                                 <!-- OUR STAFF LIST -->
                                 <div class="mb-7">
-                                    <h4 class="text-success mb-3">OUR STAFF LIST</h4>
+                                    <h4 class="text-gray-800 fw-bolder mb-3">OUR STAFF LIST</h4>
                                     <div class="row mb-7">
                                         <div class="col-md-6">
                                             <label class="fs-6 fw-bold form-label mt-3">
@@ -82,7 +93,7 @@
 
                                 <!-- PAYMENT INFORMATION -->
                                 <div class="mb-7">
-                                    <h4 class="text-success mb-3">PAYMENT INFORMATION</h4>
+                                    <h4 class="text-gray-800 fw-bolder mb-3">PAYMENT INFORMATION</h4>
                                     <div class="row mb-7">
                                         <div class="col-md-4">
                                             <label class="fs-6 fw-bold form-label mt-3">Reason of Payment</label>
@@ -114,12 +125,15 @@
                             </div>
 
                             <!-- Payment of Party Section -->
-                            <div class="mb-7" id="party-payment-section" style="display: none;">
-                                <h3 class="text-success mb-4">PAYMENT OF PARTY</h3>
+                            <div class="mb-10" id="party-payment-section" style="display: none;">
+                                <div class="d-flex align-items-center mb-5">
+                                    <span class="bullet bullet-vertical h-40px bg-primary me-4"></span>
+                                    <h3 class="text-gray-800 fw-bolder mb-0">PAYMENT OF PARTY</h3>
+                                </div>
                                 
                                 <!-- OUR PARTY -->
                                 <div class="mb-7">
-                                    <h4 class="text-success mb-3">OUR PARTY</h4>
+                                    <h4 class="text-gray-800 fw-bolder mb-3">OUR PARTY</h4>
                                     <div class="row mb-7">
                                         <div class="col-md-6">
                                             <label class="fs-6 fw-bold form-label mt-3">
@@ -165,7 +179,7 @@
 
                                 <!-- PAYMENT INFORMATION -->
                                 <div class="mb-7">
-                                    <h4 class="text-success mb-3">PAYMENT INFORMATION</h4>
+                                    <h4 class="text-gray-800 fw-bolder mb-3">PAYMENT INFORMATION</h4>
                                     <div class="row mb-7">
                                         <div class="col-md-4">
                                             <label class="fs-6 fw-bold form-label mt-3">Reson/Bill No.</label>
@@ -197,12 +211,15 @@
                             </div>
 
                             <!-- Payment of Vendor Section -->
-                            <div class="mb-7" id="vendor-payment-section" style="display: none;">
-                                <h3 class="text-success mb-4">PAYMENT OF VENDOR</h3>
+                            <div class="mb-10" id="vendor-payment-section" style="display: none;">
+                                <div class="d-flex align-items-center mb-5">
+                                    <span class="bullet bullet-vertical h-40px bg-primary me-4"></span>
+                                    <h3 class="text-gray-800 fw-bolder mb-0">PAYMENT OF VENDOR</h3>
+                                </div>
                                 
                                 <!-- OUR VENDOR -->
                                 <div class="mb-7">
-                                    <h4 class="text-success mb-3">OUR VENDOR</h4>
+                                    <h4 class="text-gray-800 fw-bolder mb-3">OUR VENDOR</h4>
                                     <div class="row mb-7">
                                         <div class="col-md-6">
                                             <label class="fs-6 fw-bold form-label mt-3">
@@ -255,7 +272,7 @@
 
                                 <!-- PAYMENT INFORMATION -->
                                 <div class="mb-7">
-                                    <h4 class="text-success mb-3">PAYMENT INFORMATION</h4>
+                                    <h4 class="text-gray-800 fw-bolder mb-3">PAYMENT INFORMATION</h4>
                                     <div class="row mb-7">
                                         <div class="col-md-3">
                                             <label class="fs-6 fw-bold form-label mt-3">Reson/Bill No.</label>
@@ -329,17 +346,17 @@
                             </div>
 
                             <!-- Common Payment Information (for Staff and Party) -->
-                            <div class="mb-7" id="common-payment-section" style="display: none;">
-                                <h4 class="text-success mb-3">PAYMENT INFORMATION</h4>
-                                <div class="row mb-7">
-                                    <div class="col-md-3">
+                            <div class="mb-10" id="common-payment-section" style="display: none;">
+                                <h4 class="text-gray-800 fw-bolder mb-3">PAYMENT INFORMATION</h4>
+                                <div class="row g-5 mb-7">
+                                    <div class="col-12 col-md-6 col-lg-3">
                                         <label class="fs-6 fw-bold form-label mt-3">Ref. No.</label>
                                         <input type="text" class="form-control form-control-solid" name="ref_number" id="ref_number_common" value="{{ old('ref_number', isset($payment) ? $payment->ref_number : '') }}" placeholder="Enter Ref. No." />
                                         @error('ref_number')
                                             <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-12 col-md-6 col-lg-3">
                                         <label class="fs-6 fw-bold form-label mt-3">
                                             <span class="required">Date</span>
                                         </label>
@@ -348,7 +365,7 @@
                                             <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-12 col-lg-6">
                                         <label class="fs-6 fw-bold form-label mt-3">Remarks</label>
                                         <textarea class="form-control form-control-solid" name="remarks" id="remarks_common" rows="2" placeholder="Enter Remarks">{{ old('remarks', isset($payment) ? $payment->remarks : '') }}</textarea>
                                     </div>
@@ -356,8 +373,8 @@
                             </div>
 
                             <div class="separator mb-6"></div>
-                            <div class="d-flex justify-content-end">
-                                <a href="{{route('payments.index')}}" data-kt-payment-form="cancel" class="btn btn-light me-3">Cancel</a>
+                            <div class="d-flex flex-column flex-sm-row justify-content-end gap-3">
+                                <a href="{{route('payments.index')}}" data-kt-payment-form="cancel" class="btn btn-light">Cancel</a>
                                 <button type="submit" data-kt-payment-form="submit" class="btn btn-primary">
                                     <span class="indicator-label">{{ isset($payment) ? 'Update' : 'Save' }}</span>
                                     <span class="indicator-progress">Please wait...

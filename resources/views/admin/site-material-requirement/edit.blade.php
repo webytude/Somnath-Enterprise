@@ -130,7 +130,7 @@
                                                         <label class="form-label">Time Within</label>
                                                         <input type="number" class="form-control form-control-solid material-time-within" name="details[{{ $index }}][time_within_days]" value="{{ old("details.$index.time_within_days", $timeWithinDays) }}" min="0" placeholder="Days" />
                                                     </div>
-                                                    <div class="col-md-1 d-flex align-items-end">
+                                                    <div class="col-12 col-md-2 col-xl-1 d-flex align-items-end justify-content-md-start justify-content-xl-end mb-1">
                                                         <button type="button" class="btn btn-sm btn-danger remove-detail-row">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
@@ -178,7 +178,7 @@
                                                     <label class="form-label">Time Within</label>
                                                     <input type="number" class="form-control form-control-solid material-time-within" name="details[0][time_within_days]" min="0" placeholder="Days" />
                                                 </div>
-                                                <div class="col-md-1 d-flex align-items-end">
+                                                <div class="col-12 col-md-2 col-xl-1 d-flex align-items-end justify-content-md-start justify-content-xl-end mb-1">
                                                     <button type="button" class="btn btn-sm btn-danger remove-detail-row" style="display: none;">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
@@ -407,7 +407,7 @@
                             <label class="form-label">Time Within</label>
                             <input type="number" class="form-control form-control-solid material-time-within" name="details[${detailRowIndex}][time_within_days]" min="0" placeholder="Days" />
                         </div>
-                        <div class="col-md-1 d-flex align-items-end">
+                        <div class="col-12 col-md-2 col-xl-1 d-flex align-items-end justify-content-md-start justify-content-xl-end mb-1">
                             <button type="button" class="btn btn-sm btn-danger remove-detail-row">
                                 <i class="fas fa-trash"></i>
                             </button>

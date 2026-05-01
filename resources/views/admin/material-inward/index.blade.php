@@ -26,7 +26,8 @@
             </div>
             <div class="card-body py-4">
                 @include('global.show_session')
-                <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_material_inwards">
+                <div class="table-responsive">
+                <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_material_inwards" style="min-width: 1200px;">
                     <thead>
                         <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
                             <th class="min-w-150px">Location</th>
@@ -60,7 +61,8 @@
                                 <a href="{{ route('material-inwards.show', $materialInward) }}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" title="View">
                                     <span class="svg-icon svg-icon-3">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                            <path d="M14.0185 10.3162L11.0635 7.36125L12.1368 6.28796L17.1368 11.288L12.1368 16.288L11.0635 15.2147L14.0185 12.2597H3.13672V10.3162H14.0185Z" fill="currentColor" />
+                                            <path opacity="0.3" d="M12 4C7 4 2.73 7.11 1 12C2.73 16.89 7 20 12 20C17 20 21.27 16.89 23 12C21.27 7.11 17 4 12 4Z" fill="currentColor"/>
+                                            <path d="M12 9C10.34 9 9 10.34 9 12C9 13.66 10.34 15 12 15C13.66 15 15 13.66 15 12C15 10.34 13.66 9 12 9Z" fill="currentColor"/>
                                         </svg>
                                     </span>
                                 </a>
@@ -93,6 +95,7 @@
                         @endforelse
                     </tbody>
                 </table>
+                </div>
             </div>
         </div>
     </div>

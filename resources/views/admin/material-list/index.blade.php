@@ -26,25 +26,27 @@
             </div>
             <div class="card-body py-4">
                 @include('global.show_session')
-                <form method="GET" action="{{ route('material-lists.index') }}" class="row mb-4 g-3 align-items-end">
-                    <div class="col-md-4">
-                        <label for="category_id" class="form-label fw-bold">Filter by Category</label>
-                        <select name="category_id" id="category_id" class="form-select form-select-sm">
-                            <option value="">All Categories</option>
-                            @foreach($materialCategories as $category)
-                                <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
-                                    {{ $category->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <button type="submit" class="btn btn-sm btn-primary me-2">Apply Filter</button>
-                        <a href="{{ route('material-lists.index') }}" class="btn btn-sm btn-light">Reset</a>
-                    </div>
-                </form>
+                <div class="border rounded p-4 mb-6 bg-light-primary">
+                    <form method="GET" action="{{ route('material-lists.index') }}" class="d-flex flex-column flex-lg-row align-items-lg-end gap-4">
+                        <div class="w-100 w-lg-350px">
+                            <label for="category_id" class="form-label fw-bold text-gray-700">Filter by Category</label>
+                            <select name="category_id" id="category_id" class="form-select form-select-solid">
+                                <option value="">All Categories</option>
+                                @foreach($materialCategories as $category)
+                                    <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                                        {{ $category->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="d-flex align-items-center gap-3 flex-wrap">
+                            <button type="submit" class="btn btn-primary">Apply Filter</button>
+                            <a href="{{ route('material-lists.index') }}" class="btn btn-light">Reset</a>
+                        </div>
+                    </form>
+                </div>
                 <div class="table-responsive">
-                    <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_material_lists">
+                    <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_material_lists" style="min-width: 900px;">
                         <thead>
                             <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
                                 <th class="min-w-50px">S.No</th>

@@ -6,7 +6,7 @@
         <div data-kt-swapper="true" data-kt-swapper-mode="prepend" data-kt-swapper-parent="{default: '#kt_content_container', 'lg': '#kt_toolbar_container'}" class="page-title d-flex flex-column align-items-start me-3 mb-5 mb-lg-0">
             <h1 class="d-flex text-dark fw-bolder fs-3 flex-column mb-0">View Payment</h1>
         </div>
-        <div class="d-flex align-items-center gap-2 gap-lg-3">
+        <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 gap-lg-3">
             <a href="{{ route('payments.edit', $payment) }}" class="btn btn-sm btn-primary">
                 <i class="fas fa-edit"></i> Edit
             </a>
@@ -21,12 +21,20 @@
         <div class="row g-7">
             <div class="col-xl-12">
                 <div class="card card-flush h-lg-100">
-                    <div class="card-body pt-5">
+                    <div class="card-header border-0 pt-6">
+                        <div class="card-title">
+                            <h2 class="fw-bolder mb-0">Payment Details</h2>
+                        </div>
+                    </div>
+                    <div class="card-body pt-3">
                         <!-- Payment Type -->
-                        <div class="mb-7">
-                            <h3 class="text-primary mb-4">PAYMENT TYPE</h3>
-                            <div class="row mb-7">
-                                <div class="col-md-12">
+                        <div class="mb-10">
+                            <div class="d-flex align-items-center mb-5">
+                                <span class="bullet bullet-vertical h-40px bg-primary me-4"></span>
+                                <h3 class="text-gray-800 fw-bolder mb-0">PAYMENT TYPE</h3>
+                            </div>
+                            <div class="row g-5 mb-7">
+                                <div class="col-12">
                                     <label class="fs-6 fw-bold form-label">Payment Type</label>
                                     <p class="form-control-plaintext">
                                         <span class="badge badge-{{ $payment->payment_type == 'staff' ? 'primary' : ($payment->payment_type == 'party' ? 'success' : 'warning') }}">
@@ -39,11 +47,14 @@
 
                         @if($payment->payment_type == 'staff')
                         <!-- Payment of Staff -->
-                        <div class="mb-7">
-                            <h3 class="text-success mb-4">PAYMENT OF STAFF</h3>
+                        <div class="mb-10">
+                            <div class="d-flex align-items-center mb-5">
+                                <span class="bullet bullet-vertical h-40px bg-primary me-4"></span>
+                                <h3 class="text-gray-800 fw-bolder mb-0">PAYMENT OF STAFF</h3>
+                            </div>
                             
                             <div class="mb-7">
-                                <h4 class="text-success mb-3">OUR STAFF LIST</h4>
+                                <h4 class="text-gray-800 fw-bolder mb-3">OUR STAFF LIST</h4>
                                 <div class="row mb-7">
                                     <div class="col-md-6">
                                         <label class="fs-6 fw-bold form-label">Staff Name</label>
@@ -67,7 +78,7 @@
                             </div>
 
                             <div class="mb-7">
-                                <h4 class="text-success mb-3">PAYMENT INFORMATION</h4>
+                                <h4 class="text-gray-800 fw-bolder mb-3">PAYMENT INFORMATION</h4>
                                 <div class="row mb-7">
                                     <div class="col-md-6">
                                         <label class="fs-6 fw-bold form-label">Reason of Payment</label>
@@ -84,11 +95,14 @@
 
                         @if($payment->payment_type == 'party')
                         <!-- Payment of Party -->
-                        <div class="mb-7">
-                            <h3 class="text-success mb-4">PAYMENT OF PARTY</h3>
+                        <div class="mb-10">
+                            <div class="d-flex align-items-center mb-5">
+                                <span class="bullet bullet-vertical h-40px bg-primary me-4"></span>
+                                <h3 class="text-gray-800 fw-bolder mb-0">PAYMENT OF PARTY</h3>
+                            </div>
                             
                             <div class="mb-7">
-                                <h4 class="text-success mb-3">OUR PARTY</h4>
+                                <h4 class="text-gray-800 fw-bolder mb-3">OUR PARTY</h4>
                                 <div class="row mb-7">
                                     <div class="col-md-6">
                                         <label class="fs-6 fw-bold form-label">PARTY</label>
@@ -109,7 +123,7 @@
                             </div>
 
                             <div class="mb-7">
-                                <h4 class="text-success mb-3">PAYMENT INFORMATION</h4>
+                                <h4 class="text-gray-800 fw-bolder mb-3">PAYMENT INFORMATION</h4>
                                 <div class="row mb-7">
                                     <div class="col-md-4">
                                         <label class="fs-6 fw-bold form-label">Reson/Bill No.</label>
@@ -130,11 +144,14 @@
 
                         @if($payment->payment_type == 'vendor')
                         <!-- Payment of Vendor -->
-                        <div class="mb-7">
-                            <h3 class="text-success mb-4">PAYMENT OF VENDOR</h3>
+                        <div class="mb-10">
+                            <div class="d-flex align-items-center mb-5">
+                                <span class="bullet bullet-vertical h-40px bg-primary me-4"></span>
+                                <h3 class="text-gray-800 fw-bolder mb-0">PAYMENT OF VENDOR</h3>
+                            </div>
                             
                             <div class="mb-7">
-                                <h4 class="text-success mb-3">OUR VENDOR</h4>
+                                <h4 class="text-gray-800 fw-bolder mb-3">OUR VENDOR</h4>
                                 <div class="row mb-7">
                                     <div class="col-md-6">
                                         <label class="fs-6 fw-bold form-label">VENDOR</label>
@@ -158,7 +175,7 @@
                             </div>
 
                             <div class="mb-7">
-                                <h4 class="text-success mb-3">PAYMENT INFORMATION</h4>
+                                <h4 class="text-gray-800 fw-bolder mb-3">PAYMENT INFORMATION</h4>
                                 <div class="row mb-7">
                                     <div class="col-md-3">
                                         <label class="fs-6 fw-bold form-label">Reson/Bill No.</label>
@@ -208,7 +225,7 @@
                         <!-- Common Payment Information (for Staff) -->
                         @if($payment->payment_type == 'staff')
                         <div class="mb-7">
-                            <h4 class="text-success mb-3">PAYMENT INFORMATION</h4>
+                            <h4 class="text-gray-800 fw-bolder mb-3">PAYMENT INFORMATION</h4>
                             <div class="row mb-7">
                                 <div class="col-md-3">
                                     <label class="fs-6 fw-bold form-label">Ref. No.</label>

@@ -13,15 +13,23 @@
         <div class="row g-7">
             <div class="col-xl-12">
                 <div class="card card-flush h-lg-100" id="kt_bill_inward_form_main">
-                    <div class="card-body pt-5">
+                    <div class="card-header border-0 pt-6">
+                        <div class="card-title">
+                            <h2 class="fw-bolder mb-0">Bill Inward Details</h2>
+                        </div>
+                    </div>
+                    <div class="card-body pt-3">
                         <form method="POST" id="kt_bill_inward_form" class="form fv-plugins-bootstrap5 fv-plugins-framework" action="{{ route('bill-inwards.store') }}" enctype="multipart/form-data">
                             @csrf
                             
                             <!-- Section 1: OUR FIRM -->
-                            <div class="mb-7">
-                                <h3 class="text-success mb-4">OUR FIRM</h3>
-                                <div class="row mb-7">
-                                    <div class="col-md-12">
+                            <div class="mb-10">
+                                <div class="d-flex align-items-center mb-5">
+                                    <span class="bullet bullet-vertical h-40px bg-primary me-4"></span>
+                                    <h3 class="text-gray-800 fw-bolder mb-0">OUR FIRM</h3>
+                                </div>
+                                <div class="row g-5 mb-7">
+                                    <div class="col-12">
                                         <label class="fs-6 fw-bold form-label mt-3">
                                             <span class="required">Firm From List</span>
                                         </label>
@@ -39,10 +47,13 @@
                             </div>
 
                             <!-- Section 2: PARTY DETAILS -->
-                            <div class="mb-7">
-                                <h3 class="text-success mb-4">PARTY DETAILS</h3>
-                                <div class="row mb-7">
-                                    <div class="col-md-4">
+                            <div class="mb-10">
+                                <div class="d-flex align-items-center mb-5">
+                                    <span class="bullet bullet-vertical h-40px bg-primary me-4"></span>
+                                    <h3 class="text-gray-800 fw-bolder mb-0">PARTY DETAILS</h3>
+                                </div>
+                                <div class="row g-5 mb-7">
+                                    <div class="col-12 col-lg-4">
                                         <label class="fs-6 fw-bold form-label mt-3">
                                             <span class="required">Party</span>
                                         </label>
@@ -56,11 +67,11 @@
                                             <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-12 col-lg-4">
                                         <label class="fs-6 fw-bold form-label mt-3">Party GST (Auto)</label>
                                         <input type="text" class="form-control form-control-solid" id="party_gst" name="party_gst" value="{{ old('party_gst') }}" placeholder="Auto-filled from Party" readonly />
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-12 col-lg-4">
                                         <label class="fs-6 fw-bold form-label mt-3">Party Pan (Auto)</label>
                                         <input type="text" class="form-control form-control-solid" id="party_pan" name="party_pan" value="{{ old('party_pan') }}" placeholder="Auto-filled from Party" readonly />
                                     </div>
@@ -68,24 +79,27 @@
                             </div>
 
                             <!-- Section 3: ADD BILL DETAILS -->
-                            <div class="mb-7">
-                                <h3 class="text-success mb-4">ADD BILL DETAILS</h3>
-                                <div class="row mb-7">
-                                    <div class="col-md-4">
+                            <div class="mb-10">
+                                <div class="d-flex align-items-center mb-5">
+                                    <span class="bullet bullet-vertical h-40px bg-primary me-4"></span>
+                                    <h3 class="text-gray-800 fw-bolder mb-0">ADD BILL DETAILS</h3>
+                                </div>
+                                <div class="row g-5 mb-7">
+                                    <div class="col-12 col-lg-4">
                                         <label class="fs-6 fw-bold form-label mt-3">Bill No.</label>
                                         <input type="text" class="form-control form-control-solid" name="bill_number" value="{{ old('bill_number') }}" placeholder="Enter Bill Number" />
                                         @error('bill_number')
                                             <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-12 col-lg-4">
                                         <label class="fs-6 fw-bold form-label mt-3">Bill Date</label>
                                         <input type="date" class="form-control form-control-solid" name="bill_date" value="{{ old('bill_date') }}" />
                                         @error('bill_date')
                                             <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-12 col-lg-4">
                                         <label class="fs-6 fw-bold form-label mt-3">Attach Bill</label>
                                         <input type="file" class="form-control form-control-solid" name="bill_attachment" accept=".pdf,.jpg,.jpeg,.png" />
                                         @error('bill_attachment')
@@ -96,11 +110,14 @@
                             </div>
 
                             <!-- Section 4: MATERIAL DETAILS -->
-                            <div class="mb-7">
-                                <h3 class="text-success mb-4">MATERIAL DETAILS</h3>
+                            <div class="mb-10">
+                                <div class="d-flex align-items-center mb-5">
+                                    <span class="bullet bullet-vertical h-40px bg-primary me-4"></span>
+                                    <h3 class="text-gray-800 fw-bolder mb-0">MATERIAL DETAILS</h3>
+                                </div>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered" id="material-details-table">
-                                        <thead class="table-light">
+                                    <table class="table align-middle table-row-dashed fs-6 gy-5" id="material-details-table" style="min-width: 1200px;">
+                                        <thead>
                                             <tr>
                                                 <th>Sr. No.</th>
                                                 <th>Material Name</th>
@@ -152,7 +169,7 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <button type="button" class="btn btn-primary mt-3" id="add-detail-row">
+                                <button type="button" class="btn btn-sm btn-primary mt-3" id="add-detail-row">
                                     <i class="fas fa-plus"></i> Add More Materials
                                 </button>
                                 @error('details')
@@ -161,25 +178,16 @@
                             </div>
 
                             <!-- Summary Calculations -->
-                            <div class="row mb-7">
-                                <div class="col-md-6"></div>
-                                <div class="col-md-6">
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
+                            <div class="row justify-content-end mb-8">
+                                <div class="col-12 col-md-8 col-lg-5">
+                                    <div class="bg-light-primary rounded p-5">
+                                        <div class="mb-5">
                                             <label class="fs-6 fw-bold form-label">Add Bhadu/Labour</label>
                                             <input type="number" class="form-control form-control-solid" name="add_bhadu_labour" id="add_bhadu_labour" step="0.01" min="0" value="{{ old('add_bhadu_labour', 0) }}" placeholder="0.00" />
                                         </div>
-                                        <div class="col-md-6">
-                                            <label class="fs-6 fw-bold form-label">(B)</label>
-                                        </div>
-                                    </div>
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
+                                        <div>
                                             <label class="fs-6 fw-bold form-label">Total Bill/Voucher Amt.</label>
                                             <input type="number" class="form-control form-control-solid" name="total_bill_amount" id="total_bill_amount" step="0.01" min="0" value="{{ old('total_bill_amount', 0) }}" placeholder="A+B" readonly />
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="fs-6 fw-bold form-label">A+B</label>
                                         </div>
                                     </div>
                                 </div>
@@ -195,10 +203,13 @@
                             </div>
 
                             <!-- Section 5: PAYMENT INFORMATION -->
-                            <div class="mb-7">
-                                <h3 class="text-success mb-4">PAYMENT INFORMATION</h3>
-                                <div class="row mb-7">
-                                    <div class="col-md-4">
+                            <div class="mb-10">
+                                <div class="d-flex align-items-center mb-5">
+                                    <span class="bullet bullet-vertical h-40px bg-primary me-4"></span>
+                                    <h3 class="text-gray-800 fw-bolder mb-0">PAYMENT INFORMATION</h3>
+                                </div>
+                                <div class="row g-5 mb-7">
+                                    <div class="col-12 col-lg-4">
                                         <label class="fs-6 fw-bold form-label mt-3">
                                             <span class="required">Status</span>
                                         </label>
@@ -211,22 +222,22 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="row mb-7" id="payment-details-section" style="display: none;">
-                                    <div class="col-md-4">
+                                <div class="row g-5 mb-7" id="payment-details-section" style="display: none;">
+                                    <div class="col-12 col-lg-4">
                                         <label class="fs-6 fw-bold form-label mt-3">If Paid - Ref. No.</label>
                                         <input type="text" class="form-control form-control-solid" name="payment_ref_number" id="payment_ref_number" value="{{ old('payment_ref_number') }}" placeholder="Enter Reference Number" />
                                         @error('payment_ref_number')
                                             <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-12 col-lg-4">
                                         <label class="fs-6 fw-bold form-label mt-3">If Paid - Date</label>
                                         <input type="date" class="form-control form-control-solid" name="payment_date" id="payment_date" value="{{ old('payment_date') }}" />
                                         @error('payment_date')
                                             <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-12 col-lg-4">
                                         <label class="fs-6 fw-bold form-label mt-3">If Paid - Remarks</label>
                                         <textarea class="form-control form-control-solid" name="payment_remarks" id="payment_remarks" rows="2" placeholder="Enter Payment Remarks">{{ old('payment_remarks') }}</textarea>
                                         @error('payment_remarks')
@@ -237,8 +248,8 @@
                             </div>
 
                             <div class="separator mb-6"></div>
-                            <div class="d-flex justify-content-end">
-                                <a href="{{route('bill-inwards.index')}}" data-kt-bill-inward-form="cancel" class="btn btn-light me-3">Cancel</a>
+                            <div class="d-flex flex-column flex-sm-row justify-content-end gap-3">
+                                <a href="{{route('bill-inwards.index')}}" data-kt-bill-inward-form="cancel" class="btn btn-light">Cancel</a>
                                 <button type="submit" data-kt-bill-inward-form="submit" class="btn btn-primary">
                                     <span class="indicator-label">Save</span>
                                     <span class="indicator-progress">Please wait...

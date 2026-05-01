@@ -80,6 +80,7 @@
                 <div class="tab-content" id="kt_tab_content">
                     <!-- List of Staff Tab -->
                     <div class="tab-pane fade {{ ($activeTab ?? 'staff_list') == 'staff_list' ? 'show active' : '' }}" id="kt_tab_staff_list" role="tabpanel">
+                        <div class="table-responsive">
                         <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_staff">
                             <thead>
                                 <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
@@ -89,7 +90,7 @@
                                     <th class="min-w-100px">Designation</th>
                                     <th class="min-w-100px">Mobile</th>
                                     <th class="min-w-100px">DOJ</th>
-                                    <th class="text-end min-w-100px">Action</th>
+                                    <th class="text-end min-w-150px">Action</th>
                                 </tr>
                             </thead>
                             <tbody class="text-gray-600 fw-bold">
@@ -147,18 +148,20 @@
                                 @endforelse
                             </tbody>
                         </table>
+                        </div>
                     </div>
 
                     <!-- Attendance Tab -->
                     <div class="tab-pane fade {{ ($activeTab ?? 'staff_list') == 'attendance' ? 'show active' : '' }}" id="kt_tab_attendance" role="tabpanel">
                         <div class="card">
-                            <div class="card-header">
-                                <div class="card-title">
-                                    <h3 class="mb-0">Staff Attendance - {{ $today->format('d M Y') }}</h3>
+                            <div class="card-header border-0 pt-6">
+                                <div class="card-title d-flex flex-column">
+                                    <h3 class="mb-1">Staff Attendance - {{ $today->format('d M Y') }}</h3>
+                                    <span class="text-muted fs-7">Track daily attendance by staff and location</span>
                                 </div>
-                                <div class="card-toolbar">
-                                    <div class="d-flex align-items-center gap-5">
-                                        <a href="{{ route('attendance.report') }}" type="button" class="btn btn-primary">
+                                <div class="card-toolbar w-100 w-lg-auto">
+                                    <div class="d-flex flex-column flex-lg-row align-items-start align-items-lg-center gap-3 gap-lg-5 w-100">
+                                        <a href="{{ route('attendance.report') }}" type="button" class="btn btn-primary btn-sm">
                                             <span class="svg-icon svg-icon-2">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                                     <path d="M14.2929 16.7071C13.9024 16.3166 13.9024 15.6834 14.2929 15.2929L16.5858 13H5C4.44772 13 4 12.5523 4 12C4 11.4477 4.44772 11 5 11H16.5858L14.2929 8.70711C13.9024 8.31658 13.9024 7.68342 14.2929 7.29289C14.6834 6.90237 15.3166 6.90237 15.7071 7.29289L19.7071 11.2929C20.0976 11.6834 20.0976 12.3166 19.7071 12.7071L15.7071 16.7071C15.3166 17.0976 14.6834 17.0976 14.2929 16.7071Z" fill="currentColor"/>
@@ -166,14 +169,14 @@
                                             </span>
                                             View All Attendance Report
                                         </a>
-                                        <div class="badge badge-success fs-6 px-4 py-3">
+                                        <div class="badge badge-light-success fs-7 px-4 py-3">
                                             <i class="fas fa-users me-2"></i>
                                             <strong>Present Today: {{ $presentCount }}</strong> / {{ $staff->count() }}
                                         </div>
-                                        <div class="d-flex align-items-center gap-3">
-                                            <label class="form-label mb-0 fw-bold">Select Date:</label>
-                                            <input type="date" id="attendance_date_picker" class="form-control form-control-sm" value="{{ $selectedDate ?? $today->format('Y-m-d') }}" style="width: 180px;" />
-                                            <button type="button" id="load_attendance_btn" class="btn btn-sm btn-primary">
+                                        <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-2 gap-sm-3 w-100 w-lg-auto">
+                                            <label class="form-label mb-0 fw-bold text-nowrap">Select Date:</label>
+                                            <input type="date" id="attendance_date_picker" class="form-control form-control-sm w-200px" value="{{ $selectedDate ?? $today->format('Y-m-d') }}" />
+                                            <button type="button" id="load_attendance_btn" class="btn btn-sm btn-light-primary">
                                                 <i class="fas fa-search"></i> Load Attendance
                                             </button>
                                         </div>
@@ -188,7 +191,7 @@
                                 </div>
                                 @endif
                                 <div class="table-responsive">
-                                    <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_attendance">
+                                    <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_attendance" style="min-width: 1150px;">
                                         <thead>
                                             <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
                                                 <th class="min-w-50px">S.No</th>
@@ -196,7 +199,12 @@
                                                 <th class="min-w-150px">Staff Name</th>
                                                 <th class="min-w-100px">Code</th>
                                                 <th class="min-w-100px">Designation</th>
-                                                <th class="min-w-150px text-center">Attendance<br><small>(Today: {{ $today->format('d/m/Y') }})</small></th>
+                                                <th class="min-w-180px text-center">
+                                                    <div class="d-flex flex-column align-items-center">
+                                                        <span class="fw-bold text-gray-800">Attendance</span>
+                                                        <span class="badge badge-light-primary mt-1">Today: {{ $today->format('d/m/Y') }}</span>
+                                                    </div>
+                                                </th>
                                                 <th class="min-w-150px text-center">Location</th>
                                                 <th class="min-w-200px text-center">Remark</th>
                                             </tr>
@@ -327,7 +335,7 @@
                             <div class="card-body">
                                 @include('global.show_session')
                                 <div class="table-responsive">
-                                    <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_daily_expenses">
+                                    <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_daily_expenses" style="min-width: 950px;">
                                         <thead>
                                             <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
                                                 <th class="min-w-125px">Date</th>
@@ -337,7 +345,7 @@
                                                 <th class="min-w-125px">Amount</th>
                                                 <th class="min-w-200px">Description</th>
                                                 <th class="min-w-200px">Remark</th>
-                                                <th class="text-end min-w-100px">Action</th>
+                                                <th class="text-end min-w-150px">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody class="text-gray-600 fw-bold">
