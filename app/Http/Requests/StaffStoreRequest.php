@@ -15,6 +15,13 @@ class StaffStoreRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('role_id') && $this->input('role_id') === '') {
+            $this->merge(['role_id' => null]);
+        }
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -32,6 +39,7 @@ class StaffStoreRequest extends FormRequest
                 'max:255',
                 Rule::unique('users', 'email')->ignore($userId),
             ],
+            'role_id' => ['nullable', 'integer', 'exists:roles,id'],
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'second_name' => 'nullable|string|max:255',

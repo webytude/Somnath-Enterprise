@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Location;
+use App\Models\Role;
 use App\Models\Staff;
 use App\Models\User;
-use App\Models\Location;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -80,7 +81,9 @@ class StaffController extends Controller
     public function create()
     {
         $locations = Location::orderBy('name')->get();
-        return view('admin.staff.create', compact('locations'));
+        $roles = Role::orderBy('name')->get();
+
+        return view('admin.staff.create', compact('locations', 'roles'));
     }
 
     /**
@@ -92,6 +95,8 @@ class StaffController extends Controller
         $data['created_by'] = Auth::user()->id;
         $email = $data['email'];
         unset($data['email']);
+        $roleId = $data['role_id'] ?? null;
+        unset($data['role_id']);
         $locationIds = $request->input('location_ids', []);
         
         // Generate staff code if not provided
@@ -107,7 +112,7 @@ class StaffController extends Controller
             $data['photo'] = asset('/images/staff/' . $name);
         }
         
-        DB::transaction(function () use ($data, $email, $locationIds) {
+        DB::transaction(function () use ($data, $email, $locationIds, $roleId) {
             $password = !empty($data['mobile_number']) && strlen((string)$data['mobile_number']) >= 6
                 ? (string)$data['mobile_number']
                 : 'password123@';
@@ -117,6 +122,7 @@ class StaffController extends Controller
                 'email' => $email,
                 'password' => Hash::make($password),
                 'is_staff' => true,
+                'role_id' => $roleId,
                 'phone' => $data['mobile_number'] ?? null,
                 'dob' => $data['dob'] ?? null,
                 'address' => $data['present_address'] ?? null,
@@ -145,7 +151,9 @@ class StaffController extends Controller
     {
         $staff->load('locations', 'user');
         $locations = Location::orderBy('name')->get();
-        return view('admin.staff.edit', compact('staff', 'locations'));
+        $roles = Role::orderBy('name')->get();
+
+        return view('admin.staff.edit', compact('staff', 'locations', 'roles'));
     }
 
     /**
@@ -157,6 +165,8 @@ class StaffController extends Controller
         $data['updated_by'] = Auth::user()->id;
         $email = $data['email'];
         unset($data['email']);
+        $roleId = $data['role_id'] ?? null;
+        unset($data['role_id']);
         $locationIds = $request->input('location_ids', []);
         
         // Handle photo upload
@@ -176,12 +186,13 @@ class StaffController extends Controller
             $data['photo'] = asset('/images/staff/' . $name);
         }
         
-        DB::transaction(function () use ($staff, $data, $email, $locationIds) {
+        DB::transaction(function () use ($staff, $data, $email, $locationIds, $roleId) {
             if ($staff->user) {
                 $staff->user->update([
                     'name' => trim(($data['first_name'] ?? '') . ' ' . ($data['last_name'] ?? '')),
                     'email' => $email,
                     'is_staff' => true,
+                    'role_id' => $roleId,
                     'phone' => $data['mobile_number'] ?? null,
                     'dob' => $data['dob'] ?? null,
                     'address' => $data['present_address'] ?? null,
@@ -197,6 +208,7 @@ class StaffController extends Controller
                     'email' => $email,
                     'password' => Hash::make($password),
                     'is_staff' => true,
+                    'role_id' => $roleId,
                     'phone' => $data['mobile_number'] ?? null,
                     'dob' => $data['dob'] ?? null,
                     'address' => $data['present_address'] ?? null,

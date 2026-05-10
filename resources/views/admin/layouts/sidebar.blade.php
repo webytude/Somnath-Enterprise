@@ -16,7 +16,7 @@
         <div class="hover-scroll-overlay-y my-5 my-lg-5" id="kt_aside_menu_wrapper" data-kt-scroll="{}" >
             <div class="menu menu-column menu-title-gray-800 menu-state-title-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-500" id="#kt_aside_menu" data-kt-menu="true" data-kt-menu-expand="false">
                 <!-- Manage Staff -->
-                @if(!auth()->check() || !auth()->user()->isStaff())
+                @if(auth()->check() &&  auth()->user()->hasPermission('staff.index') )
                 <div data-kt-menu-trigger="click" class="menu-item {{ request()->routeIs(['staff.*', 'users.*', 'attendance.*', 'daily-expense.*']) ? 'here show' : '' }} menu-accordion">
                     <span class="menu-link">
                         <span class="menu-icon">
@@ -31,6 +31,7 @@
                         <span class="menu-arrow"></span>
                     </span>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        @hasPermission('staff.index')
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('staff.*') ? 'active' : '' }}" href="{{ route('staff.index') }}">
                                 <span class="menu-bullet">
@@ -39,12 +40,60 @@
                                 <span class="menu-title">Staff</span>
                             </a>
                         </div>
+                        @endhasPermission
                     </div>
                 </div>
                 @endif
 
+                <!-- Roles & Permissions (separate from Manage Staff) -->
+                @if(auth()->check() && (auth()->user()->hasPermission('roles.index') || auth()->user()->hasPermission('permissions.index')))
+                <div data-kt-menu-trigger="click" class="menu-item {{ request()->routeIs(['roles.*', 'permissions.*']) ? 'here show' : '' }} menu-accordion">
+                    <span class="menu-link">
+                        <span class="menu-icon">
+                            <span class="svg-icon svg-icon-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <path opacity="0.3" d="M20.5543 4.37873C20.8318 4.14405 21.1515 3.97398 21.496 3.88555C21.8406 3.79712 22.2014 3.79284 22.5485 3.87423C22.8956 3.95563 23.2191 4.11973 23.5019 4.34793C23.7847 4.57613 24.0176 4.86234 24.1836 5.19034C24.3496 5.51834 24.4443 5.87848 24.4607 6.24627C24.4771 6.61407 24.4147 6.98056 24.2779 7.32109C24.1412 7.66162 23.9335 7.96782 23.6699 8.21876L13.6699 18.2188C13.4063 18.4697 13.0884 18.6593 12.7391 18.7725C12.3898 18.8857 12.0191 18.9194 11.6547 18.8708C11.2904 18.8222 10.9428 18.6932 10.6396 18.4954C10.3364 18.2976 10.0864 18.0371 9.91083 17.7358L4.91083 8.73584C4.73412 8.43263 4.63676 8.09159 4.6277 7.74228C4.61864 7.39296 4.69822 7.0472 4.85885 6.73584C5.01948 6.42448 5.25566 6.15784 5.54605 5.96059C5.83644 5.76334 6.17115 5.64235 6.52049 5.60896C6.86983 5.57558 7.22237 5.63114 7.54472 5.77045L11.5447 7.52045L20.5543 4.37873Z" fill="currentColor" />
+                                    <path d="M12.8314 21.2599L12.2574 20.3719C12.0966 20.136 11.9694 19.8778 11.8809 19.6048L11.6134 18.7328C11.5253 18.4584 11.4757 18.1725 11.4664 17.8838L11.4238 16.5878C11.4164 16.2967 11.4444 16.0056 11.5071 15.7208L11.7251 14.7398C11.7878 14.455 11.8846 14.1795 12.0134 13.9198L12.5009 12.9198C12.6297 12.6601 12.789 12.4184 12.9759 12.2008L13.6599 11.3928C13.8468 11.1752 14.0594 10.9834 14.2929 10.8228L15.0829 10.2878C15.3164 10.1272 15.5684 9.99981 15.8329 9.90881L16.6479 9.62281C16.9124 9.53181 17.1864 9.47781 17.4639 9.46281L18.8979 9.38781C19.1754 9.37281 19.4524 9.39681 19.7229 9.45981L20.8929 9.72981C21.1634 9.79281 21.4244 9.89481 21.6699 10.0328L22.4979 10.4798C22.7434 10.6178 22.9704 10.7898 23.1729 10.9918L23.6499 11.4688C23.8524 11.6708 24.0274 11.8988 24.1699 12.1468L24.6479 12.9598C24.7904 13.2078 24.8979 13.4738 24.9679 13.7508L25.1729 14.5538C25.2429 14.8308 25.2749 15.1168 25.2679 15.4028L25.2479 16.4028C25.2409 16.6888 25.1949 16.9728 25.1129 17.2468L24.9129 17.9398C24.8309 18.2138 24.7129 18.4768 24.5629 18.7218L24.1129 19.4718C23.9629 19.7168 23.7829 19.9418 23.5779 20.1418L22.8279 20.8918C22.6229 21.0918 22.3929 21.2648 22.1429 21.4048L21.3929 21.8548C21.1429 21.9948 20.8779 22.0998 20.6029 22.1668L19.8529 22.3668C19.5779 22.4338 19.2929 22.4618 19.0079 22.4548L18.0079 22.4348C17.7229 22.4278 17.4389 22.3848 17.1629 22.3068L16.1629 22.0468C15.8869 21.9688 15.6229 21.8548 15.3779 21.7098L14.6279 21.2599C14.3829 21.1149 14.1579 20.9349 13.9579 20.7299L13.2079 19.9799C13.0079 19.7749 12.8349 19.5449 12.6949 19.2949L12.2449 18.5449C12.1049 18.2949 11.9999 18.0299 11.9329 17.7549L11.7329 17.0049C11.6659 16.7299 11.6379 16.4449 11.6449 16.1599L11.6649 15.1599C11.6719 14.8749 11.7149 14.5909 11.7929 14.3149L12.0529 13.3149C12.1309 13.0389 12.2449 12.7749 12.3899 12.5299L12.8314 21.2599Z" fill="currentColor" />
+                                </svg>
+                            </span>
+                        </span>
+                        <span class="menu-title">Roles &amp; Permissions</span>
+                        <span class="menu-arrow"></span>
+                    </span>
+                    <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        @hasPermission('roles.index')
+                        <div class="menu-item">
+                            <a class="menu-link {{ request()->routeIs('roles.*') ? 'active' : '' }}" href="{{ route('roles.index') }}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Roles</span>
+                            </a>
+                        </div>
+                        @endhasPermission
+                        @hasPermission('permissions.index')
+                        <div class="menu-item">
+                            <a class="menu-link {{ request()->routeIs('permissions.*') ? 'active' : '' }}" href="{{ route('permissions.index') }}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Permissions</span>
+                            </a>
+                        </div>
+                        @endhasPermission
+                    </div>
+                </div>
+                @endif
                 <!-- MANAGE WORK -->
-                @if(!auth()->check() || !auth()->user()->isStaff())
+                @if(auth()->check() && (
+                    auth()->user()->hasPermission('firms.index')
+                    || auth()->user()->hasPermission('departments.index')
+                    || auth()->user()->hasPermission('sub-departments.index')
+                    || auth()->user()->hasPermission('division.index')
+                    || auth()->user()->hasPermission('sub-division.index')
+                    || auth()->user()->hasPermission('locations.index')
+                    || auth()->user()->hasPermission('works.index')
+                ))
                 <div data-kt-menu-trigger="click" class="menu-item {{ request()->routeIs(['departments.*', 'sub-departments.*', 'division.*', 'sub-division.*', 'locations.*', 'firms.*', 'works.*']) ? 'here show' : '' }} menu-accordion">
                     <span class="menu-link">
                         <span class="menu-icon">
@@ -61,6 +110,7 @@
                         <span class="menu-arrow"></span>
                     </span>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        @hasPermission('firms.index')
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('firms.*') ? 'active' : '' }}" href="{{ route('firms.index') }}">
                                 <span class="menu-bullet">
@@ -69,8 +119,10 @@
                                 <span class="menu-title">Firm</span>
                             </a>
                         </div>
+                        @endhasPermission
                     </div>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        @hasPermission('departments.index')
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('departments.*') ? 'active' : '' }}" href="{{ route('departments.index') }}">
                                 <span class="menu-bullet">
@@ -79,8 +131,10 @@
                                 <span class="menu-title">Department</span>
                             </a>
                         </div>
+                        @endhasPermission
                     </div>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        @hasPermission('sub-departments.index')
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('sub-departments.*') ? 'active' : '' }}" href="{{ route('sub-departments.index') }}">
                                 <span class="menu-bullet">
@@ -89,8 +143,10 @@
                                 <span class="menu-title">Sub Department</span>
                             </a>
                         </div>
+                        @endhasPermission
                     </div>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        @hasPermission('division.index')
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('division.*') ? 'active' : '' }}" href="{{ route('division.index') }}">
                                 <span class="menu-bullet">
@@ -99,8 +155,10 @@
                                 <span class="menu-title">Division</span>
                             </a>
                         </div>
+                        @endhasPermission
                     </div>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        @hasPermission('sub-division.index')
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('sub-division.*') ? 'active' : '' }}" href="{{ route('sub-division.index') }}">
                                 <span class="menu-bullet">
@@ -109,8 +167,10 @@
                                 <span class="menu-title">Sub Division</span>
                             </a>
                         </div>
+                        @endhasPermission
                     </div>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        @hasPermission('locations.index')
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('locations.*') ? 'active' : '' }}" href="{{ route('locations.index') }}">
                                 <span class="menu-bullet">
@@ -119,8 +179,10 @@
                                 <span class="menu-title">Location</span>
                             </a>
                         </div>
+                        @endhasPermission
                     </div>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        @hasPermission('works.index')
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('works.*') ? 'active' : '' }}" href="{{ route('works.index') }}">
                                 <span class="menu-bullet">
@@ -129,12 +191,18 @@
                                 <span class="menu-title">Work</span>
                             </a>
                         </div>
+                        @endhasPermission
                     </div>
                 </div>
                 @endif
 
                 <!-- Manage Party/Vendor -->
-                @if(!auth()->check() || !auth()->user()->isStaff())
+                @if(auth()->check() && (
+                    auth()->user()->hasPermission('material-categories.index')
+                    || auth()->user()->hasPermission('material-lists.index')
+                    || auth()->user()->hasPermission('parties.index')
+                    || auth()->user()->hasPermission('contractors.index')
+                ))
                 <div data-kt-menu-trigger="click" class="menu-item {{ request()->routeIs(['material-categories.*', 'material-lists.*', 'parties.*', 'contractors.*']) ? 'here show' : '' }} menu-accordion">
                     <span class="menu-link">
                         <span class="menu-icon">
@@ -149,6 +217,7 @@
                         <span class="menu-arrow"></span>
                     </span>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        @hasPermission('material-categories.index')
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('material-categories.*') ? 'active' : '' }}" href="{{ route('material-categories.index') }}">
                                 <span class="menu-bullet">
@@ -157,8 +226,10 @@
                                 <span class="menu-title">Material Category</span>
                             </a>
                         </div>
+                        @endhasPermission
                     </div>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        @hasPermission('material-lists.index')
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('material-lists.*') ? 'active' : '' }}" href="{{ route('material-lists.index') }}">
                                 <span class="menu-bullet">
@@ -167,8 +238,10 @@
                                 <span class="menu-title">Material List</span>
                             </a>
                         </div>
+                        @endhasPermission
                     </div>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        @hasPermission('parties.index')
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('parties.*') ? 'active' : '' }}" href="{{ route('parties.index') }}">
                                 <span class="menu-bullet">
@@ -177,8 +250,10 @@
                                 <span class="menu-title">Party</span>
                             </a>
                         </div>
+                        @endhasPermission
                     </div>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        @hasPermission('contractors.index')
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('contractors.*') ? 'active' : '' }}" href="{{ route('contractors.index') }}">
                                 <span class="menu-bullet">
@@ -187,12 +262,19 @@
                                 <span class="menu-title">Manage Vendor/Contractor</span>
                             </a>
                         </div>
+                        @endhasPermission
                     </div>
                 </div>
                 @endif
 
                 <!-- Manage Site -->
-                @if(!auth()->check() || !auth()->user()->isStaff())
+                @if(auth()->check() && (
+                    auth()->user()->hasPermission('site-material-requirements.index')
+                    || auth()->user()->hasPermission('material-inwards.index')
+                    || auth()->user()->hasPermission('site-progress.index')
+                    || auth()->user()->hasPermission('tool-lists.index')
+                    || auth()->user()->hasPermission('stages.index')
+                ))
                 <div data-kt-menu-trigger="click" class="menu-item {{ request()->routeIs(['site-material-requirements.*', 'material-inwards.*', 'site-progress.*', 'tool-lists.*', 'stages.*']) ? 'here show' : '' }} menu-accordion">
                     <span class="menu-link">
                         <span class="menu-icon">
@@ -207,6 +289,7 @@
                         <span class="menu-arrow"></span>
                     </span>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        @hasPermission('site-material-requirements.index')
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('site-material-requirements.*') ? 'active' : '' }}" href="{{ route('site-material-requirements.index') }}">
                                 <span class="menu-bullet">
@@ -215,8 +298,10 @@
                                 <span class="menu-title">Material Requirement</span>
                             </a>
                         </div>
+                        @endhasPermission
                     </div>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        @hasPermission('material-inwards.index')
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('material-inwards.*') ? 'active' : '' }}" href="{{ route('material-inwards.index') }}">
                                 <span class="menu-bullet">
@@ -225,8 +310,10 @@
                                 <span class="menu-title">Material Inward Details</span>
                             </a>
                         </div>
+                        @endhasPermission
                     </div>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        @hasPermission('site-progress.index')
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('site-progress.*') ? 'active' : '' }}" href="{{ route('site-progress.index') }}">
                                 <span class="menu-bullet">
@@ -235,8 +322,10 @@
                                 <span class="menu-title">Site Progress</span>
                             </a>
                         </div>
+                        @endhasPermission
                     </div>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        @hasPermission('tool-lists.index')
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('tool-lists.*') ? 'active' : '' }}" href="{{ route('tool-lists.index') }}">
                                 <span class="menu-bullet">
@@ -245,8 +334,10 @@
                                 <span class="menu-title">Tools</span>
                             </a>
                         </div>
+                        @endhasPermission
                     </div>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        @hasPermission('stages.index')
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('stages.*') ? 'active' : '' }}" href="{{ route('stages.index') }}">
                                 <span class="menu-bullet">
@@ -255,12 +346,16 @@
                                 <span class="menu-title">Stage</span>
                             </a>
                         </div>
+                        @endhasPermission
                     </div>
                 </div>
                 @endif
 
                 <!-- Manage GST Bill -->
-                @if(!auth()->check() || !auth()->user()->isStaff())
+                @if(auth()->check() && (
+                    auth()->user()->hasPermission('bill-inwards.index')
+                    || auth()->user()->hasPermission('bill-outwards.index')
+                ))
                 <div data-kt-menu-trigger="click" class="menu-item {{ request()->routeIs(['bill-inwards.*', 'bill-outwards.*']) ? 'here show' : '' }} menu-accordion">
                     <span class="menu-link">
                         <span class="menu-icon">
@@ -275,6 +370,7 @@
                         <span class="menu-arrow"></span>
                     </span>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        @hasPermission('bill-inwards.index')
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('bill-inwards.*') ? 'active' : '' }}" href="{{ route('bill-inwards.index') }}">
                                 <span class="menu-bullet">
@@ -283,8 +379,10 @@
                                 <span class="menu-title">Bill Inward</span>
                             </a>
                         </div>
+                        @endhasPermission
                     </div>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        @hasPermission('bill-outwards.index')
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('bill-outwards.*') ? 'active' : '' }}" href="{{ route('bill-outwards.index') }}">
                                 <span class="menu-bullet">
@@ -293,12 +391,13 @@
                                 <span class="menu-title">Bill Outward</span>
                             </a>
                         </div>
+                        @endhasPermission
                     </div>
                 </div>
                 @endif
 
                 <!-- Manage Order -->
-                @if(!auth()->check() || !auth()->user()->isStaff())
+                @if(auth()->check() && auth()->user()->hasPermission('work-orders.index'))
                 <div data-kt-menu-trigger="click" class="menu-item {{ request()->routeIs('work-orders.*') ? 'here show' : '' }} menu-accordion">
                     <span class="menu-link">
                         <span class="menu-icon">
@@ -313,6 +412,7 @@
                         <span class="menu-arrow"></span>
                     </span>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        @hasPermission('work-orders.index')
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('work-orders.*') ? 'active' : '' }}" href="{{ route('work-orders.index') }}">
                                 <span class="menu-bullet">
@@ -321,12 +421,13 @@
                                 <span class="menu-title">Work Order</span>
                             </a>
                         </div>
+                        @endhasPermission
                     </div>
                 </div>
                 @endif
 
                 <!-- Manage Payment -->
-                @if(!auth()->check() || !auth()->user()->isStaff())
+                @if(auth()->check() && auth()->user()->hasPermission('payments.index'))
                 <div data-kt-menu-trigger="click" class="menu-item {{ request()->routeIs('payments.*') ? 'here show' : '' }} menu-accordion">
                     <span class="menu-link">
                         <span class="menu-icon">
@@ -341,6 +442,7 @@
                         <span class="menu-arrow"></span>
                     </span>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        @hasPermission('payments.index')
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('payments.*') ? 'active' : '' }}" href="{{ route('payments.index') }}">
                                 <span class="menu-bullet">
@@ -349,12 +451,16 @@
                                 <span class="menu-title">Payment</span>
                             </a>
                         </div>
+                        @endhasPermission
                     </div>
                 </div>
                 @endif
 
                 <!-- Manage Scrap -->
-                @if(!auth()->check() || !auth()->user()->isStaff())
+                @if(auth()->check() && (
+                    auth()->user()->hasPermission('scrap-materials.index')
+                    || auth()->user()->hasPermission('scrap-lists.index')
+                ))
                 <!-- <div data-kt-menu-trigger="click" class="menu-item {{ request()->routeIs(['scrap-materials.*', 'scrap-lists.*']) ? 'here show' : '' }} menu-accordion">
                     <span class="menu-link">
                         <span class="menu-icon">

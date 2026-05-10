@@ -33,6 +33,8 @@ use App\Http\Controllers\BillOutwardController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\StageController;
 use App\Http\Controllers\WorkOrderController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\PermissionController;  
 // Route::get('/', function () {
 //     return view('admin.auth.login');
 // });
@@ -73,14 +75,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('attendance/get', [AttendanceController::class, 'getAttendance'])->name('attendance.get');
     Route::get('attendance/report', [AttendanceController::class, 'report'])->name('attendance.report');
 
-    // Daily Expense routes
-    Route::resource('daily-expense', DailyExpenseController::class);
+    // Route::middleware(['permission:daily_expense.manage'])->group(function () {
+        Route::resource('daily-expense', DailyExpenseController::class);
+    // });
 
+    // Route::middleware(['permission:parties.manage'])->group(function () {
+        Route::resource('parties', PartyController::class);
+    // });
 
-    Route::resource('parties', PartyController::class);
-
-    Route::get('contractors/get-works-by-locations', [ContractorController::class, 'getWorksByLocations'])->name('contractors.getWorksByLocations');
-    Route::resource('contractors', ContractorController::class);
+    // Route::middleware(['permission:contractors.manage'])->group(function () {
+        Route::get('contractors/get-works-by-locations', [ContractorController::class, 'getWorksByLocations'])->name('contractors.getWorksByLocations');
+        Route::resource('contractors', ContractorController::class);
+    // });
 
     Route::get('site-progress/get-works-by-location', [SiteProgressController::class, 'getWorksByLocation'])->name('site-progress.getWorksByLocation');
     Route::get('site-progress/get-stages-by-work', [SiteProgressController::class, 'getStagesByWork'])->name('site-progress.getStagesByWork');
@@ -126,9 +132,19 @@ Route::middleware(['auth'])->group(function () {
     Route::get('work-orders/vendor-assignments/{contractor}', [WorkOrderController::class, 'vendorAssignments'])->name('work-orders.vendorAssignments');
     Route::resource('work-orders', WorkOrderController::class);
 
-    Route::get('my-profile', [ProfileController::class, 'index'])->name('user.getProfile');
-    Route::get('edit-profile', [ProfileController::class, 'edit'])->name('user.editProfile');
-    Route::put('edit-profile/{id}', [ProfileController::class, 'update'])->name('user.updateProfile');
-    Route::get('change-password', [ProfileController::class, 'changePassword'])->name('user.changePassword');
-    Route::post('change-password', [ProfileController::class, 'updatePassword'])->name('user.updatePassword');
+    // Route::middleware(['permission:profile.self'])->group(function () {
+        Route::get('my-profile', [ProfileController::class, 'index'])->name('user.getProfile');
+        Route::get('edit-profile', [ProfileController::class, 'edit'])->name('user.editProfile');
+        Route::put('edit-profile/{id}', [ProfileController::class, 'update'])->name('user.updateProfile');
+        Route::get('change-password', [ProfileController::class, 'changePassword'])->name('user.changePassword');
+        Route::post('change-password', [ProfileController::class, 'updatePassword'])->name('user.updatePassword');
+    // });
+
+    // Route::middleware(['permission:roles.manage'])->group(function () {
+        Route::resource('roles', RoleController::class);
+    // });
+
+    // Route::middleware(['permission:permissions.view'])->group(function () {
+        Route::get('permissions', [PermissionController::class, 'index'])->name('permissions.index');
+    // });
 });

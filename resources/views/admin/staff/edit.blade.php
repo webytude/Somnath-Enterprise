@@ -160,6 +160,26 @@
                                         <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
                                     @enderror
                                 </div>
+                            </div>
+
+                            <div class="row mb-7">
+                                <div class="col-md-6">
+                                    <label class="fs-6 fw-bold form-label mt-3">Role</label>
+                                    <select class="form-select form-select-solid" name="role_id" data-control="select2" data-placeholder="Select role...">
+                                        <option value="">No role</option>
+                                        @foreach($roles as $role)
+                                            @if($role->name != 'admin')
+                                            <option value="{{ $role->id }}" {{ (string) old('role_id', optional($staff->user)->role_id ?? '') === (string) $role->id ? 'selected' : '' }}>{{ $role->name }}</option>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                    @error('role_id')
+                                        <span id="error" class="error invalid-feedback" style="display: block;">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="row mb-7">
                                 <div class="col-md-4">
                                     <label class="fs-6 fw-bold form-label mt-3">Gender</label>
                                     <select class="form-select form-select-solid" name="gender" data-control="select2" data-placeholder="Select Gender...">
