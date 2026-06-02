@@ -18,7 +18,7 @@ class BillInwardController extends Controller
      */
     public function index()
     {
-        $billInwards = BillInward::with(['firm', 'party', 'details.material'])->latest()->get();
+        $billInwards = BillInward::forCurrentUser()->with(['firm', 'party', 'details.material'])->latest()->get();
         return view('admin.bill-inward.index', compact('billInwards'));
     }
 

@@ -43,7 +43,7 @@ class SiteProgressController extends Controller
      */
     public function index()
     {
-        $siteProgress = SiteProgress::with('location')->latest()->get();
+        $siteProgress = SiteProgress::forCurrentUser()->with('location')->latest()->get();
         return view('admin.site-progress.index', compact('siteProgress'));
     }
 

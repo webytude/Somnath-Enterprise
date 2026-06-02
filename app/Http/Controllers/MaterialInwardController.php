@@ -19,7 +19,7 @@ class MaterialInwardController extends Controller
      */
     public function index()
     {
-        $materialInwards = MaterialInward::with(['location', 'work', 'party', 'details.material'])->latest()->get();
+        $materialInwards = MaterialInward::forCurrentUser()->with(['location', 'work', 'party', 'details.material'])->latest()->get();
         return view('admin.material-inward.index', compact('materialInwards'));
     }
 

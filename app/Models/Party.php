@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use App\Traits\LocationScoped;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Party extends Model
 {
-    use HasFactory;
+    use HasFactory, LocationScoped;
+
+    // Location scoping resolves through the party_locations pivot.
+    protected $locationRelation = 'locations';
 
     protected $fillable = [
         'name',

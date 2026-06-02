@@ -31,7 +31,7 @@
                         <span class="menu-arrow"></span>
                     </span>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
-                        @hasPermission('staff.index')
+                        @if(auth()->check() && auth()->user()->hasPermission('staff.index'))
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('staff.*') ? 'active' : '' }}" href="{{ route('staff.index') }}">
                                 <span class="menu-bullet">
@@ -40,7 +40,7 @@
                                 <span class="menu-title">Staff</span>
                             </a>
                         </div>
-                        @endhasPermission
+                        @endif
                     </div>
                 </div>
                 @endif
@@ -61,7 +61,7 @@
                         <span class="menu-arrow"></span>
                     </span>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
-                        @hasPermission('roles.index')
+                        @if(auth()->check() && auth()->user()->hasPermission('roles.index'))
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('roles.*') ? 'active' : '' }}" href="{{ route('roles.index') }}">
                                 <span class="menu-bullet">
@@ -70,8 +70,8 @@
                                 <span class="menu-title">Roles</span>
                             </a>
                         </div>
-                        @endhasPermission
-                        @hasPermission('permissions.index')
+                        @endif
+                        @if(auth()->check() && auth()->user()->hasPermission('permissions.index'))
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('permissions.*') ? 'active' : '' }}" href="{{ route('permissions.index') }}">
                                 <span class="menu-bullet">
@@ -80,7 +80,7 @@
                                 <span class="menu-title">Permissions</span>
                             </a>
                         </div>
-                        @endhasPermission
+                        @endif
                     </div>
                 </div>
                 @endif
@@ -110,7 +110,7 @@
                         <span class="menu-arrow"></span>
                     </span>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
-                        @hasPermission('firms.index')
+                        @if(auth()->check() && auth()->user()->hasPermission('firms.index'))
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('firms.*') ? 'active' : '' }}" href="{{ route('firms.index') }}">
                                 <span class="menu-bullet">
@@ -119,10 +119,10 @@
                                 <span class="menu-title">Firm</span>
                             </a>
                         </div>
-                        @endhasPermission
+                        @endif
                     </div>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
-                        @hasPermission('departments.index')
+                        @if(auth()->check() && auth()->user()->hasPermission('departments.index'))
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('departments.*') ? 'active' : '' }}" href="{{ route('departments.index') }}">
                                 <span class="menu-bullet">
@@ -131,10 +131,10 @@
                                 <span class="menu-title">Department</span>
                             </a>
                         </div>
-                        @endhasPermission
+                        @endif
                     </div>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
-                        @hasPermission('sub-departments.index')
+                        @if(auth()->check() && auth()->user()->hasPermission('sub-departments.index'))
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('sub-departments.*') ? 'active' : '' }}" href="{{ route('sub-departments.index') }}">
                                 <span class="menu-bullet">
@@ -143,10 +143,10 @@
                                 <span class="menu-title">Sub Department</span>
                             </a>
                         </div>
-                        @endhasPermission
+                        @endif
                     </div>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
-                        @hasPermission('division.index')
+                        @if(auth()->check() && auth()->user()->hasPermission('division.index'))
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('division.*') ? 'active' : '' }}" href="{{ route('division.index') }}">
                                 <span class="menu-bullet">
@@ -155,10 +155,10 @@
                                 <span class="menu-title">Division</span>
                             </a>
                         </div>
-                        @endhasPermission
+                        @endif
                     </div>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
-                        @hasPermission('sub-division.index')
+                        @if(auth()->check() && auth()->user()->hasPermission('sub-division.index'))
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('sub-division.*') ? 'active' : '' }}" href="{{ route('sub-division.index') }}">
                                 <span class="menu-bullet">
@@ -167,10 +167,10 @@
                                 <span class="menu-title">Sub Division</span>
                             </a>
                         </div>
-                        @endhasPermission
+                        @endif
                     </div>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
-                        @hasPermission('locations.index')
+                        @if(auth()->check() && auth()->user()->hasPermission('locations.index'))
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('locations.*') ? 'active' : '' }}" href="{{ route('locations.index') }}">
                                 <span class="menu-bullet">
@@ -179,10 +179,10 @@
                                 <span class="menu-title">Location</span>
                             </a>
                         </div>
-                        @endhasPermission
+                        @endif
                     </div>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
-                        @hasPermission('works.index')
+                        @if(auth()->check() && auth()->user()->hasPermission('works.index'))
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('works.*') ? 'active' : '' }}" href="{{ route('works.index') }}">
                                 <span class="menu-bullet">
@@ -191,7 +191,7 @@
                                 <span class="menu-title">Work</span>
                             </a>
                         </div>
-                        @endhasPermission
+                        @endif
                     </div>
                 </div>
                 @endif
@@ -217,7 +217,7 @@
                         <span class="menu-arrow"></span>
                     </span>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
-                        @hasPermission('material-categories.index')
+                        @if(auth()->check() && auth()->user()->hasPermission('material-categories.index'))
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('material-categories.*') ? 'active' : '' }}" href="{{ route('material-categories.index') }}">
                                 <span class="menu-bullet">
@@ -226,10 +226,10 @@
                                 <span class="menu-title">Material Category</span>
                             </a>
                         </div>
-                        @endhasPermission
+                        @endif
                     </div>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
-                        @hasPermission('material-lists.index')
+                        @if(auth()->check() && auth()->user()->hasPermission('material-lists.index'))
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('material-lists.*') ? 'active' : '' }}" href="{{ route('material-lists.index') }}">
                                 <span class="menu-bullet">
@@ -238,10 +238,10 @@
                                 <span class="menu-title">Material List</span>
                             </a>
                         </div>
-                        @endhasPermission
+                        @endif
                     </div>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
-                        @hasPermission('parties.index')
+                        @if(auth()->check() && auth()->user()->hasPermission('parties.index'))
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('parties.*') ? 'active' : '' }}" href="{{ route('parties.index') }}">
                                 <span class="menu-bullet">
@@ -250,10 +250,10 @@
                                 <span class="menu-title">Party</span>
                             </a>
                         </div>
-                        @endhasPermission
+                        @endif
                     </div>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
-                        @hasPermission('contractors.index')
+                        @if(auth()->check() && auth()->user()->hasPermission('contractors.index'))
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('contractors.*') ? 'active' : '' }}" href="{{ route('contractors.index') }}">
                                 <span class="menu-bullet">
@@ -262,7 +262,7 @@
                                 <span class="menu-title">Manage Vendor/Contractor</span>
                             </a>
                         </div>
-                        @endhasPermission
+                        @endif
                     </div>
                 </div>
                 @endif
@@ -289,7 +289,7 @@
                         <span class="menu-arrow"></span>
                     </span>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
-                        @hasPermission('site-material-requirements.index')
+                        @if(auth()->check() && auth()->user()->hasPermission('site-material-requirements.index'))
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('site-material-requirements.*') ? 'active' : '' }}" href="{{ route('site-material-requirements.index') }}">
                                 <span class="menu-bullet">
@@ -298,10 +298,10 @@
                                 <span class="menu-title">Material Requirement</span>
                             </a>
                         </div>
-                        @endhasPermission
+                        @endif
                     </div>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
-                        @hasPermission('material-inwards.index')
+                        @if(auth()->check() && auth()->user()->hasPermission('material-inwards.index'))
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('material-inwards.*') ? 'active' : '' }}" href="{{ route('material-inwards.index') }}">
                                 <span class="menu-bullet">
@@ -310,10 +310,10 @@
                                 <span class="menu-title">Material Inward Details</span>
                             </a>
                         </div>
-                        @endhasPermission
+                        @endif
                     </div>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
-                        @hasPermission('site-progress.index')
+                        @if(auth()->check() && auth()->user()->hasPermission('site-progress.index'))
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('site-progress.*') ? 'active' : '' }}" href="{{ route('site-progress.index') }}">
                                 <span class="menu-bullet">
@@ -322,10 +322,10 @@
                                 <span class="menu-title">Site Progress</span>
                             </a>
                         </div>
-                        @endhasPermission
+                        @endif
                     </div>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
-                        @hasPermission('tool-lists.index')
+                        @if(auth()->check() && auth()->user()->hasPermission('tool-lists.index'))
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('tool-lists.*') ? 'active' : '' }}" href="{{ route('tool-lists.index') }}">
                                 <span class="menu-bullet">
@@ -334,10 +334,10 @@
                                 <span class="menu-title">Tools</span>
                             </a>
                         </div>
-                        @endhasPermission
+                        @endif
                     </div>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
-                        @hasPermission('stages.index')
+                        @if(auth()->check() && auth()->user()->hasPermission('stages.index'))
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('stages.*') ? 'active' : '' }}" href="{{ route('stages.index') }}">
                                 <span class="menu-bullet">
@@ -346,7 +346,7 @@
                                 <span class="menu-title">Stage</span>
                             </a>
                         </div>
-                        @endhasPermission
+                        @endif
                     </div>
                 </div>
                 @endif
@@ -370,7 +370,7 @@
                         <span class="menu-arrow"></span>
                     </span>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
-                        @hasPermission('bill-inwards.index')
+                        @if(auth()->check() && auth()->user()->hasPermission('bill-inwards.index'))
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('bill-inwards.*') ? 'active' : '' }}" href="{{ route('bill-inwards.index') }}">
                                 <span class="menu-bullet">
@@ -379,10 +379,10 @@
                                 <span class="menu-title">Bill Inward</span>
                             </a>
                         </div>
-                        @endhasPermission
+                        @endif
                     </div>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
-                        @hasPermission('bill-outwards.index')
+                        @if(auth()->check() && auth()->user()->hasPermission('bill-outwards.index'))
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('bill-outwards.*') ? 'active' : '' }}" href="{{ route('bill-outwards.index') }}">
                                 <span class="menu-bullet">
@@ -391,7 +391,7 @@
                                 <span class="menu-title">Bill Outward</span>
                             </a>
                         </div>
-                        @endhasPermission
+                        @endif
                     </div>
                 </div>
                 @endif
@@ -412,7 +412,7 @@
                         <span class="menu-arrow"></span>
                     </span>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
-                        @hasPermission('work-orders.index')
+                        @if(auth()->check() && auth()->user()->hasPermission('work-orders.index'))
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('work-orders.*') ? 'active' : '' }}" href="{{ route('work-orders.index') }}">
                                 <span class="menu-bullet">
@@ -421,7 +421,7 @@
                                 <span class="menu-title">Work Order</span>
                             </a>
                         </div>
-                        @endhasPermission
+                        @endif
                     </div>
                 </div>
                 @endif
@@ -442,7 +442,7 @@
                         <span class="menu-arrow"></span>
                     </span>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
-                        @hasPermission('payments.index')
+                        @if(auth()->check() && auth()->user()->hasPermission('payments.index'))
                         <div class="menu-item">
                             <a class="menu-link {{ request()->routeIs('payments.*') ? 'active' : '' }}" href="{{ route('payments.index') }}">
                                 <span class="menu-bullet">
@@ -451,7 +451,7 @@
                                 <span class="menu-title">Payment</span>
                             </a>
                         </div>
-                        @endhasPermission
+                        @endif
                     </div>
                 </div>
                 @endif

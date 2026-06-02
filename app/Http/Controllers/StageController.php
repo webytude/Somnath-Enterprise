@@ -17,7 +17,7 @@ class StageController extends Controller
      */
     public function index()
     {
-        $stages = Stage::with(['location', 'work'])->latest()->get();
+        $stages = Stage::forCurrentUser()->with(['location', 'work'])->latest()->get();
         return view('admin.stage.index', compact('stages'));
     }
 

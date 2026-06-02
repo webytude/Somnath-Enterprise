@@ -18,7 +18,7 @@ class SiteMaterialRequirementController extends Controller
      */
     public function index()
     {
-        $siteMaterialRequirements = SiteMaterialRequirement::with(['location', 'details.material'])->latest()->get();
+        $siteMaterialRequirements = SiteMaterialRequirement::forCurrentUser()->with(['location', 'details.material'])->latest()->get();
         return view('admin.site-material-requirement.index', compact('siteMaterialRequirements'));
     }
 

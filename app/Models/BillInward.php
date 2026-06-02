@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use App\Traits\LocationScoped;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class BillInward extends Model
 {
-    use HasFactory;
+    use HasFactory, LocationScoped;
+
+    // No own location column; scope through the related party's locations.
+    protected $locationViaRelation = 'party.locations';
 
     protected $fillable = [
         'firm_id',

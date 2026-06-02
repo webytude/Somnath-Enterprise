@@ -17,7 +17,7 @@ class ContractorController extends Controller
      */
     public function index()
     {
-        $contractors = Contractor::with('paymentSlab')->latest()->get();
+        $contractors = Contractor::forCurrentUser()->with('paymentSlab')->latest()->get();
         return view('admin.contractor.index', compact('contractors'));
     }
 

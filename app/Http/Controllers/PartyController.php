@@ -17,7 +17,7 @@ class PartyController extends Controller
      */
     public function index()
     {
-        $parties = Party::latest()->get();
+        $parties = Party::forCurrentUser()->latest()->get();
         return view('admin.party.index', compact('parties'));
     }
 

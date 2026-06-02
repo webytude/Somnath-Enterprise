@@ -18,18 +18,25 @@ class AttendanceController extends Controller
     {
         $date = $request->get('date', date('Y-m-d'));
         $selectedDate = Carbon::parse($date);
-        
-        // Get all staff
-        $staff = Staff::with('locations')->orderBy('first_name')->get();
-        
-        // Get attendance for the selected date
+
+        // Staff list - admin sees all, staff sees only those sharing their locations.
+        $staff = Staff::forCurrentUser()->with('locations')->orderBy('first_name')->get();
+        $allowedStaffIds = $staff->pluck('id')->toArray();
+
+        // Get attendance for the selected date (scoped to allowed staff)
         $attendances = Attendance::whereDate('attendance_date', $selectedDate)
+            ->whereIn('staff_id', $allowedStaffIds)
             ->get()
             ->keyBy('staff_id');
-        
-        // Get all locations for attendance assignment
-        $locations = Location::orderBy('name')->get();
-        
+
+        // Locations for attendance assignment - admin sees all, staff sees only their own.
+        $locationsQuery = Location::orderBy('name');
+        if (Auth::check() && Auth::user()->isStaff() && Auth::user()->staff) {
+            $staffLocationIds = Auth::user()->staff->locations()->pluck('locations.id')->toArray();
+            $locationsQuery->whereIn('id', $staffLocationIds);
+        }
+        $locations = $locationsQuery->get();
+
         return view('admin.staff.attendance', compact('staff', 'attendances', 'selectedDate', 'locations'));
     }
 
@@ -112,6 +119,12 @@ class AttendanceController extends Controller
         $startDate = $request->get('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
         $endDate = $request->get('end_date', Carbon::now()->endOfMonth()->format('Y-m-d'));
 
+        // Prevent a staff user from probing attendance of staff outside their locations.
+        $allowedStaffIds = Staff::forCurrentUser()->pluck('id')->toArray();
+        if ($staffId && ! in_array((int) $staffId, $allowedStaffIds)) {
+            return response()->json([]);
+        }
+
         $attendances = Attendance::where('staff_id', $staffId)
             ->whereBetween('attendance_date', [$startDate, $endDate])
             ->get()
@@ -140,17 +153,19 @@ class AttendanceController extends Controller
         $startDateParsed = Carbon::parse($startDate);
         $endDateParsed = Carbon::parse($endDate);
         
-        // Get all staff
-        $allStaff = Staff::orderBy('first_name')->get();
-        
-        // Build query
+        // Staff list - admin sees all, staff sees only those sharing their locations.
+        $allStaff = Staff::forCurrentUser()->orderBy('first_name')->get();
+        $allowedStaffIds = $allStaff->pluck('id')->toArray();
+
+        // Build query (scoped to allowed staff)
         $query = Attendance::with(['staff', 'location'])
             ->whereBetween('attendance_date', [$startDateParsed, $endDateParsed])
+            ->whereIn('staff_id', $allowedStaffIds)
             ->orderBy('attendance_date', 'desc')
             ->orderBy('staff_id');
-        
-        // Filter by staff if selected
-        if ($staffId) {
+
+        // Filter by staff if selected (only within allowed staff)
+        if ($staffId && in_array((int) $staffId, $allowedStaffIds)) {
             $query->where('staff_id', $staffId);
         }
         

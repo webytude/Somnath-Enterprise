@@ -30,9 +30,9 @@
                     <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_works">
                         <thead>
                             <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
-                                <th class="min-w-150px">Name Of Work</th>
-                                <th class="min-w-125px">Firm</th>
-                                <th class="min-w-125px">Location</th>
+                                <th class="min-w-150px" style="max-width: 240px;">Name Of Work</th>
+                                <th class="min-w-125px" style="max-width: 180px;">Firm</th>
+                                <th class="min-w-125px" style="max-width: 180px;">Location</th>
                                 <th class="min-w-125px">Work Order No.</th>
                                 <th class="min-w-125px">Work Order Date</th>
                                 <th class="min-w-125px">Work Start Date</th>
@@ -44,9 +44,9 @@
                         <tbody class="text-gray-600 fw-bold">
                             @forelse($works as $work)
                             <tr>
-                                <td>{{ $work->name_of_work }}</td>
-                                <td>{{ $work->firm ? $work->firm->name : '-' }}</td>
-                                <td>{{ $work->location ? $work->location->name : '-' }}</td>
+                                <td style="max-width: 240px; white-space: normal; word-break: break-word;">{{ $work->name_of_work }}</td>
+                                <td style="max-width: 180px; white-space: normal; word-break: break-word;">{{ $work->firm ? $work->firm->name : '-' }}</td>
+                                <td style="max-width: 180px; white-space: normal; word-break: break-word;">{{ $work->location ? $work->location->name : '-' }}</td>
                                 <td>{{ $work->work_order_no ?? '-' }}</td>
                                 <td>{{ $work->wo_date ? $work->wo_date->format('d/m/Y') : '-' }}</td>
                                 <td>{{ $work->work_start_date ? $work->work_start_date->format('d/m/Y') : '-' }}</td>

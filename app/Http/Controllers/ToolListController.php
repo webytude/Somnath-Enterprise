@@ -15,7 +15,7 @@ class ToolListController extends Controller
      */
     public function index()
     {
-        $toolLists = ToolList::with('location')->latest()->get();
+        $toolLists = ToolList::forCurrentUser()->with('location')->latest()->get();
         return view('admin.tool-list.index', compact('toolLists'));
     }
 

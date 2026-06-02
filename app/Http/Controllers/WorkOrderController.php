@@ -14,7 +14,7 @@ class WorkOrderController extends Controller
 {
     public function index()
     {
-        $workOrders = WorkOrder::with(['contractor', 'location', 'work'])->latest()->get();
+        $workOrders = WorkOrder::forCurrentUser()->with(['contractor', 'location', 'work'])->latest()->get();
 
         return view('admin.work-order.index', compact('workOrders'));
     }

@@ -20,7 +20,7 @@ class WorkController extends Controller
      */
     public function index()
     {
-        $works = Work::with(['firm', 'department', 'subdepartment', 'division', 'subDivision', 'location'])->latest()->get();
+        $works = Work::forCurrentUser()->with(['firm', 'department', 'subdepartment', 'division', 'subDivision', 'location'])->latest()->get();
         return view('admin.work.index', compact('works'));
     }
 

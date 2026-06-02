@@ -27,15 +27,15 @@
             <div class="card-body py-4">
                 @include('global.show_session')
                 <div class="table-responsive">
-                <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_users" style="min-width: 1300px;">
+                <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_users">
                     <thead>
                         <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
                             <th class="min-w-125px">Name</th>
                             <th class="min-w-125px">Firm</th>
-                            <th class="min-w-125px">Department</th>
-                            <th class="min-w-125px">Sub Department</th>
-                            <th class="min-w-125px">Division</th>
-                            <th class="min-w-125px">Sub Division</th>
+                            <!-- <th class="min-w-125px">Department</th>
+                            <th class="min-w-125px">Sub Department</th> -->
+                            <th class="min-w-125px" style="max-width: 240px;">Division</th>
+                            <th class="min-w-125px" style="max-width: 200px;">Sub Division</th>
                             <th class="text-end min-w-100px">Action</th>
                         </tr>
                     </thead>
@@ -44,10 +44,10 @@
                         <tr>
                             <td>{{ $location->name }}</td>
                             <td>{{ $location->firm ? $location->firm->name : '-' }}</td>
-                            <td>{{ $location->department->name ?? '-' }}</td>
-                            <td>{{ $location->subdepartment->name ?? '-' }}</td>
-                            <td>{{ $location->division->name ?? '-' }}</td>
-                            <td>{{ $location->subDivision->name ?? '-' }}</td>
+                            <!-- <td>{{ $location->department->name ?? '-' }}</td>
+                            <td>{{ $location->subdepartment->name ?? '-' }}</td> -->
+                            <td style="max-width: 240px; white-space: normal; word-break: break-word;">{{ $location->division->name ?? '-' }}</td>
+                            <td style="max-width: 200px; white-space: normal; word-break: break-word;">{{ $location->subDivision->name ?? '-' }}</td>
                             <td class="text-end">
                                 <a href="{{ route('locations.edit', $location) }}" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
                                     <span class="svg-icon svg-icon-3">

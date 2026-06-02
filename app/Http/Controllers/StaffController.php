@@ -20,29 +20,43 @@ class StaffController extends Controller
      */
     public function index(Request $request)
     {
-        $staff = Staff::latest()->get();
-        
         // Get selected date from request, default to today
         $selectedDate = $request->get('attendance_date', date('Y-m-d'));
         $today = \Carbon\Carbon::parse($selectedDate);
         $isToday = $today->isToday();
-        
-        // Get attendance for selected date
+
+        // Staff list - admin sees all, staff sees only those sharing their locations.
+        $staff = Staff::forCurrentUser()->latest()->get();
+        $allowedStaffIds = $staff->pluck('id')->toArray();
+
+        // Logged-in staff's own location ids, reused below to scope the locations dropdown.
+        $staffLocationIds = [];
+        if (Auth::check() && Auth::user()->isStaff() && Auth::user()->staff) {
+            $staffLocationIds = Auth::user()->staff
+                ->locations()
+                ->pluck('locations.id')
+                ->toArray();
+        }
+
+        // Get attendance for selected date (scoped to allowed staff)
         $attendances = \App\Models\Attendance::whereDate('attendance_date', $today)
+            ->whereIn('staff_id', $allowedStaffIds)
             ->get()
             ->keyBy('staff_id');
-        
+
         // Get present employee count (present or present_with_bike)
         $presentCount = \App\Models\Attendance::whereDate('attendance_date', $today)
             ->whereIn('attendance_status', ['present', 'present_with_bike'])
+            ->whereIn('staff_id', $allowedStaffIds)
             ->count();
-        
+
         // Get present employees for payment
         $presentStaffIds = \App\Models\Attendance::whereDate('attendance_date', $today)
             ->whereIn('attendance_status', ['present', 'present_with_bike'])
+            ->whereIn('staff_id', $allowedStaffIds)
             ->pluck('staff_id')
             ->toArray();
-        
+
         $presentStaff = Staff::whereIn('id', $presentStaffIds)
             ->orderBy('first_name')
             ->get();
@@ -66,8 +80,12 @@ class StaffController extends Controller
             }
         }
         
-        // Get all locations for attendance assignment
-        $locations = \App\Models\Location::orderBy('name')->get();
+        // Get locations for attendance assignment - admin sees all, staff sees only their own
+        $locationsQuery = \App\Models\Location::orderBy('name');
+        if (Auth::check() && Auth::user()->isStaff() && Auth::user()->staff) {
+            $locationsQuery->whereIn('id', $staffLocationIds);
+        }
+        $locations = $locationsQuery->get();
         
         // Check if attendance tab should be active (if attendance_date parameter is present)
         $activeTab = $request->has('attendance_date') ? 'attendance' : 'staff_list';
