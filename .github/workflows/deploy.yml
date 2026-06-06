@@ -18,3 +18,9 @@ jobs:
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         server-dir: '/'
+        timeout: 60000
+        log-level: verbose
+        # One-time only: uncomment for a single run to wipe the target dir and
+        # clear the stale sync state that triggers the 502 (APPE) error, then
+        # comment it back out — it deletes ALL files in server-dir on every run.
+        # dangerous-clean-slate: true
