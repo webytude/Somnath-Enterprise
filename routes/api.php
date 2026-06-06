@@ -40,15 +40,18 @@ use App\Http\Controllers\Api\RoleController;
 | permission:<resource>.<action>), matching the permissions.name keys.
 */
 
-Route::prefix('v1')->group(function () {
+// All API route NAMES are prefixed with "api." so they never collide with the
+// web routes/web.php names (e.g. web "departments.index" vs api
+// "api.departments.index"). URLs are unaffected — only the route() name keys.
+Route::prefix('v1')->name('api.')->group(function () {
 
     // --- Public ---
-    Route::post('login', [AuthController::class, 'login'])->name('api.login');
+    Route::post('login', [AuthController::class, 'login'])->name('login');
 
     // --- Authenticated ---
     Route::middleware('auth:sanctum')->group(function () {
-        Route::get('me', [AuthController::class, 'me'])->name('api.me');
-        Route::post('logout', [AuthController::class, 'logout'])->name('api.logout');
+        Route::get('me', [AuthController::class, 'me'])->name('me');
+        Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
         // ---- Org structure ----
         Route::apiResource('departments', DepartmentController::class);
