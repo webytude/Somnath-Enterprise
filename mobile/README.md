@@ -35,7 +35,8 @@ mobile/
 
 ## Setup (bare React Native CLI — no Expo)
 
-> 📖 **Full step-by-step run guide for Android & iOS: [RUNNING.md](./RUNNING.md)**
+> 📖 **Run guide (Android & iOS): [RUNNING.md](./RUNNING.md)**
+> 🤖 **Android build/release guide (APK & AAB): [ANDROID_BUILD.md](./ANDROID_BUILD.md)**
 
 This folder holds JS/TS + config only. Generate the native projects with your
 own setup, then run with the RN CLI.
