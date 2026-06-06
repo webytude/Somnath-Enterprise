@@ -1,22 +1,18 @@
 import axios from 'axios';
-import Constants from 'expo-constants';
-import * as SecureStore from 'expo-secure-store';
+import { API_BASE_URL } from '@/config/env';
+import { getItem } from '@/lib/secureStore';
 
 export const TOKEN_KEY = 'sm_auth_token';
 
-const baseURL =
-  (Constants.expoConfig?.extra?.apiBaseUrl as string) ??
-  'http://10.0.2.2:8000/api/v1';
-
 export const api = axios.create({
-  baseURL,
+  baseURL: API_BASE_URL,
   headers: { Accept: 'application/json' },
   timeout: 20000,
 });
 
 // Attach the Bearer token to every request.
 api.interceptors.request.use(async (config) => {
-  const token = await SecureStore.getItemAsync(TOKEN_KEY);
+  const token = await getItem(TOKEN_KEY);
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

@@ -5,7 +5,7 @@ import React, {
   useState,
   useCallback,
 } from 'react';
-import * as SecureStore from 'expo-secure-store';
+import { getItem, setItem, deleteItem } from '@/lib/secureStore';
 import { api, TOKEN_KEY, setUnauthorizedHandler } from '@/api/client';
 
 export interface AuthUser {
@@ -42,7 +42,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch {
       // ignore — we clear local state regardless
     }
-    await SecureStore.deleteItemAsync(TOKEN_KEY);
+    await deleteItem(TOKEN_KEY);
     setToken(null);
     setUser(null);
   }, []);
@@ -58,14 +58,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     (async () => {
       try {
-        const saved = await SecureStore.getItemAsync(TOKEN_KEY);
+        const saved = await getItem(TOKEN_KEY);
         if (saved) {
           setToken(saved);
           const { data } = await api.get('/me');
           setUser(data.user);
         }
       } catch {
-        await SecureStore.deleteItemAsync(TOKEN_KEY);
+        await deleteItem(TOKEN_KEY);
       } finally {
         setLoading(false);
       }
@@ -78,7 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       password,
       device_name: 'mobile',
     });
-    await SecureStore.setItemAsync(TOKEN_KEY, data.token);
+    await setItem(TOKEN_KEY, data.token);
     setToken(data.token);
     setUser(data.user);
   }, []);

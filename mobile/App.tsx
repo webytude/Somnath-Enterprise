@@ -1,6 +1,6 @@
 import './global.css';
 import React from 'react';
-import { StatusBar } from 'expo-status-bar';
+import { StatusBar } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -20,7 +20,7 @@ export default function App() {
         <GluestackUIProvider mode="light">
           <QueryClientProvider client={queryClient}>
             <AuthProvider>
-              <StatusBar style="light" />
+              <StatusBar barStyle="light-content" backgroundColor="#0f766e" />
               <RootNavigator />
             </AuthProvider>
           </QueryClientProvider>
