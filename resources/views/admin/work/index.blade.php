@@ -24,6 +24,7 @@
                     </div>
                 </div>
             </div>
+            
             <div class="card-body py-4">
                 @include('global.show_session')
                 <div class="table-responsive">
