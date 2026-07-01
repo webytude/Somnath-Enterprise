@@ -25,6 +25,7 @@
                 </div>
             </div>
             <div class="card-body py-4">
+                
                 @include('global.show_session')
                 <div class="table-responsive">
                     <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_works">
