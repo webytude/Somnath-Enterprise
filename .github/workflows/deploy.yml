@@ -17,7 +17,7 @@ jobs:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        server-dir: '/public_html/'
+        server-dir: '/'
         timeout: 60000
         log-level: verbose
         # One-time only: uncomment for a single run to wipe the target dir and
