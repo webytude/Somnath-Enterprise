@@ -53,6 +53,7 @@ Route::prefix('v1')->name('api.')->group(function () {
         Route::get('me', [AuthController::class, 'me'])->name('me');
         Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
+
         // ---- Org structure ----
         Route::apiResource('departments', DepartmentController::class);
         Route::apiResource('sub-departments', SubdepartmentController::class);
